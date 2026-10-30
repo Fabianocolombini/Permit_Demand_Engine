@@ -31,6 +31,14 @@ class Jurisdiction(BaseModel):
     date_format: str = "mixed"
     issued_date_min: str | None = None
     notes: str | None = None
+    # Export / live-pull helpers
+    export_date_field: str | None = None
+    arcgis_date_format: str | None = None  # date_only | epoch_ms | sql_date | iso_text | year_int
+    page_size: int | None = None
+    order_by_fields: str | None = None
+    return_geometry: bool | None = None
+    export_monthly: bool | None = None
+    export_where: str | None = None  # optional full WHERE override (skips date clauses)
 
 
 def load_jurisdictions(path: Path | str = DEFAULT_REGISTRY) -> list[Jurisdiction]:
@@ -38,6 +46,18 @@ def load_jurisdictions(path: Path | str = DEFAULT_REGISTRY) -> list[Jurisdiction
     if not isinstance(raw, list):
         raise ValueError(f"jurisdictions.yaml must be a list, got {type(raw)}")
     return [Jurisdiction.model_validate(item) for item in raw]
+
+
+def load_jurisdictions_raw(path: Path | str = DEFAULT_REGISTRY) -> list[dict[str, Any]]:
+    """Dicts with YAML extras preserved (export tooling)."""
+    raw = yaml.safe_load(Path(path).read_text()) or []
+    if not isinstance(raw, list):
+        raise ValueError(f"jurisdictions.yaml must be a list, got {type(raw)}")
+    out: list[dict[str, Any]] = []
+    for item in raw:
+        model = Jurisdiction.model_validate(item)
+        out.append({**item, **model.model_dump()})
+    return out
 
 
 def get_jurisdiction(jurisdiction_id: str, path: Path | str = DEFAULT_REGISTRY) -> Jurisdiction:

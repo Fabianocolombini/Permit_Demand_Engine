@@ -1,4 +1,4 @@
-"""Connector interface — live ArcGIS/Socrata deferred; file connector implements this."""
+"""Connector interface for permit extractors (file / ArcGIS / Socrata)."""
 
 from __future__ import annotations
 

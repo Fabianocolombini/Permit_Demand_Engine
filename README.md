@@ -2,109 +2,77 @@
 
 Turn Florida building permits into fittings demand signals for a Tigre / Dura demo.
 
-**This PR (slice 1):** greenfield scaffold + **CSV/XLS file ingest** for Miami-Dade → normalize → DuckDB `silver.permits`. Map/Streamlit, statewide discovery, and Tier C imputation are deferred.
-
-Source of truth for structure/schema: V1.1 statewide FL spec (project docs). Scope here is Miami-Dade unincorporated only; statewide waves come later.
+**This PR:** robust ArcGIS + Socrata CSV extract for Onda 1 Tier A jurisdictions (post-2021), expanded `jurisdictions.yaml`, extract manifest + sample preview. Streamlit/map deferred.
 
 ---
 
-## Hard decisions (this slice)
+## Hard decisions
 
 | Topic | Decision |
 |---|---|
-| Ingest | **CSV/XLS first** (`src/ingest/file_csv.py`). Live ArcGIS/Socrata connectors deferred. |
-| Identity | `PermitNumber` → `permit_id` |
-| ZIP | Site/city ZIP from address or geocode — **never** `ContractorZip` |
-| Valuation | `EstimatedValue` parsed as **USD dollars** (string → float) |
-| Window | Post-pandemic from **2021-01-01** (configurable in `config/`) |
-| UI | No Streamlit / map yet |
-
----
-
-## Layout
-
-```
-config/           jurisdictions.yaml, assumptions.yaml, taxonomy.yaml
-src/ingest/       file_csv.py (primary); arcgis/socrata stubs deferred
-src/normalize/    Pydantic Permit + field_map mapper
-src/classify/     regex rules stub
-src/enrich/       Census batch geocode helper + coverage stats
-scripts/          export_arcgis_sample, 02_ingest, 03_normalize, 04_classify, 05_enrich
-data/bronze/      preferred local file drop (per jurisdiction_id)
-data/raw/         alternate drop / bootstrap exports
-data/reference/   schema & coverage reports
-calibration/      actual_sales stub
-permits.duckdb    local DuckDB (gitignored)
-```
+| Extract first | Dump **raw/full** permits to CSV under `data/bronze/<id>/` before classify |
+| Identity | `PermitNumber` (or local equivalent) |
+| ZIP | Site/city ZIP from address/geocode — **never** contractor ZIP |
+| Valuation | USD dollars |
+| Window | Issued ≥ **2021-01-01** (configurable) |
+| Miami-Dade Hub | **Unincorporated only** — City of Miami is a separate feed |
+| Large files | Bronze CSVs gitignored; commit scripts + preview + manifest |
 
 ---
 
 ## Quick start
 
 ```bash
-python -m venv .venv && source .venv/bin/activate
-pip install -r requirements.txt
+python3 -m pip install -r requirements.txt
 
-# 1) Bootstrap a manageable recent sample from the public FeatureServer → CSV
-python3 scripts/export_arcgis_sample.py --max-records 5000 --since 2024-01-01
-# Writes: data/bronze/fl_miami_dade_county/miami_dade_sample.csv
-# Post-pandemic full window: --since 2021-01-01 (huge — raise --max-records / paginate).
-# Normalize still keeps issued_date >= 2021-01-01 via config.
+# Probe curated Onda 1 candidates
+python3 scripts/00_discover.py
+python3 scripts/01_probe.py --all
 
-# Or drop your own CSV/XLS into data/bronze/fl_miami_dade_county/ (or data/raw/…).
+# Full post-2021 extract for one or all Tier A jurisdictions
+python3 scripts/export_permits_csv.py --jurisdiction fl_miami_dade_county --monthly
+python3 scripts/export_permits_csv.py --all-tier-a --since 2021-01-01 --monthly
 
-# 2) File ingest → stage JSONL
-python3 scripts/02_ingest.py --jurisdiction fl_miami_dade_county
-
-# 3) Normalize → silver.permits (DuckDB)
-python3 scripts/03_normalize.py --jurisdiction fl_miami_dade_county --replace
-
-# 4) Optional classify + geography enrich (Census sample for missing site ZIP)
-python3 scripts/04_classify.py --jurisdiction fl_miami_dade_county
-python3 scripts/05_enrich.py --jurisdiction fl_miami_dade_county --geocode-sample 100
+# Build markdown manifest from bronze *_extract_meta.json
+python3 scripts/build_extract_manifest.py
 ```
 
-Or: `make install && make export && make pipeline`
-
-### XLS / custom files
+Optional file → DuckDB path (from prior scaffold):
 
 ```bash
-# Place files under data/bronze/fl_miami_dade_county/*.xlsx (or *.csv)
 python3 scripts/02_ingest.py --jurisdiction fl_miami_dade_county
 python3 scripts/03_normalize.py --jurisdiction fl_miami_dade_county --replace
 ```
 
-Column names should match the ArcGIS Hub table (or adjust `field_map` in `config/jurisdictions.yaml`).
+---
+
+## Tier A extracts in this wave
+
+See `data/reference/extract_manifest.md` for row counts, date spans, and absolute CSV paths.
+
+| ID | Source | Covers |
+|---|---|---|
+| `fl_miami_dade_county` | ArcGIS Hub table | Unincorporated only |
+| `fl_miami_city` | City of Miami AGOL | City |
+| `fl_orlando_city` | Socrata | City |
+| `fl_hillsborough_county` | TPC MapServer | Full county (multi-jurisdiction labels) |
+| `fl_cape_coral_city` | Cape Coral MapServer | Active permits (city) |
+| `fl_broward_county` | HCED Posse points | Small / engineering-leaning subset |
+| `fl_manatee_active_residential` | Manatee MapServer | Active residential only |
+
+**Tier B (blocked — no open record API found quickly):** Palm Beach building, Orange County unincorporated, Duval/Jacksonville, Pinellas, Lee unincorporated, Polk, Brevard, Volusia, Pasco, Osceola, Sarasota, full Broward BCS.
 
 ---
 
-## Config
+## Layout
 
-- `config/jurisdictions.yaml` — Miami-Dade entry with `connector: file`, FeatureServer URL documented for later live pull, and `field_map` from the probed schema report.
-- `config/assumptions.yaml` — material/timing/logistics stubs (V1.1); window defaults.
-- Filters: `--since` on normalize, or `issued_date_min` on the jurisdiction / `window.issued_date_min` in assumptions.
-
----
-
-## Limitations (honest)
-
-- **Unincorporated Miami-Dade only** — Hub layer does not cover incorporated cities.
-- **No native geometry / site ZIP** on the chosen FeatureServer table; city is present. Site ZIP may be parsed from address text or filled for a **small Census geocode sample**; `ContractorZip` is ignored.
-- Live API connectors, statewide 67-county discovery, Tier C imputation, Streamlit/map: **not in this PR**.
-- Sample export caps rows by default (`--max-records 5000`) so bootstrap stays manageable.
-
----
-
-## DuckDB
-
-After normalize:
-
-```sql
-SELECT COUNT(*), 
-       AVG(zip IS NOT NULL)::DOUBLE AS pct_zip_approx,
-       AVG(declared_valuation IS NOT NULL)::DOUBLE AS pct_val
-FROM silver.permits
-WHERE jurisdiction_id = 'fl_miami_dade_county';
 ```
-
-DB file: `permits.duckdb` (local, gitignored).
+config/jurisdictions.yaml     Onda 1 registry (Tier A + B stubs)
+src/ingest/arcgis.py          paginated FeatureServer/MapServer client
+src/ingest/socrata.py         SODA client
+scripts/export_permits_csv.py full CSV dump (monthly slices, retry)
+scripts/00_discover.py        curated endpoint probe
+scripts/01_probe.py           registry probe
+data/bronze/<id>/             large CSVs (gitignored) + sample_preview.csv
+data/reference/               extract_manifest.md, probe JSON, committed preview
+```
