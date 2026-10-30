@@ -234,138 +234,389 @@
     Active residential permits only (MapServer layer 0). Not full historical
     Manatee feed — portal/webapp Tier B for complete history.
 
-# --- Onda 1 without open record API (catalogued) ---
+# --- Onda 1 Tier B via Shovels.ai (paid/aggregated API) ---
+# Resolve geo_id at pull time via /counties|/cities|/jurisdictions/search.
+# Auth: SHOVELS_API_KEY env secret. Window: issued/start ≥ 2021-01-01.
+# job_value from Shovels is cents; export adds job_value_usd.
 
 - id: fl_broward_full_building
-  name: "Broward County full building permits"
+  name: "Broward County full building permits (Shovels)"
   state: FL
   county: "Broward"
   county_fips: "12011"
   level: county
-  covers: unknown
+  covers: full_county
   tier: B
-  connector: null
-  notes: "BCS/Posse citizen portal (dpepp.broward.org) — no open FeatureServer for full building volume."
+  connector: shovels
+  bronze_glob: "data/bronze/fl_broward_full_building/*.{csv,xlsx,xls}"
+  shovels_county_q: "Broward"
+  export_date_field: issue_date
+  field_map:
+    permit_id: number
+    issued_date: issue_date
+    address_raw: address_name
+    city: address_city
+    zip: address_zip_code
+    description_raw: description
+    work_class_raw: type
+    permit_type_raw: subtype
+    declared_valuation: job_value_usd
+  date_format: iso_text
+  issued_date_min: "2021-01-01"
+  notes: >
+    Shovels county geo pull for Broward (complements small HCED Posse ArcGIS subset).
+    BCS citizen portal still has no open FeatureServer.
 
 - id: fl_palm_beach_county
-  name: "Palm Beach County"
+  name: "Palm Beach County (Shovels)"
   state: FL
   county: "Palm Beach"
   county_fips: "12099"
   level: county
-  covers: unincorporated_only
+  covers: full_county
   tier: B
-  connector: null
+  connector: shovels
+  bronze_glob: "data/bronze/fl_palm_beach_county/*.{csv,xlsx,xls}"
+  shovels_county_q: "Palm Beach"
+  export_date_field: issue_date
+  field_map:
+    permit_id: number
+    issued_date: issue_date
+    address_raw: address_name
+    city: address_city
+    zip: address_zip_code
+    description_raw: description
+    work_class_raw: type
+    permit_type_raw: subtype
+    declared_valuation: job_value_usd
+  date_format: iso_text
+  issued_date_min: "2021-01-01"
   notes: >
-    Public ePermits MapServer is ROW/utility polygons, not building permits.
-    Building search via discover.pbcgov.org — Tier B.
+    Shovels county pull. Open ePermits MapServer is ROW/utility only; building
+    search was portal-only (discover.pbcgov.org). covers=full_county pending
+    jurisdiction-level validation against incorporated cities.
 
 - id: fl_orange_county
-  name: "Orange County (unincorporated)"
+  name: "Orange County (Shovels)"
   state: FL
   county: "Orange"
   county_fips: "12095"
   level: county
-  covers: unincorporated_only
+  covers: full_county
   tier: B
-  connector: null
-  notes: "OC FastTrack portal search only — no open API. Orlando city is separate Tier A."
+  connector: shovels
+  bronze_glob: "data/bronze/fl_orange_county/*.{csv,xlsx,xls}"
+  shovels_county_q: "Orange"
+  export_date_field: issue_date
+  field_map:
+    permit_id: number
+    issued_date: issue_date
+    address_raw: address_name
+    city: address_city
+    zip: address_zip_code
+    description_raw: description
+    work_class_raw: type
+    permit_type_raw: subtype
+    declared_valuation: job_value_usd
+  date_format: iso_text
+  issued_date_min: "2021-01-01"
+  notes: >
+    Shovels county pull (includes Orlando + unincorporated). City of Orlando
+    Tier A Socrata extract remains separate — dedupe before gold.
 
 - id: fl_duval_jacksonville
-  name: "Duval / City of Jacksonville"
+  name: "Duval / Jacksonville (Shovels)"
   state: FL
   county: "Duval"
   county_fips: "12031"
   level: city
-  covers: city
+  covers: full_county
   tier: B
-  connector: null
-  notes: "JAXEPICS portal search / email export — no Socrata or open FeatureServer found."
+  connector: shovels
+  bronze_glob: "data/bronze/fl_duval_jacksonville/*.{csv,xlsx,xls}"
+  shovels_county_q: "Duval"
+  export_date_field: issue_date
+  field_map:
+    permit_id: number
+    issued_date: issue_date
+    address_raw: address_name
+    city: address_city
+    zip: address_zip_code
+    description_raw: description
+    work_class_raw: type
+    permit_type_raw: subtype
+    declared_valuation: job_value_usd
+  date_format: iso_text
+  issued_date_min: "2021-01-01"
+  notes: >
+    Shovels Duval County geo (Jacksonville consolidated city/county). JAXEPICS
+    portal had no open record API.
 
 - id: fl_pinellas_county
-  name: "Pinellas County"
+  name: "Pinellas County (Shovels)"
   state: FL
   county: "Pinellas"
   county_fips: "12103"
   level: county
-  covers: unknown
+  covers: full_county
   tier: B
-  connector: null
-  notes: "Enterprise GIS hub present; no public building-permit FeatureServer located in probe."
+  connector: shovels
+  bronze_glob: "data/bronze/fl_pinellas_county/*.{csv,xlsx,xls}"
+  shovels_county_q: "Pinellas"
+  export_date_field: issue_date
+  field_map:
+    permit_id: number
+    issued_date: issue_date
+    address_raw: address_name
+    city: address_city
+    zip: address_zip_code
+    description_raw: description
+    work_class_raw: type
+    permit_type_raw: subtype
+    declared_valuation: job_value_usd
+  date_format: iso_text
+  issued_date_min: "2021-01-01"
+  notes: "Shovels county pull. No public building-permit FeatureServer in prior probe."
 
 - id: fl_lee_county
-  name: "Lee County (unincorporated)"
+  name: "Lee County (Shovels)"
   state: FL
   county: "Lee"
   county_fips: "12071"
   level: county
-  covers: unincorporated_only
+  covers: full_county
   tier: B
-  connector: null
-  notes: "No county permit FeatureServer found. Cape Coral city Active layer is separate Tier A."
+  connector: shovels
+  bronze_glob: "data/bronze/fl_lee_county/*.{csv,xlsx,xls}"
+  shovels_county_q: "Lee"
+  export_date_field: issue_date
+  field_map:
+    permit_id: number
+    issued_date: issue_date
+    address_raw: address_name
+    city: address_city
+    zip: address_zip_code
+    description_raw: description
+    work_class_raw: type
+    permit_type_raw: subtype
+    declared_valuation: job_value_usd
+  date_format: iso_text
+  issued_date_min: "2021-01-01"
+  notes: >
+    Shovels county pull (includes Cape Coral + unincorporated). Prefer over
+    Cape Coral Active-only ArcGIS for historical depth; see also
+    fl_cape_coral_shovels city backfill.
 
 - id: fl_polk_county
-  name: "Polk County"
+  name: "Polk County (Shovels)"
   state: FL
   county: "Polk"
   county_fips: "12105"
   level: county
-  covers: unknown
+  covers: full_county
   tier: B
-  connector: null
-  notes: "No open building-permit FeatureServer found in ArcGIS search."
+  connector: shovels
+  bronze_glob: "data/bronze/fl_polk_county/*.{csv,xlsx,xls}"
+  shovels_county_q: "Polk"
+  export_date_field: issue_date
+  field_map:
+    permit_id: number
+    issued_date: issue_date
+    address_raw: address_name
+    city: address_city
+    zip: address_zip_code
+    description_raw: description
+    work_class_raw: type
+    permit_type_raw: subtype
+    declared_valuation: job_value_usd
+  date_format: iso_text
+  issued_date_min: "2021-01-01"
+  notes: "Shovels county pull. No open FeatureServer in prior probe."
 
 - id: fl_brevard_county
-  name: "Brevard County"
+  name: "Brevard County (Shovels)"
   state: FL
   county: "Brevard"
   county_fips: "12009"
   level: county
-  covers: unknown
+  covers: full_county
   tier: B
-  connector: null
-  notes: "No open building-permit FeatureServer found."
+  connector: shovels
+  bronze_glob: "data/bronze/fl_brevard_county/*.{csv,xlsx,xls}"
+  shovels_county_q: "Brevard"
+  export_date_field: issue_date
+  field_map:
+    permit_id: number
+    issued_date: issue_date
+    address_raw: address_name
+    city: address_city
+    zip: address_zip_code
+    description_raw: description
+    work_class_raw: type
+    permit_type_raw: subtype
+    declared_valuation: job_value_usd
+  date_format: iso_text
+  issued_date_min: "2021-01-01"
+  notes: "Shovels county pull. No open FeatureServer in prior probe."
 
 - id: fl_volusia_county
-  name: "Volusia County"
+  name: "Volusia County (Shovels)"
   state: FL
   county: "Volusia"
   county_fips: "12127"
   level: county
-  covers: unknown
+  covers: full_county
   tier: B
-  connector: null
-  notes: "Dashboard (VCGIS4) exists; no public FeatureServer URL resolved in probe."
+  connector: shovels
+  bronze_glob: "data/bronze/fl_volusia_county/*.{csv,xlsx,xls}"
+  shovels_county_q: "Volusia"
+  export_date_field: issue_date
+  field_map:
+    permit_id: number
+    issued_date: issue_date
+    address_raw: address_name
+    city: address_city
+    zip: address_zip_code
+    description_raw: description
+    work_class_raw: type
+    permit_type_raw: subtype
+    declared_valuation: job_value_usd
+  date_format: iso_text
+  issued_date_min: "2021-01-01"
+  notes: "Shovels county pull. VCGIS dashboard had no public FeatureServer URL."
 
 - id: fl_pasco_county
-  name: "Pasco County"
+  name: "Pasco County (Shovels)"
   state: FL
   county: "Pasco"
   county_fips: "12101"
   level: county
-  covers: unknown
+  covers: full_county
   tier: B
-  connector: null
-  notes: "No open building-permit FeatureServer found."
+  connector: shovels
+  bronze_glob: "data/bronze/fl_pasco_county/*.{csv,xlsx,xls}"
+  shovels_county_q: "Pasco"
+  export_date_field: issue_date
+  field_map:
+    permit_id: number
+    issued_date: issue_date
+    address_raw: address_name
+    city: address_city
+    zip: address_zip_code
+    description_raw: description
+    work_class_raw: type
+    permit_type_raw: subtype
+    declared_valuation: job_value_usd
+  date_format: iso_text
+  issued_date_min: "2021-01-01"
+  notes: "Shovels county pull. No open FeatureServer in prior probe."
 
 - id: fl_osceola_county
-  name: "Osceola County"
+  name: "Osceola County (Shovels)"
   state: FL
   county: "Osceola"
   county_fips: "12097"
   level: county
-  covers: unknown
+  covers: full_county
   tier: B
-  connector: null
-  notes: "No open building-permit FeatureServer found."
+  connector: shovels
+  bronze_glob: "data/bronze/fl_osceola_county/*.{csv,xlsx,xls}"
+  shovels_county_q: "Osceola"
+  export_date_field: issue_date
+  field_map:
+    permit_id: number
+    issued_date: issue_date
+    address_raw: address_name
+    city: address_city
+    zip: address_zip_code
+    description_raw: description
+    work_class_raw: type
+    permit_type_raw: subtype
+    declared_valuation: job_value_usd
+  date_format: iso_text
+  issued_date_min: "2021-01-01"
+  notes: "Shovels county pull. No open FeatureServer in prior probe."
 
 - id: fl_sarasota_county
-  name: "Sarasota County"
+  name: "Sarasota County (Shovels)"
   state: FL
   county: "Sarasota"
   county_fips: "12115"
   level: county
-  covers: unknown
+  covers: full_county
   tier: B
-  connector: null
-  notes: "Enterprise GIS hub; no building-permit FeatureServer located quickly."
+  connector: shovels
+  bronze_glob: "data/bronze/fl_sarasota_county/*.{csv,xlsx,xls}"
+  shovels_county_q: "Sarasota"
+  export_date_field: issue_date
+  field_map:
+    permit_id: number
+    issued_date: issue_date
+    address_raw: address_name
+    city: address_city
+    zip: address_zip_code
+    description_raw: description
+    work_class_raw: type
+    permit_type_raw: subtype
+    declared_valuation: job_value_usd
+  date_format: iso_text
+  issued_date_min: "2021-01-01"
+  notes: "Shovels county pull. Enterprise GIS hub had no building FeatureServer."
+
+# --- Historical backfill where Tier A was Active-only ---
+
+- id: fl_cape_coral_shovels
+  name: "City of Cape Coral (Shovels historical)"
+  state: FL
+  county: "Lee"
+  county_fips: "12071"
+  level: city
+  covers: city
+  tier: B
+  connector: shovels
+  bronze_glob: "data/bronze/fl_cape_coral_shovels/*.{csv,xlsx,xls}"
+  shovels_city_q: "Cape Coral"
+  export_date_field: issue_date
+  field_map:
+    permit_id: number
+    issued_date: issue_date
+    address_raw: address_name
+    city: address_city
+    zip: address_zip_code
+    description_raw: description
+    work_class_raw: type
+    permit_type_raw: subtype
+    declared_valuation: job_value_usd
+  date_format: iso_text
+  issued_date_min: "2021-01-01"
+  notes: >
+    Shovels city geo backfill — preferred over Cape Coral Active Building
+    Permits ArcGIS layer for post-2021 history.
+
+- id: fl_manatee_county_shovels
+  name: "Manatee County (Shovels historical)"
+  state: FL
+  county: "Manatee"
+  county_fips: "12081"
+  level: county
+  covers: full_county
+  tier: B
+  connector: shovels
+  bronze_glob: "data/bronze/fl_manatee_county_shovels/*.{csv,xlsx,xls}"
+  shovels_county_q: "Manatee"
+  export_date_field: issue_date
+  field_map:
+    permit_id: number
+    issued_date: issue_date
+    address_raw: address_name
+    city: address_city
+    zip: address_zip_code
+    description_raw: description
+    work_class_raw: type
+    permit_type_raw: subtype
+    declared_valuation: job_value_usd
+  date_format: iso_text
+  issued_date_min: "2021-01-01"
+  notes: >
+    Shovels county geo backfill — preferred over Manatee Active residential
+    MapServer for complete post-2021 history.

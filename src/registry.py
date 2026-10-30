@@ -39,6 +39,11 @@ class Jurisdiction(BaseModel):
     return_geometry: bool | None = None
     export_monthly: bool | None = None
     export_where: str | None = None  # optional full WHERE override (skips date clauses)
+    # Shovels.ai connector (Tier B / statewide paid API)
+    shovels_geo_id: str | None = None
+    shovels_county_q: str | None = None
+    shovels_city_q: str | None = None
+    shovels_jurisdiction_q: str | None = None
 
 
 def load_jurisdictions(path: Path | str = DEFAULT_REGISTRY) -> list[Jurisdiction]:
