@@ -1,0 +1,43 @@
+# Jurisdiction registry — V1.1 structure.
+# Live ArcGIS/Socrata connectors are deferred; Miami-Dade uses file ingest for this slice.
+# field_map values are hypotheses from data/reference/schema_report_miami_dade.md
+# (aligned with hard decisions: PermitNumber, EstimatedValue USD, no ContractorZip).
+
+- id: fl_miami_dade_county
+  name: "Miami-Dade County (unincorporated)"
+  state: FL
+  county: "Miami-Dade"
+  county_fips: "12086"
+  level: county
+  covers: unincorporated_only          # does NOT include incorporated cities
+  tier: A
+  connector: file                      # primary path for this PR; ArcGIS live later
+  # Official FeatureServer (bootstrap export only — see scripts/export_arcgis_sample.py)
+  endpoint: "https://services.arcgis.com/8Pc9XBTAsYuxx9Ny/arcgis/rest/services/miamidade_permit_data/FeatureServer"
+  layer: 0
+  bronze_glob: "data/bronze/fl_miami_dade_county/*.{csv,xlsx,xls}"
+  raw_glob: "data/raw/fl_miami_dade_county/*.{csv,xlsx,xls}"
+  field_map:
+    permit_id: PermitNumber            # identity key (never ProcessNumber / GlobalID)
+    issued_date: PermitIssuedDate
+    applied_date: ApplicationDate
+    address_raw: PropertyAddress
+    city: City
+    state: State
+    # zip: intentionally omitted — no site ZIP on this layer; never map ContractorZip
+    description_raw: DetailDescriptionComments
+    work_class_raw: ProposedUseDescription
+    permit_type_raw: PermitType
+    declared_valuation: EstimatedValue # string digits → USD float
+    contractor_name: ContractorName
+    contractor_license: ContractorNumber
+    owner_name: OwnerName
+    square_feet: SquareFootage
+    units: StructureUnits
+    is_residential: ResidentialCommercial
+  date_format: mixed                   # PermitIssuedDate=date-only text; ApplicationDate=epoch ms
+  issued_date_min: "2021-01-01"        # post-pandemic window (configurable)
+  notes: >
+    Unincorporated county only. No native geometry or site ZIP on the Hub table.
+    ContractorZip must never be used as site ZIP. Live ArcGIS connector deferred;
+    use scripts/export_arcgis_sample.py to bootstrap CSVs under data/raw/ or data/bronze/.
