@@ -1,0 +1,26 @@
+# Category taxonomy — V1.1 four demo categories + extended labels for classification.
+
+categories:
+  - id: res_new_plumbing
+    brand_story: tigre_usa
+  - id: res_repipe
+    brand_story: tigre_usa
+  - id: irrigation
+    brand_story: dura
+  - id: pool_spa
+    brand_story: dura
+  # Extended (kept for classify stub / later model)
+  - id: res_remodel_plumbing
+    brand_story: tigre_usa
+  - id: res_water_heater
+    brand_story: tigre_usa
+  - id: comm_plumbing
+    brand_story: tigre_usa
+  - id: institutional
+    brand_story: other
+  - id: fire_protection
+    brand_story: other
+  - id: site_utility
+    brand_story: other
+  - id: other
+    brand_story: other

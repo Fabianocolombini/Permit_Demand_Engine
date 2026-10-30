@@ -1,0 +1,64 @@
+# Model assumptions stub (V1.1 §2.1). Material/timing used later; kept here so
+# downstream scripts have a single config home. No constants in model code.
+
+window:
+  issued_date_min: "2021-01-01"   # post-pandemic history
+  emphasize_recent: true          # prefer recent/current demand in analysis later
+
+material_content:
+  res_new_plumbing:
+    method: share_of_valuation
+    plumbing_share_of_project_value: { low: 0.035, base: 0.045, high: 0.055 }
+    material_share_of_plumbing:      { low: 0.30,  base: 0.35,  high: 0.40  }
+    fittings_share_of_material:      { low: 0.14,  base: 0.18,  high: 0.22  }
+    confidence: low
+
+  res_repipe:
+    method: fixed_per_project
+    fittings_value_usd: { low: 320, base: 450, high: 640 }
+    confidence: low
+
+  irrigation:
+    method: share_of_valuation
+    fittings_share_of_project: { low: 0.08, base: 0.12, high: 0.16 }
+    confidence: low
+
+  pool_spa:
+    method: share_of_valuation
+    fittings_share_of_project: { low: 0.05, base: 0.08, high: 0.11 }
+    confidence: low
+
+timing:
+  permit_to_purchase_days:
+    res_new_plumbing: [30, 75]
+    res_repipe:       [3, 15]
+    irrigation:       [7, 30]
+    pool_spa:         [21, 60]
+  distribution: triangular
+
+logistics:
+  facilities:
+    - { id: janesville_wi, name: "Tigre USA", lat: 42.683, lon: -89.019, type: plant }
+    - { id: beaumont_ca,   name: "Dura CA",   lat: 33.929, lon: -116.977, type: plant }
+    - { id: celina_tn,     name: "Dura TN",   lat: 36.551, lon: -85.502, type: plant }
+  road_factor: 1.25
+  freight_rate_usd_per_lb_km: 0.00011
+  avg_density_lb_per_usd: 0.9
+  min_freight_charge_usd: 85
+
+economics:
+  gross_margin:
+    res_new_plumbing: 0.30
+    res_repipe:       0.34
+    irrigation:       0.33
+    pool_spa:         0.38
+
+coverage:
+  plumbing_share_of_construction: 0.045
+  fittings_share_of_plumbing_material: 0.18
+
+hypothetical_facility:
+  candidates:
+    - { id: fl_central, name: "Hipótese Orlando", lat: 28.54, lon: -81.38 }
+    - { id: fl_south,   name: "Hipótese Medley",  lat: 25.86, lon: -80.33 }
+    - { id: fl_north,   name: "Hipótese Jacksonville", lat: 30.33, lon: -81.66 }
