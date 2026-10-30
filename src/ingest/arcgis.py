@@ -13,6 +13,10 @@ from src.ingest.base import Connector
 
 DEFAULT_TIMEOUT = 120.0
 MAX_ATTEMPTS = 5
+DEFAULT_HEADERS = {
+    "User-Agent": "PermitDemandEngine/1.0 (+https://github.com/Fabianocolombini/Permit_Demand_Engine)",
+    "Accept": "application/json,text/plain,*/*",
+}
 
 
 class ArcGISConnector(Connector):
@@ -42,9 +46,16 @@ class ArcGISConnector(Connector):
         self._owns_client = client is None
         self._meta: dict[str, Any] | None = None
 
+    def _new_client(self) -> httpx.Client:
+        return httpx.Client(
+            timeout=DEFAULT_TIMEOUT,
+            follow_redirects=True,
+            headers=DEFAULT_HEADERS,
+        )
+
     def __enter__(self) -> "ArcGISConnector":
         if self._client is None:
-            self._client = httpx.Client(timeout=DEFAULT_TIMEOUT, follow_redirects=True)
+            self._client = self._new_client()
         return self
 
     def __exit__(self, *args: Any) -> None:
@@ -55,7 +66,7 @@ class ArcGISConnector(Connector):
     @property
     def client(self) -> httpx.Client:
         if self._client is None:
-            self._client = httpx.Client(timeout=DEFAULT_TIMEOUT, follow_redirects=True)
+            self._client = self._new_client()
             self._owns_client = True
         return self._client
 
@@ -70,6 +81,15 @@ class ArcGISConnector(Connector):
         )
         self._meta = meta
         fields = [{"name": f["name"], "type": f["type"], "alias": f.get("alias")} for f in meta.get("fields") or []]
+        oid = meta.get("objectIdField") or meta.get("objectIdFieldName")
+        if not oid:
+            for f in fields:
+                if f.get("type") == "esriFieldTypeOID" or f.get("name", "").upper() == "OBJECTID":
+                    oid = f["name"]
+                    break
+            if oid:
+                # Persist so fetch() can order stably when server omits objectIdField
+                meta["objectIdField"] = oid
         return {
             "name": meta.get("name"),
             "type": meta.get("type"),
@@ -78,7 +98,7 @@ class ArcGISConnector(Connector):
             "supports_pagination": bool(
                 (meta.get("advancedQueryCapabilities") or {}).get("supportsPagination", True)
             ),
-            "object_id_field": meta.get("objectIdField") or meta.get("objectIdFieldName"),
+            "object_id_field": oid,
             "fields": fields,
             "total_features": count.get("count"),
             "host": urlparse(self.endpoint).netloc,

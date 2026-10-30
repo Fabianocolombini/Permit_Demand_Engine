@@ -207,6 +207,26 @@ def _cell(v: Any) -> Any:
     return v
 
 
+def _compose_address(row: dict[str, Any]) -> dict[str, Any]:
+    """Fill ADDRESS from house/street parts when split (Manatee PermitData)."""
+    if row.get("ADDRESS"):
+        return row
+    parts: list[str] = []
+    for key in ("HOUSE", "STREETDIR", "STREETNAME", "STREETSUFFIX", "UNITNUM"):
+        val = row.get(key)
+        if val is None:
+            continue
+        s = str(val).strip()
+        if not s or s.upper() in {"NA", "N/A", "NONE", "NULL"}:
+            continue
+        parts.append(s)
+    if parts:
+        out = dict(row)
+        out["ADDRESS"] = " ".join(parts)
+        return out
+    return row
+
+
 def export_jurisdiction(
     jur: dict[str, Any],
     *,
@@ -253,11 +273,13 @@ def export_jurisdiction(
             for a, b in month_slices(since, until):
                 print(f"  slice {a} → {b}", flush=True)
                 for row in iter_rows(jur, a, b):
+                    row = _compose_address(row)
                     if len(preview_buf) < preview_rows:
                         preview_buf.append(row)
                     yield row
         else:
             for row in iter_rows(jur, since, until):
+                row = _compose_address(row)
                 if len(preview_buf) < preview_rows:
                     preview_buf.append(row)
                 yield row

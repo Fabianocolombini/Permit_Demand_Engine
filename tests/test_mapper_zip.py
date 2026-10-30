@@ -16,6 +16,16 @@ def test_trailing_fl_zip():
     assert extract_site_zip_from_address("123 MAIN ST FL 33176-0001") == "33176"
 
 
+def test_epoch_ms_not_treated_as_ns():
+    from datetime import date
+
+    from src.normalize.mapper import parse_date
+
+    # 2021-01-11 ≈ 1610355660000 ms — must not collapse to 1970
+    assert parse_date(1610355660000).year == 2021
+    assert parse_date("2021_11") == date(2021, 11, 1)
+
+
 def test_contractor_zip_ignored():
     j = Jurisdiction(
         id="fl_miami_dade_county",

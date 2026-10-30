@@ -1,26 +1,39 @@
-# Category taxonomy — V1.1 four demo categories + extended labels for classification.
+# Category taxonomy — V1.1 + TOM/SAM metrics.
+# TOM = all ingested permits. SAM = Tigre/Dura subset below (sam: true).
+# res_new_plumbing includes new residential construction (implied plumbing rough-in).
 
 categories:
   - id: res_new_plumbing
     brand_story: tigre_usa
+    sam: true
   - id: res_repipe
     brand_story: tigre_usa
+    sam: true
   - id: irrigation
     brand_story: dura
+    sam: true
   - id: pool_spa
     brand_story: dura
-  # Extended (kept for classify stub / later model)
+    sam: true
   - id: res_remodel_plumbing
     brand_story: tigre_usa
+    sam: true
+  # Extended (classified but outside SAM)
   - id: res_water_heater
     brand_story: tigre_usa
+    sam: false
   - id: comm_plumbing
     brand_story: tigre_usa
+    sam: false
   - id: institutional
     brand_story: other
+    sam: false
   - id: fire_protection
     brand_story: other
+    sam: false
   - id: site_utility
     brand_story: other
+    sam: false
   - id: other
     brand_story: other
+    sam: false

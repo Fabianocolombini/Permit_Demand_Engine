@@ -231,8 +231,46 @@
   date_format: mixed
   issued_date_min: "2021-01-01"
   notes: >
-    Active residential permits only (MapServer layer 0). Not full historical
-    Manatee feed — portal/webapp Tier B for complete history.
+    Active residential permits only (MapServer layer 0). Prefer
+    fl_manatee_county (PermitData table) for full post-2021 history.
+
+- id: fl_manatee_county
+  name: "Manatee County PermitData (full history table)"
+  state: FL
+  county: "Manatee"
+  county_fips: "12081"
+  level: county
+  covers: full_county
+  tier: A
+  connector: arcgis
+  endpoint: "https://www.mymanatee.org/gisbads/rest/services/Permit/permitlinks/MapServer"
+  layer: 1
+  bronze_glob: "data/bronze/fl_manatee_county/*.{csv,xlsx,xls}"
+  export_date_field: ISSUED
+  arcgis_date_format: date_only
+  export_monthly: true
+  return_geometry: false
+  order_by_fields: OBJECTID
+  page_size: 2000
+  field_map:
+    permit_id: PERMITNUM
+    issued_date: ISSUED
+    applied_date: APPLYDATE
+    address_raw: ADDRESS
+    city: CITY
+    description_raw: NOTE
+    work_class_raw: SUBTYPE
+    permit_type_raw: PERMITTYPE
+    declared_valuation: JOBVALUE
+    units: NUMOFUNITS
+    is_residential: TYPEOFPROJECT
+  date_format: mixed
+  issued_date_min: "2021-01-01"
+  notes: >
+    Permit/permitlinks MapServer table PermitData (~555k total; ~248k issued
+    >= 2021). ISSUED is ISO text (YYYY-MM-DD). No native geometry or site ZIP —
+    compose ADDRESS from HOUSE/STREET* at normalize. Accela deeplink in DEEPLINK.
+    Preferred non-Shovels full-history Manatee feed (path B).
 
 # --- Onda 1 Tier B via Shovels.ai (paid/aggregated API) ---
 # Resolve geo_id at pull time via /counties|/cities|/jurisdictions/search.

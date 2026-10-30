@@ -26,12 +26,16 @@ normalize:
 	$(PYTHON) scripts/03_normalize.py --jurisdiction fl_miami_dade_county --replace
 
 classify:
-	$(PYTHON) scripts/04_classify.py --jurisdiction fl_miami_dade_county
+	$(PYTHON) scripts/04_classify.py --all
 
 enrich:
 	$(PYTHON) scripts/05_enrich.py --jurisdiction fl_miami_dade_county --geocode-sample 100
 
 pipeline: ingest normalize classify enrich
+
+# Ingest+normalize+classify every Tier A bronze CSV present on disk
+tier-a-pipeline:
+	$(PYTHON) scripts/run_tier_a_pipeline.py
 
 manifest:
 	$(PYTHON) scripts/build_extract_manifest.py

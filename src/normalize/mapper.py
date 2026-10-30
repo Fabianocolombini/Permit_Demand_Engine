@@ -22,12 +22,14 @@ def parse_date(value: Any, fmt_hint: str = "mixed") -> date | None:
     if isinstance(value, datetime):
         return value.date()
     if isinstance(value, (int, float)):
-        # Heuristic: epoch ms vs seconds
+        # Heuristic: epoch ns / µs / ms / seconds (2021 ms ≈ 1.6e12)
         ts = float(value)
-        if ts > 1e12:  # ns
+        if ts > 1e17:  # nanoseconds
+            ts /= 1e9
+        elif ts > 1e14:  # microseconds
             ts /= 1e6
-        elif ts > 1e10:  # ms
-            ts /= 1000.0
+        elif ts > 1e11:  # milliseconds
+            ts /= 1e3
         try:
             return datetime.fromtimestamp(ts, tz=timezone.utc).date()
         except (OverflowError, OSError, ValueError):
@@ -39,12 +41,19 @@ def parse_date(value: Any, fmt_hint: str = "mixed") -> date | None:
         # Numeric string that looks like epoch
         if s.isdigit() and len(s) >= 10:
             return parse_date(int(s), fmt_hint)
+        # Hillsborough period key YYYY_MM
+        if len(s) == 7 and s[4] == "_" and s[:4].isdigit() and s[5:].isdigit():
+            try:
+                return date(int(s[:4]), int(s[5:]), 1)
+            except ValueError:
+                return None
         for f in (
             "%Y-%m-%d",
             "%m/%d/%Y",
             "%Y-%m-%dT%H:%M:%S",
             "%Y-%m-%dT%H:%M:%S.%f",
             "%Y-%m-%d %H:%M:%S",
+            "%Y_%m",
         ):
             try:
                 return datetime.strptime(s[:26], f).date()
@@ -173,6 +182,18 @@ def map_row(
 
     address = _get(row, fm.get("address_raw"))
     address_raw = "" if address is None else str(address).strip()
+    # Manatee PermitData (and similar) split house/street across columns
+    if not address_raw:
+        parts: list[str] = []
+        for key in ("HOUSE", "STREETDIR", "STREETNAME", "STREETSUFFIX", "UNITNUM"):
+            val = row.get(key)
+            if val is None:
+                continue
+            s = str(val).strip()
+            if not s or s.upper() in {"NA", "N/A", "NONE", "NULL"}:
+                continue
+            parts.append(s)
+        address_raw = " ".join(parts)
 
     city_val = _get(row, fm.get("city"))
     city = None if city_val is None or str(city_val).strip() == "" else str(city_val).strip()
@@ -219,8 +240,30 @@ def map_row(
     valuation = parse_valuation_usd(_get(row, fm.get("declared_valuation")))
 
     work_class = _get(row, fm.get("work_class_raw"))
-    # Append CategoryDescription slots when present (Miami-Dade)
-    cat_bits = []
+    # Enrich work_class for classify: Miami-Dade ApplicationType* carries NEW vs
+    # RE-ROOF; ProposedUse* carries SFR/townhouse; CategoryDescription slots too.
+    cat_bits: list[str] = []
+    for key in (
+        "ApplicationTypeDescription",
+        "ApplicationTypeCode",
+        "ProposedUseDescription",
+        "ProposedUseCode",
+        "TYPEOFPROJECT",
+        "BUILDINGTYPE",
+        "CATEGORY",
+        "SUBTYPE",
+    ):
+        # Skip if this key is already the mapped work_class / permit_type / desc
+        mapped = {
+            (fm.get("work_class_raw") or "").lower(),
+            (fm.get("permit_type_raw") or "").lower(),
+            (fm.get("description_raw") or "").lower(),
+        }
+        if key.lower() in mapped:
+            continue
+        cd = row.get(key)
+        if cd is not None and str(cd).strip() and str(cd).strip().upper() not in {"NA", "N/A"}:
+            cat_bits.append(str(cd).strip())
     for i in range(1, 11):
         cd = row.get(f"CategoryDescription{i}")
         if cd is not None and str(cd).strip():
@@ -229,8 +272,18 @@ def map_row(
     if work_class is not None and str(work_class).strip():
         work_class_raw = str(work_class).strip()
     if cat_bits:
-        extra = " | ".join(cat_bits)
-        work_class_raw = f"{work_class_raw} | {extra}" if work_class_raw else extra
+        # de-dupe preserving order
+        seen: set[str] = set()
+        uniq: list[str] = []
+        for b in cat_bits:
+            if b not in seen:
+                seen.add(b)
+                uniq.append(b)
+        extra = " | ".join(uniq)
+        if work_class_raw and work_class_raw in seen:
+            work_class_raw = extra
+        else:
+            work_class_raw = f"{work_class_raw} | {extra}" if work_class_raw else extra
 
     desc = _get(row, fm.get("description_raw"))
     ptype = _get(row, fm.get("permit_type_raw"))

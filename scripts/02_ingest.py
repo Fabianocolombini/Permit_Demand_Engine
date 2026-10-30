@@ -59,7 +59,9 @@ def main() -> None:
     files = [
         f
         for f in files
-        if "_staging" not in f.parts and f.name != "normalized_preview.csv"
+        if "_staging" not in f.parts
+        and f.name != "normalized_preview.csv"
+        and f.name != "sample_preview.csv"  # avoid double-count with full extract
     ]
     if not files:
         raise SystemExit(
