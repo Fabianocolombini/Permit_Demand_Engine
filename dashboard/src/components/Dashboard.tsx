@@ -499,7 +499,7 @@ export default function Dashboard({ data }: { data: Metrics }) {
         {tab === "tom" && (
           <div className="grid gap-4 lg:grid-cols-2">
             <Panel
-              title={`YTD Jan–${MONTHS[ytdM - 1]} · same period 2023–2026`}
+              title={`YTD Jan–${MONTHS[ytdM - 1]} · same period 2023–2026 · click a year to refresh header KPIs`}
               action={<ModeToggle mode={mode} setMode={setMode} />}
             >
               <div className="h-72">
@@ -521,9 +521,25 @@ export default function Dashboard({ data }: { data: Metrics }) {
                     />
                     <Bar
                       dataKey={mode === "count" ? "count" : "valuationB"}
-                      fill={GULF}
                       radius={[2, 2, 0, 0]}
-                    />
+                      cursor="pointer"
+                      onClick={(d) => {
+                        const y = Number(
+                          (d as { payload?: { year?: string | number } })?.payload
+                            ?.year ?? (d as { year?: string | number })?.year
+                        );
+                        if (y) onlyYear(y);
+                      }}
+                    >
+                      {ytdCompareChart.map((r) => (
+                        <Cell
+                          key={r.year}
+                          fill={
+                            selectedYears.includes(Number(r.year)) ? GULF : "#35555a"
+                          }
+                        />
+                      ))}
+                    </Bar>
                   </BarChart>
                 </ResponsiveContainer>
               </div>
@@ -531,7 +547,14 @@ export default function Dashboard({ data }: { data: Metrics }) {
                 {tomYtd
                   .filter((r) => r.year >= 2023)
                   .map((r) => (
-                    <div key={r.year} className="border-t border-[var(--line)] pt-2">
+                    <button
+                      key={r.year}
+                      type="button"
+                      onClick={() => onlyYear(r.year)}
+                      className={`border-t border-[var(--line)] pt-2 text-left hover:bg-white/5 ${
+                        selectedYears.includes(r.year) ? "bg-white/10" : ""
+                      }`}
+                    >
                       <p className="text-[var(--muted)]">{r.year}</p>
                       <p className="text-[var(--sand)]">
                         Permits {num(r.count)}
@@ -540,7 +563,7 @@ export default function Dashboard({ data }: { data: Metrics }) {
                       <p className="text-xs text-[var(--muted)]">
                         YoY permits {pct(r.count_yoy_pct)} · $ {pct(r.valuation_yoy_pct)}
                       </p>
-                    </div>
+                    </button>
                   ))}
               </div>
             </Panel>
