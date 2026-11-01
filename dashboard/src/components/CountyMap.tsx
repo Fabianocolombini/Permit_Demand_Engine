@@ -8,7 +8,7 @@ type Props = {
   counties: Metrics["regions"]["counties"];
   selected: string | null;
   onSelect: (county: string | null) => void;
-  mode: "sam_valuation" | "sam_count" | "som_usd";
+  mode: "sam_valuation" | "sam_count" | "som_usd" | "som_material_usd";
 };
 
 function colorScale(t: number): string {
@@ -32,7 +32,7 @@ export default function CountyMap({ counties, selected, onSelect, mode }: Props)
   }, [counties]);
 
   const maxVal = useMemo(() => {
-    const vals = counties.map((c) => c[mode] || 0);
+    const vals = counties.map((c) => Number(c[mode as keyof typeof c] || 0));
     return Math.max(...vals, 1);
   }, [counties, mode]);
 
@@ -61,7 +61,7 @@ export default function CountyMap({ counties, selected, onSelect, mode }: Props)
         style: (feat) => {
           const id = String((feat as GeoJSON.Feature).id || "");
           const row = byFips.get(id);
-          const v = row ? row[mode] : 0;
+          const v = row ? Number(row[mode as keyof typeof row] || 0) : 0;
           const t = Math.sqrt(v / maxVal);
           const isSel = row && selected === row.county;
           return {
@@ -90,7 +90,7 @@ export default function CountyMap({ counties, selected, onSelect, mode }: Props)
           });
           if (row) {
             lyr.bindTooltip(
-              `<strong>${row.county}</strong><br/>SAM ${num(row.sam_count)} · ${usd(row.sam_valuation)}<br/>SOM ${usd(row.som_usd)}`,
+              `<strong>${row.county}</strong><br/>SAM ${num(row.sam_count)} · ${usd(row.sam_valuation)}<br/>SOM ${usd(row.som_usd)}<br/>SOM material ${usd(row.som_material_usd || 0)}`,
               { sticky: true }
             );
           } else {

@@ -7,6 +7,45 @@ export type MonthlyPoint = {
   kind?: "observed" | "projected";
 };
 
+export type PipelineWindow = {
+  days: number;
+  start: string;
+  end: string;
+  sam_count: number;
+  sam_valuation: number;
+  material_usd: number;
+  som_usd: number;
+  som_material_usd: number;
+  by_county: Array<{
+    county: string;
+    fips: string | null;
+    sam_count: number;
+    sam_valuation: number;
+    material_usd: number;
+    labor_usd: number;
+    som_usd: number;
+    som_material_usd: number;
+  }>;
+  by_category: Array<{
+    category: string;
+    sam_count: number;
+    sam_valuation: number;
+    material_usd: number;
+    labor_usd: number;
+    som_usd: number;
+    som_material_usd: number;
+  }>;
+  by_contractor: Array<{
+    contractor_name: string;
+    permits: number;
+    valuation: number;
+    material_usd: number;
+    som_material_usd: number;
+    counties: string;
+    categories: string;
+  }>;
+};
+
 export type Metrics = {
   generated_at: string;
   as_of: string;
@@ -114,6 +153,21 @@ export type Metrics = {
       count: number;
       valuation: number;
     }>;
+    share_by_year: Array<{
+      year: number;
+      tom_count: number;
+      sam_count: number;
+      tom_valuation: number;
+      sam_valuation: number;
+      sam_share_count_pct: number | null;
+      sam_share_valuation_pct: number | null;
+      som_usd: number;
+    }>;
+  };
+  pipeline: {
+    d30: PipelineWindow;
+    d60: PipelineWindow;
+    note: string;
   };
   regions: {
     counties: Array<{
@@ -124,6 +178,15 @@ export type Metrics = {
       tom_valuation: number;
       sam_valuation: number;
       som_usd: number;
+      material_usd?: number;
+      som_material_usd?: number;
+    }>;
+    county_monthly_sam: Array<{
+      county: string;
+      year: number;
+      month: number;
+      count: number;
+      valuation: number;
     }>;
     miami_dade: {
       jurisdictions: Array<{
@@ -133,6 +196,8 @@ export type Metrics = {
         tom_valuation: number;
         sam_valuation: number;
         som_usd: number;
+        material_usd?: number;
+        som_material_usd?: number;
       }>;
       mesoregions: Array<{
         area: string;
@@ -141,6 +206,9 @@ export type Metrics = {
         tom_valuation: number;
         sam_valuation: number;
         som_usd: number;
+        material_usd?: number;
+        labor_usd?: number;
+        som_material_usd?: number;
         note?: string;
       }>;
       coverage_note: string;
@@ -173,5 +241,5 @@ export type Contractor = {
   categories: string;
 };
 
-export type TabId = "tom" | "sam" | "regions" | "contractors";
+export type TabId = "tom" | "sam" | "pipeline" | "regions" | "contractors";
 export type MetricMode = "count" | "valuation";

@@ -6,6 +6,7 @@ import {
   Bar,
   BarChart,
   CartesianGrid,
+  Cell,
   ComposedChart,
   Legend,
   Line,
@@ -36,9 +37,62 @@ const SAND = "#e8dcc8";
 const TABS: { id: TabId; label: string }[] = [
   { id: "tom", label: "TOM" },
   { id: "sam", label: "SAM + SOM" },
+  { id: "pipeline", label: "Pipeline 30/60d" },
   { id: "regions", label: "Regiões / Mapa" },
   { id: "contractors", label: "Contractors" },
 ];
+
+function YearChips({
+  years,
+  selected,
+  onToggle,
+  onOnly,
+}: {
+  years: number[];
+  selected: number[];
+  onToggle: (y: number) => void;
+  onOnly: (y: number) => void;
+}) {
+  return (
+    <div className="flex flex-wrap items-center gap-1.5">
+      <span className="mr-1 text-[10px] uppercase tracking-[0.14em] text-[var(--muted)]">
+        Anos
+      </span>
+      {years.map((y) => {
+        const on = selected.includes(y);
+        return (
+          <button
+            key={y}
+            type="button"
+            title="Clique = só este ano · Shift/Ctrl+clique via botão para multi"
+            onClick={(e) => {
+              if (e.metaKey || e.ctrlKey || e.shiftKey) onToggle(y);
+              else onOnly(y);
+            }}
+            className={`rounded-full px-2.5 py-1 text-xs font-medium transition ${
+              on
+                ? "bg-[var(--gulf)] text-white"
+                : "border border-[var(--line)] text-[var(--muted)] hover:text-[var(--sand)]"
+            }`}
+          >
+            {y}
+          </button>
+        );
+      })}
+      <button
+        type="button"
+        onClick={() => {
+          years.forEach((y) => {
+            if (!selected.includes(y)) onToggle(y);
+          });
+        }}
+        className="ml-1 text-[10px] uppercase tracking-[0.12em] text-[var(--muted)] hover:text-[var(--sand)]"
+      >
+        Todos
+      </button>
+    </div>
+  );
+}
 
 function Kpi({
   label,
@@ -115,14 +169,36 @@ function ModeToggle({
 }
 
 export default function Dashboard({ data }: { data: Metrics }) {
+  const yearOptions = useMemo(
+    () =>
+      [...new Set(data.sam_som.by_category_year.map((r) => r.year))]
+        .filter((y) => y >= 2023)
+        .sort(),
+    [data.sam_som.by_category_year]
+  );
   const [tab, setTab] = useState<TabId>("tom");
   const [mode, setMode] = useState<MetricMode>("count");
+  const [selectedYears, setSelectedYears] = useState<number[]>(() => [
+    yearOptions[yearOptions.length - 1] ?? 2026,
+  ]);
   const [selectedCounty, setSelectedCounty] = useState<string | null>(null);
   const [miamiOpen, setMiamiOpen] = useState(false);
+  const [pipelineDays, setPipelineDays] = useState<30 | 60>(30);
   const [contractorRank, setContractorRank] = useState<"permits" | "valuation">(
     "permits"
   );
   const [contractorScope, setContractorScope] = useState<"near" | "ytd">("near");
+
+  const toggleYear = (y: number) => {
+    setSelectedYears((prev) => {
+      if (prev.includes(y)) {
+        const next = prev.filter((x) => x !== y);
+        return next.length ? next : [y];
+      }
+      return [...prev, y].sort();
+    });
+  };
+  const onlyYear = (y: number) => setSelectedYears([y]);
 
   const u = data.universe;
   const ytdM = data.ytd_through_month;
@@ -130,6 +206,72 @@ export default function Dashboard({ data }: { data: Metrics }) {
   const samYtd = data.sam_som.ytd_comparison;
   const latestTomYtd = tomYtd[tomYtd.length - 1];
   const latestSamYtd = samYtd[samYtd.length - 1];
+
+  const filteredShare = useMemo(() => {
+    const rows = data.sam_som.share_by_year.filter((r) =>
+      selectedYears.includes(r.year)
+    );
+    const tom_count = rows.reduce((s, r) => s + r.tom_count, 0);
+    const sam_count = rows.reduce((s, r) => s + r.sam_count, 0);
+    const tom_valuation = rows.reduce((s, r) => s + r.tom_valuation, 0);
+    const sam_valuation = rows.reduce((s, r) => s + r.sam_valuation, 0);
+    return {
+      tom_count,
+      sam_count,
+      tom_valuation,
+      sam_valuation,
+      sam_share_count_pct:
+        tom_count > 0 ? (100 * sam_count) / tom_count : null,
+      sam_share_valuation_pct:
+        tom_valuation > 0 ? (100 * sam_valuation) / tom_valuation : null,
+      som_usd: sam_valuation * 0.05,
+    };
+  }, [data.sam_som.share_by_year, selectedYears]);
+
+  const filteredCategories = useMemo(() => {
+    const map = new Map<
+      string,
+      {
+        category: string;
+        count: number;
+        valuation: number;
+        material_usd: number;
+        labor_usd: number;
+        som_usd: number;
+        som_material_usd: number;
+      }
+    >();
+    for (const r of data.sam_som.by_category_year) {
+      if (!selectedYears.includes(r.year)) continue;
+      const cur = map.get(r.category) ?? {
+        category: r.category,
+        count: 0,
+        valuation: 0,
+        material_usd: 0,
+        labor_usd: 0,
+        som_usd: 0,
+        som_material_usd: 0,
+      };
+      cur.count += r.count;
+      cur.valuation += r.valuation;
+      cur.material_usd += r.material_usd;
+      cur.labor_usd += r.labor_usd;
+      cur.som_usd += r.som_usd;
+      cur.som_material_usd += r.som_material_usd;
+      map.set(r.category, cur);
+    }
+    return [...map.values()].sort((a, b) => b.valuation - a.valuation);
+  }, [data.sam_som.by_category_year, selectedYears]);
+
+  const filteredMatLab = useMemo(
+    () =>
+      data.sam_som.material_labor_annual.filter((r) =>
+        selectedYears.includes(r.year)
+      ),
+    [data.sam_som.material_labor_annual, selectedYears]
+  );
+
+  const pipe = pipelineDays === 30 ? data.pipeline.d30 : data.pipeline.d60;
 
   const tomMonthlyChart = useMemo(() => {
     const series =
@@ -170,9 +312,6 @@ export default function Dashboard({ data }: { data: Metrics }) {
         valYoY: r.valuation_yoy_pct,
       }));
   }, [tab, tomYtd, samYtd]);
-
-  const catYtd = data.sam_som.by_category_ytd;
-  const matLab = data.sam_som.material_labor_annual.filter((r) => r.year >= 2023);
 
   const selectedCountyRow = data.regions.counties.find(
     (c) => c.county === selectedCounty
@@ -390,146 +529,309 @@ export default function Dashboard({ data }: { data: Metrics }) {
         )}
 
         {tab === "sam" && (
-          <div className="grid gap-4 lg:grid-cols-2">
-            <Panel title="SAM vs TOM · participação">
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <p className="text-xs uppercase tracking-[0.14em] text-[var(--muted)]">
-                    Counts
-                  </p>
-                  <p className="stat-value text-4xl text-[var(--sand)]">
-                    {pctPlain(u.sam_share_count_pct)}
-                  </p>
-                  <p className="text-sm text-[var(--muted)]">
-                    {num(u.sam)} de {num(u.tom)}
-                  </p>
-                </div>
-                <div>
-                  <p className="text-xs uppercase tracking-[0.14em] text-[var(--muted)]">
-                    Valor $
-                  </p>
-                  <p className="stat-value text-4xl text-[var(--sun)]">
-                    {pctPlain(u.sam_share_valuation_pct)}
-                  </p>
-                  <p className="text-sm text-[var(--muted)]">
-                    ~1/3 do $ statewide no SAM (pipe / pool / irrig)
-                  </p>
-                </div>
-              </div>
-              <div className="mt-6 border-t border-[var(--line)] pt-4">
-                <p className="text-xs uppercase tracking-[0.14em] text-[var(--muted)]">
-                  SOM @ 5% do SAM addressable
-                </p>
-                <p className="stat-value mt-1 text-3xl text-[var(--foam)]">
-                  {usd(u.som_usd)}
-                </p>
-                <p className="mt-1 text-sm text-[var(--muted)]">
-                  Fittings SOM (modelo): {usd(u.fittings_som_usd)}
-                </p>
-              </div>
-            </Panel>
-
-            <Panel
-              title={`SAM YTD Jan–${MONTHS[ytdM - 1]} · 2023–2026`}
-              action={<ModeToggle mode={mode} setMode={setMode} />}
-            >
-              <div className="h-64">
-                <ResponsiveContainer width="100%" height="100%">
-                  <BarChart
-                    data={samYtd
-                      .filter((r) => r.year >= 2023)
-                      .map((r) => ({
-                        year: String(r.year),
-                        count: r.count,
-                        valuationB: r.valuation / 1e9,
-                      }))}
-                  >
-                    <CartesianGrid stroke="rgba(232,220,200,0.08)" vertical={false} />
-                    <XAxis dataKey="year" stroke={SAND} tick={{ fill: SAND, fontSize: 12 }} />
-                    <YAxis stroke={SAND} tick={{ fill: SAND, fontSize: 11 }} />
-                    <Tooltip
-                      contentStyle={{ background: "#0c2a32", border: "1px solid rgba(232,220,200,0.2)" }}
-                    />
-                    <Bar
-                      dataKey={mode === "count" ? "count" : "valuationB"}
-                      fill={MANGROVE}
-                      radius={[2, 2, 0, 0]}
-                    />
-                  </BarChart>
-                </ResponsiveContainer>
-              </div>
-              <p className="mt-2 text-xs text-[var(--muted)]">
-                YTD {latestSamYtd?.year}: {num(latestSamYtd?.count)} ·{" "}
-                {usd(latestSamYtd?.valuation)} · YoY counts {pct(latestSamYtd?.count_yoy_pct)} ·
-                $ {pct(latestSamYtd?.valuation_yoy_pct)}
+          <div className="space-y-4">
+            <div className="flex flex-wrap items-center justify-between gap-3">
+              <YearChips
+                years={yearOptions}
+                selected={selectedYears}
+                onToggle={toggleYear}
+                onOnly={onlyYear}
+              />
+              <p className="text-xs text-[var(--muted)]">
+                Clique num ano = só ele · Ctrl/Cmd+clique = soma anos · filtrando % e categorias
               </p>
-            </Panel>
+            </div>
+            <div className="grid gap-4 lg:grid-cols-2">
+              <Panel
+                title={`SAM vs TOM · ${selectedYears.join(" + ")}`}
+              >
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <p className="text-xs uppercase tracking-[0.14em] text-[var(--muted)]">
+                      Counts
+                    </p>
+                    <p className="stat-value text-4xl text-[var(--sand)]">
+                      {pctPlain(filteredShare.sam_share_count_pct)}
+                    </p>
+                    <p className="text-sm text-[var(--muted)]">
+                      {num(filteredShare.sam_count)} de {num(filteredShare.tom_count)}
+                    </p>
+                  </div>
+                  <div>
+                    <p className="text-xs uppercase tracking-[0.14em] text-[var(--muted)]">
+                      Valor $
+                    </p>
+                    <p className="stat-value text-4xl text-[var(--sun)]">
+                      {pctPlain(filteredShare.sam_share_valuation_pct)}
+                    </p>
+                    <p className="text-sm text-[var(--muted)]">
+                      SAM $ {usd(filteredShare.sam_valuation)}
+                    </p>
+                  </div>
+                </div>
+                <div className="mt-6 border-t border-[var(--line)] pt-4">
+                  <p className="text-xs uppercase tracking-[0.14em] text-[var(--muted)]">
+                    SOM @ 5% (anos selecionados)
+                  </p>
+                  <p className="stat-value mt-1 text-3xl text-[var(--foam)]">
+                    {usd(filteredShare.som_usd)}
+                  </p>
+                  <p className="mt-1 text-sm text-[var(--muted)]">
+                    SOM material (soma categorias):{" "}
+                    {usd(
+                      filteredCategories.reduce((s, r) => s + r.som_material_usd, 0)
+                    )}
+                  </p>
+                </div>
+              </Panel>
 
-            <Panel title="Por categoria · YTD (permits, $, SOM 5%, material vs mão de obra)">
-              <div className="overflow-x-auto">
-                <table className="w-full min-w-[720px] text-left text-sm">
-                  <thead>
-                    <tr className="text-[10px] uppercase tracking-[0.12em] text-[var(--muted)]">
-                      <th className="pb-2 font-medium">Categoria</th>
-                      <th className="pb-2 font-medium">Permits</th>
-                      <th className="pb-2 font-medium">YoY</th>
-                      <th className="pb-2 font-medium">Valor obra</th>
-                      <th className="pb-2 font-medium">SOM 5%</th>
-                      <th className="pb-2 font-medium">Material</th>
-                      <th className="pb-2 font-medium">Mão de obra</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {catYtd.map((r) => (
-                      <tr key={r.category} className="table-row">
-                        <td className="py-2.5 text-[var(--sand)]">
-                          {categoryLabel(r.category)}
-                        </td>
-                        <td className="py-2.5">{num(r.count)}</td>
-                        <td className="py-2.5">{pct(r.count_yoy_pct)}</td>
-                        <td className="py-2.5">{usd(r.valuation)}</td>
-                        <td className="py-2.5 text-[var(--sun)]">{usd(r.som_usd)}</td>
-                        <td className="py-2.5">{usd(r.material_usd)}</td>
-                        <td className="py-2.5">{usd(r.labor_usd)}</td>
+              <Panel
+                title="Clique nas barras de ano para filtrar"
+                action={<ModeToggle mode={mode} setMode={setMode} />}
+              >
+                <div className="h-64">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <BarChart
+                      data={data.sam_som.share_by_year
+                        .filter((r) => r.year >= 2023)
+                        .map((r) => ({
+                          year: r.year,
+                          label: String(r.year),
+                          count: r.sam_count,
+                          valuationB: r.sam_valuation / 1e9,
+                          active: selectedYears.includes(r.year),
+                        }))}
+                    >
+                      <CartesianGrid stroke="rgba(232,220,200,0.08)" vertical={false} />
+                      <XAxis dataKey="label" stroke={SAND} tick={{ fill: SAND, fontSize: 12 }} />
+                      <YAxis stroke={SAND} tick={{ fill: SAND, fontSize: 11 }} />
+                      <Tooltip
+                        contentStyle={{
+                          background: "#0c2a32",
+                          border: "1px solid rgba(232,220,200,0.2)",
+                        }}
+                      />
+                      <Bar
+                        dataKey={mode === "count" ? "count" : "valuationB"}
+                        radius={[2, 2, 0, 0]}
+                        cursor="pointer"
+                        onClick={(d) => {
+                          const y = Number(
+                            (d as { payload?: { year?: number } })?.payload?.year ??
+                              (d as { year?: number })?.year
+                          );
+                          if (y) onlyYear(y);
+                        }}
+                      >
+                        {data.sam_som.share_by_year
+                          .filter((r) => r.year >= 2023)
+                          .map((r) => (
+                            <Cell
+                              key={r.year}
+                              fill={
+                                selectedYears.includes(r.year) ? MANGROVE : "#35555a"
+                              }
+                            />
+                          ))}
+                      </Bar>
+                    </BarChart>
+                  </ResponsiveContainer>
+                </div>
+                <p className="mt-2 text-xs text-[var(--muted)]">
+                  YTD ref {latestSamYtd?.year}: YoY counts {pct(latestSamYtd?.count_yoy_pct)} · $
+                  {pct(latestSamYtd?.valuation_yoy_pct)}
+                </p>
+              </Panel>
+
+              <Panel
+                title={`Categorias · ${selectedYears.join(" + ")} (permits, $, SOM, material)`}
+              >
+                <div className="overflow-x-auto">
+                  <table className="w-full min-w-[720px] text-left text-sm">
+                    <thead>
+                      <tr className="text-[10px] uppercase tracking-[0.12em] text-[var(--muted)]">
+                        <th className="pb-2 font-medium">Categoria</th>
+                        <th className="pb-2 font-medium">Permits</th>
+                        <th className="pb-2 font-medium">Valor obra</th>
+                        <th className="pb-2 font-medium">SOM 5%</th>
+                        <th className="pb-2 font-medium">Material</th>
+                        <th className="pb-2 font-medium">SOM material</th>
+                        <th className="pb-2 font-medium">Mão de obra</th>
                       </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-              <p className="mt-3 text-xs text-[var(--muted)]">
-                {data.definitions.material_labor}
-              </p>
-            </Panel>
+                    </thead>
+                    <tbody>
+                      {filteredCategories.map((r) => (
+                        <tr key={r.category} className="table-row">
+                          <td className="py-2.5 text-[var(--sand)]">
+                            {categoryLabel(r.category)}
+                          </td>
+                          <td className="py-2.5">{num(r.count)}</td>
+                          <td className="py-2.5">{usd(r.valuation)}</td>
+                          <td className="py-2.5 text-[var(--sun)]">{usd(r.som_usd)}</td>
+                          <td className="py-2.5">{usd(r.material_usd)}</td>
+                          <td className="py-2.5 text-[var(--sun)]">
+                            {usd(r.som_material_usd)}
+                          </td>
+                          <td className="py-2.5">{usd(r.labor_usd)}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </Panel>
 
-            <Panel title="Material vs mão de obra · SAM por ano (estimativa)">
-              <div className="h-72">
-                <ResponsiveContainer width="100%" height="100%">
-                  <BarChart data={matLab}>
-                    <CartesianGrid stroke="rgba(232,220,200,0.08)" vertical={false} />
-                    <XAxis dataKey="year" stroke={SAND} tick={{ fill: SAND, fontSize: 12 }} />
-                    <YAxis stroke={SAND} tick={{ fill: SAND, fontSize: 11 }} />
-                    <Tooltip
-                      contentStyle={{ background: "#0c2a32", border: "1px solid rgba(232,220,200,0.2)" }}
-                      formatter={(v) => usd(Number(v))}
-                    />
-                    <Legend />
-                    <Bar dataKey="material_usd" stackId="a" fill={GULF} name="Material" />
-                    <Bar dataKey="labor_usd" stackId="a" fill={CORAL} name="Mão de obra" />
-                  </BarChart>
-                </ResponsiveContainer>
+              <Panel title="Material vs mão de obra · anos selecionados">
+                <div className="h-72">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <BarChart data={filteredMatLab}>
+                      <CartesianGrid stroke="rgba(232,220,200,0.08)" vertical={false} />
+                      <XAxis dataKey="year" stroke={SAND} tick={{ fill: SAND, fontSize: 12 }} />
+                      <YAxis stroke={SAND} tick={{ fill: SAND, fontSize: 11 }} />
+                      <Tooltip
+                        contentStyle={{
+                          background: "#0c2a32",
+                          border: "1px solid rgba(232,220,200,0.2)",
+                        }}
+                        formatter={(v) => usd(Number(v))}
+                      />
+                      <Legend />
+                      <Bar dataKey="material_usd" stackId="a" fill={GULF} name="Material" />
+                      <Bar dataKey="labor_usd" stackId="a" fill={CORAL} name="Mão de obra" />
+                    </BarChart>
+                  </ResponsiveContainer>
+                </div>
+              </Panel>
+            </div>
+          </div>
+        )}
+
+        {tab === "pipeline" && (
+          <div className="space-y-4">
+            <div className="flex flex-wrap items-center gap-3">
+              <div className="inline-flex rounded-full border border-[var(--line)] p-0.5 text-xs">
+                {([30, 60] as const).map((d) => (
+                  <button
+                    key={d}
+                    type="button"
+                    onClick={() => setPipelineDays(d)}
+                    className={`rounded-full px-3 py-1.5 ${
+                      pipelineDays === d
+                        ? "bg-[var(--gulf)] text-white"
+                        : "text-[var(--muted)]"
+                    }`}
+                  >
+                    Últimos {d} dias
+                  </button>
+                ))}
               </div>
-              <p className="mt-2 text-xs text-[var(--muted)]">
-                Friction: material/labor é premissa (assumptions.yaml), não medição do permit.
-                Plumbing usa 4.5% da obra × 35/65; pool/irrig usa fittings share como material.
+              <p className="text-xs text-[var(--muted)]">
+                {pipe.start} → {pipe.end} · para a equipe comercial correr atrás agora
               </p>
-            </Panel>
+            </div>
+            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+              <Kpi label="SAM permits" value={num(pipe.sam_count)} />
+              <Kpi label="SAM $" value={usd(pipe.sam_valuation)} />
+              <Kpi label="SOM 5%" value={usd(pipe.som_usd)} />
+              <Kpi
+                label="SOM material 5%"
+                value={usd(pipe.som_material_usd)}
+                sub="potencial materiais"
+              />
+            </div>
+            <div className="grid gap-4 lg:grid-cols-2">
+              <Panel title={`Onde correr · top condados (SOM material ${pipelineDays}d)`}>
+                <div className="overflow-x-auto">
+                  <table className="w-full text-left text-sm">
+                    <thead>
+                      <tr className="text-[10px] uppercase text-[var(--muted)]">
+                        <th className="pb-2">#</th>
+                        <th className="pb-2">Condado</th>
+                        <th className="pb-2">Permits</th>
+                        <th className="pb-2">SAM $</th>
+                        <th className="pb-2">SOM material</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {pipe.by_county.slice(0, 12).map((c, i) => (
+                        <tr key={c.county} className="table-row">
+                          <td className="py-2 text-[var(--muted)]">{i + 1}</td>
+                          <td className="py-2 text-[var(--sand)]">{c.county}</td>
+                          <td className="py-2">{num(c.sam_count)}</td>
+                          <td className="py-2">{usd(c.sam_valuation)}</td>
+                          <td className="py-2 text-[var(--sun)]">
+                            {usd(c.som_material_usd)}
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </Panel>
+              <Panel title="Categorias no pipeline">
+                <div className="overflow-x-auto">
+                  <table className="w-full text-left text-sm">
+                    <thead>
+                      <tr className="text-[10px] uppercase text-[var(--muted)]">
+                        <th className="pb-2">Categoria</th>
+                        <th className="pb-2">Permits</th>
+                        <th className="pb-2">SOM material</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {pipe.by_category.map((c) => (
+                        <tr key={c.category} className="table-row">
+                          <td className="py-2 text-[var(--sand)]">
+                            {categoryLabel(c.category)}
+                          </td>
+                          <td className="py-2">{num(c.sam_count)}</td>
+                          <td className="py-2 text-[var(--sun)]">
+                            {usd(c.som_material_usd)}
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </Panel>
+              <Panel title="Quem puxar · contractors no pipeline (SOM material)">
+                <div className="overflow-x-auto">
+                  <table className="w-full min-w-[640px] text-left text-sm">
+                    <thead>
+                      <tr className="text-[10px] uppercase text-[var(--muted)]">
+                        <th className="pb-2">#</th>
+                        <th className="pb-2">Contractor</th>
+                        <th className="pb-2">Permits</th>
+                        <th className="pb-2">SOM material</th>
+                        <th className="pb-2">Condados</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {pipe.by_contractor.slice(0, 20).map((c, i) => (
+                        <tr key={c.contractor_name} className="table-row">
+                          <td className="py-2 text-[var(--muted)]">{i + 1}</td>
+                          <td className="py-2 text-[var(--sand)]">{c.contractor_name}</td>
+                          <td className="py-2">{num(c.permits)}</td>
+                          <td className="py-2 text-[var(--sun)]">
+                            {usd(c.som_material_usd)}
+                          </td>
+                          <td className="max-w-[140px] truncate py-2 text-[var(--muted)]">
+                            {c.counties}
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+                <p className="mt-2 text-xs text-[var(--muted)]">{data.pipeline.note}</p>
+              </Panel>
+            </div>
           </div>
         )}
 
         {tab === "regions" && (
           <div className="grid gap-4 lg:grid-cols-5">
             <div className="lg:col-span-3">
-              <Panel title="Mapa FL · clique no condado (SAM $)">
+              <Panel title="Mapa FL · potencial SOM material (5% do material estimado)">
                 <CountyMap
                   counties={data.regions.counties}
                   selected={selectedCounty}
@@ -537,11 +839,11 @@ export default function Dashboard({ data }: { data: Metrics }) {
                     setSelectedCounty(c);
                     setMiamiOpen(c === "Miami-Dade");
                   }}
-                  mode="sam_valuation"
+                  mode="som_material_usd"
                 />
                 <p className="mt-2 text-xs text-[var(--muted)]">
-                  Condados sem bronze ficam escuros. Cobertura atual:{" "}
-                  {data.regions.counties.length} condados com dado.
+                  Cor = SOM material. Clique Miami-Dade para abrir mesorregiões. Cobertura:{" "}
+                  {data.regions.counties.length} condados.
                 </p>
               </Panel>
             </div>
@@ -563,15 +865,15 @@ export default function Dashboard({ data }: { data: Metrics }) {
                         </p>
                       </div>
                       <div>
-                        <p className="text-[var(--muted)]">SOM 5%</p>
+                        <p className="text-[var(--muted)]">SOM 5% obra</p>
                         <p className="stat-value text-2xl text-[var(--sun)]">
                           {usd(selectedCountyRow.som_usd)}
                         </p>
                       </div>
                       <div>
-                        <p className="text-[var(--muted)]">TOM</p>
-                        <p className="stat-value text-2xl text-[var(--foam)]">
-                          {num(selectedCountyRow.tom_count)}
+                        <p className="text-[var(--muted)]">SOM material 5%</p>
+                        <p className="stat-value text-2xl text-[var(--sun)]">
+                          {usd(selectedCountyRow.som_material_usd || 0)}
                         </p>
                       </div>
                     </div>
@@ -587,14 +889,20 @@ export default function Dashboard({ data }: { data: Metrics }) {
                   </div>
                 ) : (
                   <p className="text-sm text-[var(--muted)]">
-                    Clique no mapa para ver SAM / SOM do condado.
+                    Clique no mapa para ver SAM / SOM material do condado.
                   </p>
                 )}
               </Panel>
 
-              <Panel title="Top condados SAM $">
+              <Panel title="Top condados · SOM material">
                 <div className="max-h-64 space-y-1 overflow-y-auto text-sm">
-                  {data.regions.counties.slice(0, 12).map((c) => (
+                  {[...data.regions.counties]
+                    .sort(
+                      (a, b) =>
+                        (b.som_material_usd || 0) - (a.som_material_usd || 0)
+                    )
+                    .slice(0, 12)
+                    .map((c) => (
                     <button
                       key={c.county}
                       type="button"
@@ -607,7 +915,9 @@ export default function Dashboard({ data }: { data: Metrics }) {
                       }`}
                     >
                       <span className="text-[var(--sand)]">{c.county}</span>
-                      <span className="text-[var(--muted)]">{usd(c.sam_valuation)}</span>
+                      <span className="text-[var(--muted)]">
+                        {usd(c.som_material_usd || 0)}
+                      </span>
                     </button>
                   ))}
                 </div>
@@ -629,7 +939,7 @@ export default function Dashboard({ data }: { data: Metrics }) {
                             <th className="pb-1">Camada</th>
                             <th>SAM</th>
                             <th>SAM $</th>
-                            <th>SOM</th>
+                            <th>SOM mat.</th>
                           </tr>
                         </thead>
                         <tbody>
@@ -642,7 +952,9 @@ export default function Dashboard({ data }: { data: Metrics }) {
                               </td>
                               <td>{num(j.sam_count)}</td>
                               <td>{usd(j.sam_valuation)}</td>
-                              <td className="text-[var(--sun)]">{usd(j.som_usd)}</td>
+                              <td className="text-[var(--sun)]">
+                                {usd(j.som_material_usd || 0)}
+                              </td>
                             </tr>
                           ))}
                         </tbody>
@@ -659,6 +971,7 @@ export default function Dashboard({ data }: { data: Metrics }) {
                               <th className="pb-1">Área</th>
                               <th>SAM</th>
                               <th>SAM $</th>
+                              <th>SOM mat.</th>
                             </tr>
                           </thead>
                           <tbody>
@@ -667,6 +980,9 @@ export default function Dashboard({ data }: { data: Metrics }) {
                                 <td className="py-2 text-[var(--sand)]">{a.area}</td>
                                 <td>{num(a.sam_count)}</td>
                                 <td>{usd(a.sam_valuation)}</td>
+                                <td className="text-[var(--sun)]">
+                                  {usd(a.som_material_usd || 0)}
+                                </td>
                               </tr>
                             ))}
                           </tbody>

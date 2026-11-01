@@ -741,6 +741,222 @@ def main() -> None:
         for y, vals in sorted(mat_lab_year.items())
     ]
 
+    # Enrich Miami meso with material / SOM material (all-time in DB window)
+    for b in miami_meso:
+        # approximate material from SAM valuation using blended plumbing share assumptions
+        # directional: use category mix for Miami if available — else 35% of plumbing portion of SAM $
+        sam_v_area = float(b["sam_valuation"])
+        # rough: treat as new_residential-heavy Miami mix → plumbing share × material share
+        mat, lab = _material_labor("res_new_plumbing", sam_v_area, assumptions)
+        b["material_usd"] = mat
+        b["labor_usd"] = lab
+        b["som_usd"] = sam_v_area * SOM_SHARE
+        b["som_material_usd"] = mat * SOM_SHARE
+
+    for j in miami_jur:
+        mat, lab = _material_labor("res_new_plumbing", float(j["sam_valuation"]), assumptions)
+        j["material_usd"] = mat
+        j["labor_usd"] = lab
+        j["som_material_usd"] = mat * SOM_SHARE
+
+    # County material SOM (all history in window) for map metric
+    for c in counties:
+        mat, _lab = _material_labor("res_new_plumbing", float(c["sam_valuation"]), assumptions)
+        # better: weight by actual category mix per county
+        c["material_usd"] = 0.0
+        c["som_material_usd"] = 0.0
+    # overwrite with true category mix
+    county_mat: dict[str, float] = {}
+    for cat, county, n, v in con.execute(
+        """
+        SELECT category, COALESCE(county,'Unknown'), COUNT(*), SUM(valuation_filled)
+        FROM permits_v WHERE is_sam GROUP BY 1, 2
+        """
+    ).fetchall():
+        if cat == "res_repipe":
+            mat = float(
+                mat_cfg.get("res_repipe", {}).get("fittings_value_usd", {}).get("base", 450)
+            ) * int(n)
+        else:
+            mat, _ = _material_labor(cat, float(v or 0), assumptions)
+        county_mat[county] = county_mat.get(county, 0.0) + mat
+    for c in counties:
+        c["material_usd"] = county_mat.get(c["county"], 0.0)
+        c["som_material_usd"] = float(c["material_usd"]) * SOM_SHARE
+
+    # --- Pipeline short-term: last 30 / 60 days ---
+    def pipeline_window(days: int) -> dict:
+        from datetime import timedelta
+
+        start = as_of - timedelta(days=days)
+        # inclusive of as_of; exclusive of start day boundary via >
+        rows = con.execute(
+            """
+            SELECT category, COALESCE(county,'Unknown'), COUNT(*), SUM(valuation_filled),
+                   UPPER(TRIM(COALESCE(contractor_name,'')))
+            FROM permits_v
+            WHERE is_sam AND issued_date > ? AND issued_date <= ?
+            GROUP BY 1, 2, 5
+            """,
+            [start, as_of],
+        ).fetchall()
+        by_county: dict[str, dict[str, float | int]] = {}
+        by_cat: dict[str, dict[str, float | int]] = {}
+        by_contractor: dict[str, dict[str, Any]] = {}
+        for cat, county, n, v, cname in rows:
+            v = float(v or 0)
+            n = int(n)
+            if cat == "res_repipe":
+                mat = float(
+                    mat_cfg.get("res_repipe", {}).get("fittings_value_usd", {}).get("base", 450)
+                ) * n
+                lab = mat * 2.0
+            else:
+                mat, lab = _material_labor(cat, v, assumptions)
+            bc = by_county.setdefault(
+                county,
+                {
+                    "county": county,
+                    "fips": COUNTY_FIPS.get(county),
+                    "sam_count": 0,
+                    "sam_valuation": 0.0,
+                    "material_usd": 0.0,
+                    "labor_usd": 0.0,
+                },
+            )
+            bc["sam_count"] = int(bc["sam_count"]) + n
+            bc["sam_valuation"] = float(bc["sam_valuation"]) + v
+            bc["material_usd"] = float(bc["material_usd"]) + mat
+            bc["labor_usd"] = float(bc["labor_usd"]) + lab
+            bcat = by_cat.setdefault(
+                cat,
+                {
+                    "category": cat,
+                    "sam_count": 0,
+                    "sam_valuation": 0.0,
+                    "material_usd": 0.0,
+                    "labor_usd": 0.0,
+                },
+            )
+            bcat["sam_count"] = int(bcat["sam_count"]) + n
+            bcat["sam_valuation"] = float(bcat["sam_valuation"]) + v
+            bcat["material_usd"] = float(bcat["material_usd"]) + mat
+            bcat["labor_usd"] = float(bcat["labor_usd"]) + lab
+            if cname and cname not in (
+                "",
+                "OWNER",
+                "OWNER BUILDER",
+                "OWNER/BUILDER",
+                "N/A",
+                "NA",
+                "NONE",
+                "UNKNOWN",
+            ):
+                bt = by_contractor.setdefault(
+                    cname,
+                    {
+                        "contractor_name": cname,
+                        "permits": 0,
+                        "valuation": 0.0,
+                        "material_usd": 0.0,
+                        "counties": set(),
+                        "categories": set(),
+                    },
+                )
+                bt["permits"] = int(bt["permits"]) + n
+                bt["valuation"] = float(bt["valuation"]) + v
+                bt["material_usd"] = float(bt["material_usd"]) + mat
+                bt["counties"].add(county)
+                bt["categories"].add(cat)
+
+        counties_out = sorted(
+            (
+                {
+                    **b,
+                    "som_usd": float(b["sam_valuation"]) * SOM_SHARE,
+                    "som_material_usd": float(b["material_usd"]) * SOM_SHARE,
+                }
+                for b in by_county.values()
+            ),
+            key=lambda x: -float(x["som_material_usd"]),
+        )
+        cats_out = sorted(
+            (
+                {
+                    **b,
+                    "som_usd": float(b["sam_valuation"]) * SOM_SHARE,
+                    "som_material_usd": float(b["material_usd"]) * SOM_SHARE,
+                }
+                for b in by_cat.values()
+            ),
+            key=lambda x: -float(x["som_material_usd"]),
+        )
+        contractors_out = sorted(
+            (
+                {
+                    "contractor_name": b["contractor_name"],
+                    "permits": int(b["permits"]),
+                    "valuation": float(b["valuation"]),
+                    "material_usd": float(b["material_usd"]),
+                    "som_material_usd": float(b["material_usd"]) * SOM_SHARE,
+                    "counties": ", ".join(sorted(b["counties"])),
+                    "categories": ", ".join(sorted(b["categories"])),
+                }
+                for b in by_contractor.values()
+            ),
+            key=lambda x: -x["som_material_usd"],
+        )[:40]
+        tot_sam = sum(float(c["sam_valuation"]) for c in counties_out)
+        tot_mat = sum(float(c["material_usd"]) for c in counties_out)
+        tot_n = sum(int(c["sam_count"]) for c in counties_out)
+        return {
+            "days": days,
+            "start": start.isoformat(),
+            "end": as_of.isoformat(),
+            "sam_count": tot_n,
+            "sam_valuation": tot_sam,
+            "material_usd": tot_mat,
+            "som_usd": tot_sam * SOM_SHARE,
+            "som_material_usd": tot_mat * SOM_SHARE,
+            "by_county": counties_out,
+            "by_category": cats_out,
+            "by_contractor": contractors_out,
+        }
+
+    pipeline = {
+        "d30": pipeline_window(30),
+        "d60": pipeline_window(60),
+        "note": (
+            "Permits issued in the last N days — pragmatic commercial chase list. "
+            "SOM material = 5% of estimated material content in the window."
+        ),
+    }
+
+    # Per-year SAM share of TOM (for year filter chips)
+    share_by_year = []
+    for y in range(2021, as_of.year + 1):
+        r = con.execute(
+            """
+            SELECT COUNT(*), COUNT(*) FILTER (WHERE is_sam),
+                   SUM(valuation_filled), SUM(valuation_filled) FILTER (WHERE is_sam)
+            FROM permits_v WHERE yr = ?
+            """,
+            [y],
+        ).fetchone()
+        tn, sn, tv, sv = int(r[0]), int(r[1]), float(r[2] or 0), float(r[3] or 0)
+        share_by_year.append(
+            {
+                "year": y,
+                "tom_count": tn,
+                "sam_count": sn,
+                "tom_valuation": tv,
+                "sam_valuation": sv,
+                "sam_share_count_pct": _pct(sn, tn),
+                "sam_share_valuation_pct": _pct(sv, tv),
+                "som_usd": sv * SOM_SHARE,
+            }
+        )
+
     payload = {
         "generated_at": datetime.now(timezone.utc).isoformat(),
         "as_of": as_of.isoformat(),
@@ -814,7 +1030,9 @@ def main() -> None:
             "by_category_ytd": cat_ytd,
             "material_labor_annual": material_labor_annual,
             "segment_annual": seg_annual,
+            "share_by_year": share_by_year,
         },
+        "pipeline": pipeline,
         "regions": {
             "counties": counties,
             "county_monthly_sam": county_monthly,
@@ -823,7 +1041,8 @@ def main() -> None:
                 "mesoregions": miami_meso,
                 "coverage_note": (
                     "ZIP/lat mostly missing on Miami feeds. Drill = City of Miami layer vs "
-                    "county Hub + municipality tokens parsed from address when available."
+                    "county Hub + municipality tokens parsed from address when available. "
+                    "SOM material on meso uses directional plumbing material share on SAM $."
                 ),
             },
         },
