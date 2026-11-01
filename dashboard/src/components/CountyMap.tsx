@@ -90,7 +90,7 @@ export default function CountyMap({ counties, selected, onSelect, mode }: Props)
           });
           if (row) {
             lyr.bindTooltip(
-              `<strong>${row.county}</strong><br/>Total Market ${num(row.sam_count)} · ${usd(row.sam_valuation)}<br/>Potential · Tigre 5% ${usd(row.som_usd)}<br/>Materials Potential ${usd(row.som_material_usd || 0)}`,
+              `<strong>${row.county}</strong><br/>Total Market ${num(row.sam_count)} · ${usd(row.sam_valuation)}<br/>Addressable Market ${usd(row.som_usd)}<br/>Tigre × Dura Potential ${usd(row.som_material_usd || 0)}`,
               { sticky: true }
             );
           } else {
