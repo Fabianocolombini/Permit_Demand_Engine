@@ -1,675 +1,781 @@
 "use client";
 
+import dynamic from "next/dynamic";
+import { useMemo, useState } from "react";
 import {
-  Area,
-  AreaChart,
   Bar,
   BarChart,
   CartesianGrid,
-  Cell,
+  ComposedChart,
   Legend,
-  Pie,
-  PieChart,
+  Line,
   ResponsiveContainer,
   Tooltip,
   XAxis,
   YAxis,
 } from "recharts";
-import type { Metrics } from "@/lib/types";
+import type { MetricMode, Metrics, TabId } from "@/lib/types";
 import {
   categoryLabel,
+  MONTHS,
   num,
   pct,
   pctPlain,
-  segmentLabel,
   usd,
   ymLabel,
 } from "@/lib/format";
+
+const CountyMap = dynamic(() => import("./CountyMap"), { ssr: false });
 
 const GULF = "#0e7c86";
 const MANGROVE = "#1f6b4f";
 const CORAL = "#c45c3e";
 const SUN = "#e2b14a";
 const SAND = "#e8dcc8";
-const SEG_COLORS: Record<string, string> = {
-  new_residential_plumbing: GULF,
-  plumbing_repipe_remodel: "#3aa6b0",
-  pool_spa: CORAL,
-  irrigation: MANGROVE,
-  other: "#5a7076",
-};
 
-function Section({
-  id,
-  eyebrow,
-  title,
-  lead,
-  children,
+const TABS: { id: TabId; label: string }[] = [
+  { id: "tom", label: "TOM" },
+  { id: "sam", label: "SAM + SOM" },
+  { id: "regions", label: "Regiões / Mapa" },
+  { id: "contractors", label: "Contractors" },
+];
+
+function Kpi({
+  label,
+  value,
+  sub,
 }: {
-  id: string;
-  eyebrow: string;
-  title: string;
-  lead: string;
-  children: React.ReactNode;
+  label: string;
+  value: string;
+  sub?: string;
 }) {
   return (
-    <section id={id} className="section-band px-5 py-16 md:px-10 lg:px-16">
-      <div className="mx-auto max-w-6xl">
-        <p className="mb-2 text-xs font-semibold uppercase tracking-[0.22em] text-[var(--gulf)]">
-          {eyebrow}
-        </p>
-        <h2 className="brand-display max-w-3xl text-3xl text-[var(--foam)] md:text-4xl">
-          {title}
-        </h2>
-        <p className="mt-3 max-w-2xl text-[var(--muted)]">{lead}</p>
-        <div className="mt-10">{children}</div>
+    <div className="border-l border-[var(--line)] pl-4 first:border-l-0 first:pl-0">
+      <p className="text-[10px] uppercase tracking-[0.16em] text-[var(--muted)]">
+        {label}
+      </p>
+      <p className="stat-value mt-1 text-2xl text-[var(--sand)] md:text-3xl">
+        {value}
+      </p>
+      {sub && <p className="mt-1 text-xs text-[var(--muted)]">{sub}</p>}
+    </div>
+  );
+}
+
+function Panel({
+  title,
+  children,
+  action,
+}: {
+  title: string;
+  children: React.ReactNode;
+  action?: React.ReactNode;
+}) {
+  return (
+    <div className="chart-panel flex flex-col p-4">
+      <div className="mb-3 flex items-center justify-between gap-3">
+        <p className="text-sm text-[var(--muted)]">{title}</p>
+        {action}
       </div>
-    </section>
+      <div className="min-h-0 flex-1">{children}</div>
+    </div>
+  );
+}
+
+function ModeToggle({
+  mode,
+  setMode,
+}: {
+  mode: MetricMode;
+  setMode: (m: MetricMode) => void;
+}) {
+  return (
+    <div className="inline-flex rounded-full border border-[var(--line)] p-0.5 text-xs">
+      {(
+        [
+          ["count", "Counts"],
+          ["valuation", "Valor $"],
+        ] as const
+      ).map(([id, label]) => (
+        <button
+          key={id}
+          type="button"
+          onClick={() => setMode(id)}
+          className={`rounded-full px-3 py-1 transition ${
+            mode === id
+              ? "bg-[var(--gulf)] text-[var(--foam)]"
+              : "text-[var(--muted)] hover:text-[var(--sand)]"
+          }`}
+        >
+          {label}
+        </button>
+      ))}
+    </div>
   );
 }
 
 export default function Dashboard({ data }: { data: Metrics }) {
-  const h = data.q1_tom_yoy.headline;
-  const sam = data.q3_sam;
-  const som = data.q4_som;
+  const [tab, setTab] = useState<TabId>("tom");
+  const [mode, setMode] = useState<MetricMode>("count");
+  const [selectedCounty, setSelectedCounty] = useState<string | null>(null);
+  const [miamiOpen, setMiamiOpen] = useState(false);
+  const [contractorRank, setContractorRank] = useState<"permits" | "valuation">(
+    "permits"
+  );
+  const [contractorScope, setContractorScope] = useState<"near" | "ytd">("near");
 
-  const tomAnnualChart = data.q1_tom_yoy.annual.map((r) => ({
-    year: String(r.year),
-    count: r.count,
-    valuation: r.valuation / 1e9,
-    yoy: r.count_yoy_pct,
-  }));
+  const u = data.universe;
+  const ytdM = data.ytd_through_month;
+  const tomYtd = data.tom.ytd_comparison;
+  const samYtd = data.sam_som.ytd_comparison;
+  const latestTomYtd = tomYtd[tomYtd.length - 1];
+  const latestSamYtd = samYtd[samYtd.length - 1];
 
-  const monthlyTom = data.q1_tom_yoy.monthly.map((r) => ({
-    label: ymLabel(r.year, r.month),
-    count: r.count,
-    valuationM: r.valuation / 1e6,
-  }));
-
-  // Latest year segment mix
-  const years = [...new Set(data.q2_segment_trends.annual.map((r) => r.year))].sort();
-  const latestYear = years[years.length - 1];
-  const segLatest = data.q2_segment_trends.annual
-    .filter((r) => r.year === latestYear && r.segment !== "other")
-    .map((r) => ({
-      name: segmentLabel(r.segment),
-      key: r.segment,
-      count: r.count,
-      valuation: r.valuation,
+  const tomMonthlyChart = useMemo(() => {
+    const series =
+      mode === "count"
+        ? data.tom.monthly_count_with_projection
+        : data.tom.monthly_valuation_with_projection;
+    // last 36 months for readability
+    const recent = series.filter((p) => p.year >= 2023);
+    return recent.map((p) => ({
+      label: ymLabel(p.year, p.month),
+      observed: p.kind === "observed" ? p.value : null,
+      projected: p.kind === "projected" ? p.value : null,
+      // connect: last observed also as projected start for visual continuity
+      bridge:
+        p.kind === "observed" &&
+        recent.some(
+          (q) =>
+            q.kind === "projected" &&
+            q.year === p.year &&
+            q.month === p.month + 1
+        )
+          ? p.value
+          : p.kind === "projected"
+            ? p.value
+            : null,
     }));
+  }, [data.tom, mode]);
 
-  // Segment YoY series (count) for SAM-ish segments + other
-  const segKeys = [
-    "new_residential_plumbing",
-    "plumbing_repipe_remodel",
-    "pool_spa",
-    "irrigation",
-    "other",
-  ];
-  const segByYear: Record<string, Record<string, number>> = {};
-  for (const r of data.q2_segment_trends.annual) {
-    segByYear[r.year] ??= {};
-    segByYear[r.year][r.segment] = r.count;
-  }
-  const segTrendChart = years.map((y) => {
-    const row: Record<string, string | number> = { year: String(y) };
-    for (const k of segKeys) row[k] = segByYear[y]?.[k] ?? 0;
-    return row;
-  });
+  const ytdCompareChart = useMemo(() => {
+    const src = tab === "sam" ? samYtd : tomYtd;
+    return src
+      .filter((r) => r.year >= 2023)
+      .map((r) => ({
+        year: String(r.year),
+        count: r.count,
+        valuationB: r.valuation / 1e9,
+        countYoY: r.count_yoy_pct,
+        valYoY: r.valuation_yoy_pct,
+      }));
+  }, [tab, tomYtd, samYtd]);
 
-  const countyBars = sam.top_counties.slice(0, 10).map((c) => ({
-    county: c.county.replace(/ County$/i, ""),
-    valuation: c.valuation / 1e6,
-    count: c.count,
-  }));
+  const catYtd = data.sam_som.by_category_ytd;
+  const matLab = data.sam_som.material_labor_annual.filter((r) => r.year >= 2023);
 
-  const nearTerm = data.q5_near_term.by_county.slice(0, 8).map((c) => ({
-    county: c.county.replace(/ County$/i, ""),
-    pipeline: c.pipeline_0_3m_valuation / 1e6,
-  }));
+  const selectedCountyRow = data.regions.counties.find(
+    (c) => c.county === selectedCounty
+  );
 
-  const pieSam = sam.by_category.map((c) => ({
-    name: categoryLabel(c.category),
-    value: c.valuation,
-    pct: c.pct_of_sam_valuation,
-  }));
+  const contractorList =
+    contractorScope === "near"
+      ? contractorRank === "permits"
+        ? data.contractors.near_term_by_permits
+        : data.contractors.near_term_by_valuation
+      : contractorRank === "permits"
+        ? data.contractors.ytd_by_permits
+        : data.contractors.ytd_by_valuation;
 
   return (
-    <main>
-      {/* Hero — one composition, brand-forward, full-bleed FL image */}
-      <header className="hero-shell">
-        <div className="hero-media" aria-hidden />
-        <div className="relative z-10 flex flex-1 flex-col">
-          <nav className="flex items-center justify-between px-5 py-6 md:px-10 lg:px-16">
-            <div className="brand-display text-lg tracking-wide text-[var(--sand)] md:text-xl">
-              Tigre <span className="text-[var(--gulf)]">×</span> Dura
-            </div>
-            <div className="hidden text-xs uppercase tracking-[0.18em] text-[var(--muted)] sm:block">
-              Florida · Permits ≥ 2021
-            </div>
-          </nav>
-
-          <div className="flex flex-1 flex-col justify-center px-5 pb-16 pt-8 md:px-10 lg:px-16">
-            <p className="rise text-sm font-medium uppercase tracking-[0.28em] text-[var(--sun)]">
-              Permit Demand Engine
-            </p>
-            <h1 className="brand-display rise rise-delay-1 mt-4 max-w-4xl text-5xl leading-[1.05] text-[var(--foam)] md:text-7xl">
-              Florida demand,
-              <br />
-              <span className="text-[var(--sand)]">read from permits.</span>
-            </h1>
-            <p className="rise rise-delay-2 mt-6 max-w-xl text-base text-[var(--muted)] md:text-lg">
-              TOM, SAM, and 5% SOM for Tigre USA and Dura — statewide MVP from
-              open Florida permit feeds, not paid Shovels.
-            </p>
-            <div className="rise rise-delay-3 mt-10 flex flex-wrap gap-3">
-              <a className="pill-cta" href="#tom">
-                View growth
-              </a>
-              <a className="ghost-cta" href="#som">
-                SOM at 5%
-              </a>
-            </div>
-          </div>
-        </div>
-        <div className="wave-divider relative z-10" />
-      </header>
-
-      {/* Headline strip — not hero clutter; sits below first viewport */}
-      <section className="px-5 py-12 md:px-10 lg:px-16">
-        <div className="mx-auto grid max-w-6xl gap-8 sm:grid-cols-2 lg:grid-cols-4">
-          {[
-            { label: "TOM permits", value: num(data.universe.tom) },
-            {
-              label: "SAM share",
-              value: pctPlain(data.universe.sam_share_pct),
-            },
-            {
-              label: "SAM addressable $",
-              value: data.formatted_headlines.sam_valuation ?? usd(sam.share.sam_valuation),
-            },
-            {
-              label: "SOM (5%)",
-              value: data.formatted_headlines.som ?? usd(som.som_usd),
-            },
-          ].map((s) => (
-            <div key={s.label}>
-              <p className="text-xs uppercase tracking-[0.18em] text-[var(--muted)]">
-                {s.label}
-              </p>
-              <p className="stat-value mt-2 text-3xl text-[var(--sand)] md:text-4xl">
-                {s.value}
-              </p>
-            </div>
-          ))}
-        </div>
-        <p className="mx-auto mt-8 max-w-6xl text-xs text-[var(--muted)]">
-          As of {data.as_of} · generated {new Date(data.generated_at).toUTCString()} ·{" "}
-          {data.universe.jurisdictions} jurisdictions · {data.universe.counties} counties
-        </p>
-      </section>
-
-      <Section
-        id="tom"
-        eyebrow="01 · TOM"
-        title="Statewide permit growth and 2026 year-to-go"
-        lead="Total market = every permit issued since 2021. YoY on counts and declared project $, with year-end 2026 expectation from prior-year seasonality × trailing growth."
-      >
-        <div className="grid gap-6 lg:grid-cols-3">
-          <div className="lg:col-span-2 chart-panel p-5">
-            <p className="mb-4 text-sm text-[var(--muted)]">Annual TOM permits</p>
-            <div className="h-72">
-              <ResponsiveContainer width="100%" height="100%">
-                <BarChart data={tomAnnualChart}>
-                  <CartesianGrid stroke="rgba(232,220,200,0.08)" vertical={false} />
-                  <XAxis dataKey="year" stroke={SAND} tick={{ fill: SAND, fontSize: 12 }} />
-                  <YAxis stroke={SAND} tick={{ fill: SAND, fontSize: 12 }} />
-                  <Tooltip
-                    contentStyle={{
-                      background: "#0c2a32",
-                      border: "1px solid rgba(232,220,200,0.2)",
-                    }}
-                    formatter={(v) => num(Number(v))}
-                  />
-                  <Bar dataKey="count" fill={GULF} radius={[2, 2, 0, 0]} />
-                </BarChart>
-              </ResponsiveContainer>
-            </div>
-          </div>
-          <div className="flex flex-col justify-between gap-6">
+    <main className="min-h-screen">
+      {/* Compact brand bar + KPIs — not a long marketing scroll */}
+      <header className="relative overflow-hidden border-b border-[var(--line)]">
+        <div
+          className="absolute inset-0 opacity-40"
+          style={{
+            backgroundImage: "url(/images/florida-keys.jpg)",
+            backgroundSize: "cover",
+            backgroundPosition: "center 45%",
+          }}
+        />
+        <div className="absolute inset-0 bg-gradient-to-r from-[#071a1f] via-[#071a1f]/90 to-[#071a1f]/55" />
+        <div className="relative z-10 px-5 py-6 md:px-8">
+          <div className="flex flex-wrap items-end justify-between gap-4">
             <div>
-              <p className="text-xs uppercase tracking-[0.18em] text-[var(--muted)]">
-                Latest YoY (counts)
-              </p>
-              <p className="stat-value mt-2 text-4xl text-[var(--sand)]">
-                {pct(h.yoy_count_pct)}
-              </p>
-            </div>
-            <div>
-              <p className="text-xs uppercase tracking-[0.18em] text-[var(--muted)]">
-                Latest YoY ($)
-              </p>
-              <p className="stat-value mt-2 text-4xl text-[var(--sand)]">
-                {pct(h.yoy_valuation_pct)}
-              </p>
-            </div>
-            <div>
-              <p className="text-xs uppercase tracking-[0.18em] text-[var(--muted)]">
-                2026 YTD → YE expected
-              </p>
-              <p className="stat-value mt-2 text-2xl text-[var(--foam)]">
-                {num(h.y2026_ytd_count)} → {num(h.y2026_full_year_count)}
+              <p className="brand-display text-xl text-[var(--sand)] md:text-2xl">
+                Tigre <span className="text-[var(--gulf)]">×</span> Dura
               </p>
               <p className="mt-1 text-sm text-[var(--muted)]">
-                YTG {num(h.y2026_ytg_count)} · $ YTD {usd(h.y2026_ytd_valuation)} · YE{" "}
-                {usd(h.y2026_full_year_valuation)}
+                Florida Permit Demand · as of {data.as_of} · YTD Jan–{MONTHS[ytdM - 1]}
               </p>
             </div>
+            <ModeToggle mode={mode} setMode={setMode} />
+          </div>
+          <div className="mt-6 grid grid-cols-2 gap-6 lg:grid-cols-5">
+            <Kpi label="TOM" value={num(u.tom)} sub={usd(u.tom_valuation)} />
+            <Kpi
+              label="SAM / TOM"
+              value={pctPlain(u.sam_share_count_pct)}
+              sub={`${pctPlain(u.sam_share_valuation_pct)} do $`}
+            />
+            <Kpi label="SAM $" value={usd(u.sam_valuation)} sub={`${num(u.sam)} permits`} />
+            <Kpi label="SOM 5%" value={usd(u.som_usd)} sub="do SAM addressable" />
+            <Kpi
+              label={`TOM YTD ${latestTomYtd?.year} vs LY`}
+              value={pct(latestTomYtd?.count_yoy_pct)}
+              sub={`$ ${pct(latestTomYtd?.valuation_yoy_pct)}`}
+            />
           </div>
         </div>
-        <div className="chart-panel mt-6 p-5">
-          <p className="mb-4 text-sm text-[var(--muted)]">Monthly TOM trajectory</p>
-          <div className="h-64">
-            <ResponsiveContainer width="100%" height="100%">
-              <AreaChart data={monthlyTom}>
-                <defs>
-                  <linearGradient id="tomFill" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="0%" stopColor={GULF} stopOpacity={0.45} />
-                    <stop offset="100%" stopColor={GULF} stopOpacity={0} />
-                  </linearGradient>
-                </defs>
-                <CartesianGrid stroke="rgba(232,220,200,0.08)" vertical={false} />
-                <XAxis
-                  dataKey="label"
-                  stroke={SAND}
-                  tick={{ fill: SAND, fontSize: 10 }}
-                  interval="preserveStartEnd"
-                  minTickGap={40}
-                />
-                <YAxis stroke={SAND} tick={{ fill: SAND, fontSize: 12 }} />
-                <Tooltip
-                  contentStyle={{
-                    background: "#0c2a32",
-                    border: "1px solid rgba(232,220,200,0.2)",
-                  }}
-                />
-                <Area
-                  type="monotone"
-                  dataKey="count"
-                  stroke={GULF}
-                  fill="url(#tomFill)"
-                  strokeWidth={2}
-                />
-              </AreaChart>
-            </ResponsiveContainer>
-          </div>
-        </div>
-      </Section>
+      </header>
 
-      <Section
-        id="segments"
-        eyebrow="02 · Segments"
-        title="Trend by Tigre–Dura category"
-        lead="New residential plumbing, repipe/remodel, pool/spa, irrigation, and residual other — the same classification that defines SAM."
-      >
-        <div className="chart-panel p-5">
-          <p className="mb-4 text-sm text-[var(--muted)]">
-            Annual permit counts by segment
-          </p>
-          <div className="h-80">
-            <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={segTrendChart}>
-                <CartesianGrid stroke="rgba(232,220,200,0.08)" vertical={false} />
-                <XAxis dataKey="year" stroke={SAND} tick={{ fill: SAND, fontSize: 12 }} />
-                <YAxis stroke={SAND} tick={{ fill: SAND, fontSize: 12 }} />
-                <Tooltip
-                  contentStyle={{
-                    background: "#0c2a32",
-                    border: "1px solid rgba(232,220,200,0.2)",
-                  }}
-                />
-                <Legend />
-                {segKeys.map((k) => (
-                  <Bar
-                    key={k}
-                    dataKey={k}
-                    stackId="a"
-                    name={segmentLabel(k)}
-                    fill={SEG_COLORS[k]}
-                  />
-                ))}
-              </BarChart>
-            </ResponsiveContainer>
-          </div>
-        </div>
-        <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-          {segLatest.map((s) => (
-            <div key={s.key} className="border-t border-[var(--line)] pt-4">
-              <p className="text-xs uppercase tracking-[0.16em] text-[var(--muted)]">
-                {s.name} · {latestYear}
-              </p>
-              <p className="stat-value mt-2 text-2xl text-[var(--sand)]">{num(s.count)}</p>
-              <p className="text-sm text-[var(--muted)]">{usd(s.valuation)}</p>
-            </div>
+      {/* Tab nav */}
+      <nav className="sticky top-0 z-20 border-b border-[var(--line)] bg-[#071a1f]/95 backdrop-blur">
+        <div className="flex gap-1 overflow-x-auto px-3 py-2 md:px-8">
+          {TABS.map((t) => (
+            <button
+              key={t.id}
+              type="button"
+              onClick={() => setTab(t.id)}
+              className={`whitespace-nowrap rounded-full px-4 py-2 text-sm font-medium transition ${
+                tab === t.id
+                  ? "bg-[var(--gulf)] text-white"
+                  : "text-[var(--muted)] hover:bg-white/5 hover:text-[var(--sand)]"
+              }`}
+            >
+              {t.label}
+            </button>
           ))}
         </div>
-      </Section>
+      </nav>
 
-      <Section
-        id="sam"
-        eyebrow="03 · SAM"
-        title="Tigre–Dura addressable share and county trend"
-        lead="SAM is plumbing + pool/spa + irrigation + new residential construction. Projection to year-end 2026 uses the same seasonal method as TOM."
-      >
-        <div className="grid gap-6 lg:grid-cols-2">
-          <div className="chart-panel p-5">
-            <p className="mb-4 text-sm text-[var(--muted)]">SAM category mix ($)</p>
-            <div className="h-72">
-              <ResponsiveContainer width="100%" height="100%">
-                <PieChart>
-                  <Pie
-                    data={pieSam}
-                    dataKey="value"
-                    nameKey="name"
-                    innerRadius={55}
-                    outerRadius={95}
-                    paddingAngle={2}
+      <div className="px-4 py-6 md:px-8">
+        {tab === "tom" && (
+          <div className="grid gap-4 lg:grid-cols-2">
+            <Panel
+              title={`YTD Jan–${MONTHS[ytdM - 1]} · mesmo período 2023–2026 (${mode === "count" ? "counts" : "valor"})`}
+            >
+              <div className="h-72">
+                <ResponsiveContainer width="100%" height="100%">
+                  <BarChart data={ytdCompareChart}>
+                    <CartesianGrid stroke="rgba(232,220,200,0.08)" vertical={false} />
+                    <XAxis dataKey="year" stroke={SAND} tick={{ fill: SAND, fontSize: 12 }} />
+                    <YAxis stroke={SAND} tick={{ fill: SAND, fontSize: 11 }} />
+                    <Tooltip
+                      contentStyle={{ background: "#0c2a32", border: "1px solid rgba(232,220,200,0.2)" }}
+                      formatter={(v, name) =>
+                        name === "valuationB"
+                          ? [`$${Number(v).toFixed(2)}B`, "Valor"]
+                          : [num(Number(v)), "Counts"]
+                      }
+                    />
+                    <Bar
+                      dataKey={mode === "count" ? "count" : "valuationB"}
+                      fill={GULF}
+                      radius={[2, 2, 0, 0]}
+                    />
+                  </BarChart>
+                </ResponsiveContainer>
+              </div>
+              <div className="mt-3 grid grid-cols-2 gap-3 text-sm md:grid-cols-4">
+                {tomYtd
+                  .filter((r) => r.year >= 2023)
+                  .map((r) => (
+                    <div key={r.year} className="border-t border-[var(--line)] pt-2">
+                      <p className="text-[var(--muted)]">{r.year}</p>
+                      <p className="text-[var(--sand)]">
+                        {mode === "count" ? num(r.count) : usd(r.valuation)}
+                      </p>
+                      <p className="text-xs text-[var(--muted)]">
+                        YoY {mode === "count" ? pct(r.count_yoy_pct) : pct(r.valuation_yoy_pct)}
+                      </p>
+                    </div>
+                  ))}
+              </div>
+            </Panel>
+
+            <Panel title="Mensal TOM → Dez (linha pontilhada = projeção)">
+              <div className="h-72">
+                <ResponsiveContainer width="100%" height="100%">
+                  <ComposedChart data={tomMonthlyChart}>
+                    <CartesianGrid stroke="rgba(232,220,200,0.08)" vertical={false} />
+                    <XAxis
+                      dataKey="label"
+                      stroke={SAND}
+                      tick={{ fill: SAND, fontSize: 10 }}
+                      minTickGap={28}
+                    />
+                    <YAxis stroke={SAND} tick={{ fill: SAND, fontSize: 11 }} />
+                    <Tooltip
+                      contentStyle={{ background: "#0c2a32", border: "1px solid rgba(232,220,200,0.2)" }}
+                      formatter={(v) =>
+                        mode === "count" ? num(Number(v)) : usd(Number(v))
+                      }
+                    />
+                    <Line
+                      type="monotone"
+                      dataKey="observed"
+                      stroke={GULF}
+                      strokeWidth={2}
+                      dot={false}
+                      connectNulls={false}
+                      name="Observado"
+                    />
+                    <Line
+                      type="monotone"
+                      dataKey="bridge"
+                      stroke={SUN}
+                      strokeWidth={2}
+                      strokeDasharray="5 5"
+                      dot={false}
+                      connectNulls
+                      name="Projetado"
+                    />
+                  </ComposedChart>
+                </ResponsiveContainer>
+              </div>
+              <p className="mt-2 text-xs text-[var(--muted)]">
+                YE 2026 esperado:{" "}
+                {mode === "count"
+                  ? num(Number(data.tom.projection_count.full_year))
+                  : usd(Number(data.tom.projection_valuation.full_year))}{" "}
+                (YTD + YTG). Método: mesmo mês do ano anterior × crescimento trailing 3m.
+              </p>
+            </Panel>
+
+            <Panel title="Crescimento YTD vs ano anterior (counts e $)">
+              <div className="h-64">
+                <ResponsiveContainer width="100%" height="100%">
+                  <BarChart
+                    data={tomYtd
+                      .filter((r) => r.year >= 2024)
+                      .map((r) => ({
+                        year: String(r.year),
+                        counts: r.count_yoy_pct,
+                        valor: r.valuation_yoy_pct,
+                      }))}
                   >
-                    {pieSam.map((_, i) => (
-                      <Cell
-                        key={i}
-                        fill={[GULF, CORAL, MANGROVE, SUN, "#5a7076"][i % 5]}
-                      />
-                    ))}
-                  </Pie>
-                  <Tooltip
-                    formatter={(v) => usd(Number(v))}
-                    contentStyle={{
-                      background: "#0c2a32",
-                      border: "1px solid rgba(232,220,200,0.2)",
-                    }}
-                  />
-                  <Legend />
-                </PieChart>
-              </ResponsiveContainer>
-            </div>
-          </div>
-          <div className="flex flex-col justify-center gap-8">
-            <div>
-              <p className="text-xs uppercase tracking-[0.18em] text-[var(--muted)]">
-                SAM / TOM (rows)
-              </p>
-              <p className="stat-value mt-2 text-5xl text-[var(--sand)]">
-                {pctPlain(sam.share.sam_share_of_tom_count_pct)}
-              </p>
-              <p className="mt-2 text-sm text-[var(--muted)]">
-                {num(sam.share.sam_count)} of {num(sam.share.tom_count)} permits
-              </p>
-            </div>
-            <div>
-              <p className="text-xs uppercase tracking-[0.18em] text-[var(--muted)]">
-                SAM / TOM ($)
-              </p>
-              <p className="stat-value mt-2 text-4xl text-[var(--sand)]">
-                {pctPlain(sam.share.sam_share_of_tom_valuation_pct)}
-              </p>
-            </div>
-            <div>
-              <p className="text-xs uppercase tracking-[0.18em] text-[var(--muted)]">
-                2026 SAM YE expected
-              </p>
-              <p className="stat-value mt-2 text-2xl">
-                {num(sam.projection_2026_count.full_year_expected)} ·{" "}
-                {usd(sam.projection_2026_valuation.full_year_expected)}
-              </p>
-            </div>
-          </div>
-        </div>
-        <div className="chart-panel mt-6 p-5">
-          <p className="mb-4 text-sm text-[var(--muted)]">
-            Top counties by SAM valuation ($M)
-          </p>
-          <div className="h-80">
-            <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={countyBars} layout="vertical" margin={{ left: 24 }}>
-                <CartesianGrid stroke="rgba(232,220,200,0.08)" horizontal={false} />
-                <XAxis type="number" stroke={SAND} tick={{ fill: SAND, fontSize: 12 }} />
-                <YAxis
-                  type="category"
-                  dataKey="county"
-                  width={100}
-                  stroke={SAND}
-                  tick={{ fill: SAND, fontSize: 11 }}
-                />
-                <Tooltip
-                  formatter={(v) => `$${Number(v).toFixed(1)}M`}
-                  contentStyle={{
-                    background: "#0c2a32",
-                    border: "1px solid rgba(232,220,200,0.2)",
-                  }}
-                />
-                <Bar dataKey="valuation" fill={MANGROVE} radius={[0, 2, 2, 0]} />
-              </BarChart>
-            </ResponsiveContainer>
-          </div>
-        </div>
-      </Section>
+                    <CartesianGrid stroke="rgba(232,220,200,0.08)" vertical={false} />
+                    <XAxis dataKey="year" stroke={SAND} tick={{ fill: SAND, fontSize: 12 }} />
+                    <YAxis stroke={SAND} tick={{ fill: SAND, fontSize: 11 }} unit="%" />
+                    <Tooltip
+                      contentStyle={{ background: "#0c2a32", border: "1px solid rgba(232,220,200,0.2)" }}
+                      formatter={(v) => `${Number(v).toFixed(1)}%`}
+                    />
+                    <Legend />
+                    <Bar dataKey="counts" fill={GULF} name="YoY counts" />
+                    <Bar dataKey="valor" fill={CORAL} name="YoY $" />
+                  </BarChart>
+                </ResponsiveContainer>
+              </div>
+            </Panel>
 
-      <Section
-        id="som"
-        eyebrow="04 · SOM"
-        title="Serviceable obtainable market at 5%"
-        lead="SOM = 5% of SAM addressable project $. Missing valuations filled with peer medians. Material vs labor uses fittings assumptions from the V1.1 model."
-      >
-        <div className="grid gap-10 md:grid-cols-3">
-          <div>
-            <p className="text-xs uppercase tracking-[0.18em] text-[var(--muted)]">
-              SAM addressable
-            </p>
-            <p className="stat-value mt-2 text-4xl text-[var(--sand)]">
-              {som.formatted.sam_addressable}
-            </p>
+            <Panel title="Leitura">
+              <ul className="space-y-3 text-sm text-[var(--muted)]">
+                <li>
+                  Compare sempre <span className="text-[var(--sand)]">YTD vs mesmo período</span>{" "}
+                  (Jan–{MONTHS[ytdM - 1]}), não ano cheio incompleto.
+                </li>
+                <li>
+                  2026 counts YTD {pct(latestTomYtd?.count_yoy_pct)} vs 2025; valor{" "}
+                  {pct(latestTomYtd?.valuation_yoy_pct)} — $ sensível a outliers Miami-Dade.
+                </li>
+                <li>
+                  Projeção Nov–Dez em pontilhado no gráfico mensal; ajuste o toggle Counts / Valor $.
+                </li>
+              </ul>
+            </Panel>
           </div>
-          <div>
-            <p className="text-xs uppercase tracking-[0.18em] text-[var(--muted)]">
-              SOM @ 5%
-            </p>
-            <p className="stat-value mt-2 text-4xl text-[var(--sun)]">
-              {som.formatted.som}
-            </p>
-          </div>
-          <div>
-            <p className="text-xs uppercase tracking-[0.18em] text-[var(--muted)]">
-              Material / labor (of SOM $)
-            </p>
-            <p className="stat-value mt-2 text-2xl text-[var(--foam)]">
-              {som.formatted.material}{" "}
-              <span className="text-[var(--muted)]">/</span> {som.formatted.labor}
-            </p>
-            <p className="mt-2 text-sm text-[var(--muted)]">
-              {pctPlain(som.material_share_of_sam_pct)} material ·{" "}
-              {pctPlain(som.labor_share_of_sam_pct)} labor
-            </p>
-            {som.formatted.fittings_som && (
-              <p className="mt-3 text-sm text-[var(--sun)]">
-                Fittings SOM (5% of modeled fittings demand): {som.formatted.fittings_som}
+        )}
+
+        {tab === "sam" && (
+          <div className="grid gap-4 lg:grid-cols-2">
+            <Panel title="SAM vs TOM · participação">
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <p className="text-xs uppercase tracking-[0.14em] text-[var(--muted)]">
+                    Counts
+                  </p>
+                  <p className="stat-value text-4xl text-[var(--sand)]">
+                    {pctPlain(u.sam_share_count_pct)}
+                  </p>
+                  <p className="text-sm text-[var(--muted)]">
+                    {num(u.sam)} de {num(u.tom)}
+                  </p>
+                </div>
+                <div>
+                  <p className="text-xs uppercase tracking-[0.14em] text-[var(--muted)]">
+                    Valor $
+                  </p>
+                  <p className="stat-value text-4xl text-[var(--sun)]">
+                    {pctPlain(u.sam_share_valuation_pct)}
+                  </p>
+                  <p className="text-sm text-[var(--muted)]">
+                    ~1/3 do $ statewide no SAM (pipe / pool / irrig)
+                  </p>
+                </div>
+              </div>
+              <div className="mt-6 border-t border-[var(--line)] pt-4">
+                <p className="text-xs uppercase tracking-[0.14em] text-[var(--muted)]">
+                  SOM @ 5% do SAM addressable
+                </p>
+                <p className="stat-value mt-1 text-3xl text-[var(--foam)]">
+                  {usd(u.som_usd)}
+                </p>
+                <p className="mt-1 text-sm text-[var(--muted)]">
+                  Fittings SOM (modelo): {usd(u.fittings_som_usd)}
+                </p>
+              </div>
+            </Panel>
+
+            <Panel
+              title={`SAM YTD Jan–${MONTHS[ytdM - 1]} · 2023–2026`}
+              action={<ModeToggle mode={mode} setMode={setMode} />}
+            >
+              <div className="h-64">
+                <ResponsiveContainer width="100%" height="100%">
+                  <BarChart
+                    data={samYtd
+                      .filter((r) => r.year >= 2023)
+                      .map((r) => ({
+                        year: String(r.year),
+                        count: r.count,
+                        valuationB: r.valuation / 1e9,
+                      }))}
+                  >
+                    <CartesianGrid stroke="rgba(232,220,200,0.08)" vertical={false} />
+                    <XAxis dataKey="year" stroke={SAND} tick={{ fill: SAND, fontSize: 12 }} />
+                    <YAxis stroke={SAND} tick={{ fill: SAND, fontSize: 11 }} />
+                    <Tooltip
+                      contentStyle={{ background: "#0c2a32", border: "1px solid rgba(232,220,200,0.2)" }}
+                    />
+                    <Bar
+                      dataKey={mode === "count" ? "count" : "valuationB"}
+                      fill={MANGROVE}
+                      radius={[2, 2, 0, 0]}
+                    />
+                  </BarChart>
+                </ResponsiveContainer>
+              </div>
+              <p className="mt-2 text-xs text-[var(--muted)]">
+                YTD {latestSamYtd?.year}: {num(latestSamYtd?.count)} ·{" "}
+                {usd(latestSamYtd?.valuation)} · YoY counts {pct(latestSamYtd?.count_yoy_pct)} ·
+                $ {pct(latestSamYtd?.valuation_yoy_pct)}
               </p>
+            </Panel>
+
+            <Panel title="Por categoria · YTD (permits, $, SOM 5%, material vs mão de obra)">
+              <div className="overflow-x-auto">
+                <table className="w-full min-w-[720px] text-left text-sm">
+                  <thead>
+                    <tr className="text-[10px] uppercase tracking-[0.12em] text-[var(--muted)]">
+                      <th className="pb-2 font-medium">Categoria</th>
+                      <th className="pb-2 font-medium">Permits</th>
+                      <th className="pb-2 font-medium">YoY</th>
+                      <th className="pb-2 font-medium">Valor obra</th>
+                      <th className="pb-2 font-medium">SOM 5%</th>
+                      <th className="pb-2 font-medium">Material</th>
+                      <th className="pb-2 font-medium">Mão de obra</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {catYtd.map((r) => (
+                      <tr key={r.category} className="table-row">
+                        <td className="py-2.5 text-[var(--sand)]">
+                          {categoryLabel(r.category)}
+                        </td>
+                        <td className="py-2.5">{num(r.count)}</td>
+                        <td className="py-2.5">{pct(r.count_yoy_pct)}</td>
+                        <td className="py-2.5">{usd(r.valuation)}</td>
+                        <td className="py-2.5 text-[var(--sun)]">{usd(r.som_usd)}</td>
+                        <td className="py-2.5">{usd(r.material_usd)}</td>
+                        <td className="py-2.5">{usd(r.labor_usd)}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+              <p className="mt-3 text-xs text-[var(--muted)]">
+                {data.definitions.material_labor}
+              </p>
+            </Panel>
+
+            <Panel title="Material vs mão de obra · SAM por ano (estimativa)">
+              <div className="h-72">
+                <ResponsiveContainer width="100%" height="100%">
+                  <BarChart data={matLab}>
+                    <CartesianGrid stroke="rgba(232,220,200,0.08)" vertical={false} />
+                    <XAxis dataKey="year" stroke={SAND} tick={{ fill: SAND, fontSize: 12 }} />
+                    <YAxis stroke={SAND} tick={{ fill: SAND, fontSize: 11 }} />
+                    <Tooltip
+                      contentStyle={{ background: "#0c2a32", border: "1px solid rgba(232,220,200,0.2)" }}
+                      formatter={(v) => usd(Number(v))}
+                    />
+                    <Legend />
+                    <Bar dataKey="material_usd" stackId="a" fill={GULF} name="Material" />
+                    <Bar dataKey="labor_usd" stackId="a" fill={CORAL} name="Mão de obra" />
+                  </BarChart>
+                </ResponsiveContainer>
+              </div>
+              <p className="mt-2 text-xs text-[var(--muted)]">
+                Friction: material/labor é premissa (assumptions.yaml), não medição do permit.
+                Plumbing usa 4.5% da obra × 35/65; pool/irrig usa fittings share como material.
+              </p>
+            </Panel>
+          </div>
+        )}
+
+        {tab === "regions" && (
+          <div className="grid gap-4 lg:grid-cols-5">
+            <div className="lg:col-span-3">
+              <Panel title="Mapa FL · clique no condado (SAM $)">
+                <CountyMap
+                  counties={data.regions.counties}
+                  selected={selectedCounty}
+                  onSelect={(c) => {
+                    setSelectedCounty(c);
+                    setMiamiOpen(c === "Miami-Dade");
+                  }}
+                  mode="sam_valuation"
+                />
+                <p className="mt-2 text-xs text-[var(--muted)]">
+                  Condados sem bronze ficam escuros. Cobertura atual:{" "}
+                  {data.regions.counties.length} condados com dado.
+                </p>
+              </Panel>
+            </div>
+            <div className="space-y-4 lg:col-span-2">
+              <Panel title={selectedCounty ? selectedCounty : "Selecione um condado"}>
+                {selectedCountyRow ? (
+                  <div className="space-y-3 text-sm">
+                    <div className="grid grid-cols-2 gap-3">
+                      <div>
+                        <p className="text-[var(--muted)]">SAM permits</p>
+                        <p className="stat-value text-2xl text-[var(--sand)]">
+                          {num(selectedCountyRow.sam_count)}
+                        </p>
+                      </div>
+                      <div>
+                        <p className="text-[var(--muted)]">SAM $</p>
+                        <p className="stat-value text-2xl text-[var(--sand)]">
+                          {usd(selectedCountyRow.sam_valuation)}
+                        </p>
+                      </div>
+                      <div>
+                        <p className="text-[var(--muted)]">SOM 5%</p>
+                        <p className="stat-value text-2xl text-[var(--sun)]">
+                          {usd(selectedCountyRow.som_usd)}
+                        </p>
+                      </div>
+                      <div>
+                        <p className="text-[var(--muted)]">TOM</p>
+                        <p className="stat-value text-2xl text-[var(--foam)]">
+                          {num(selectedCountyRow.tom_count)}
+                        </p>
+                      </div>
+                    </div>
+                    {selectedCounty === "Miami-Dade" && (
+                      <button
+                        type="button"
+                        className="pill-cta mt-2 text-sm"
+                        onClick={() => setMiamiOpen((v) => !v)}
+                      >
+                        {miamiOpen ? "Fechar" : "Abrir"} mesorregiões Miami-Dade
+                      </button>
+                    )}
+                  </div>
+                ) : (
+                  <p className="text-sm text-[var(--muted)]">
+                    Clique no mapa para ver SAM / SOM do condado.
+                  </p>
+                )}
+              </Panel>
+
+              <Panel title="Top condados SAM $">
+                <div className="max-h-64 space-y-1 overflow-y-auto text-sm">
+                  {data.regions.counties.slice(0, 12).map((c) => (
+                    <button
+                      key={c.county}
+                      type="button"
+                      onClick={() => {
+                        setSelectedCounty(c.county);
+                        setMiamiOpen(c.county === "Miami-Dade");
+                      }}
+                      className={`flex w-full items-center justify-between rounded px-2 py-1.5 text-left hover:bg-white/5 ${
+                        selectedCounty === c.county ? "bg-white/10" : ""
+                      }`}
+                    >
+                      <span className="text-[var(--sand)]">{c.county}</span>
+                      <span className="text-[var(--muted)]">{usd(c.sam_valuation)}</span>
+                    </button>
+                  ))}
+                </div>
+              </Panel>
+            </div>
+
+            {miamiOpen && (
+              <div className="lg:col-span-5">
+                <Panel title="Miami-Dade · drill mesorregião / jurisdição">
+                  <p className="mb-3 text-xs text-[var(--muted)]">
+                    {data.regions.miami_dade.coverage_note}
+                  </p>
+                  <div className="grid gap-4 md:grid-cols-2">
+                    <div>
+                      <p className="mb-2 text-sm text-[var(--sand)]">Camadas (jurisdição)</p>
+                      <table className="w-full text-left text-sm">
+                        <thead>
+                          <tr className="text-[10px] uppercase text-[var(--muted)]">
+                            <th className="pb-1">Camada</th>
+                            <th>SAM</th>
+                            <th>SAM $</th>
+                            <th>SOM</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {data.regions.miami_dade.jurisdictions.map((j) => (
+                            <tr key={j.jurisdiction_id} className="table-row">
+                              <td className="py-2 text-[var(--sand)]">
+                                {j.jurisdiction_id === "fl_miami_city"
+                                  ? "City of Miami"
+                                  : "County Hub (unincorp.)"}
+                              </td>
+                              <td>{num(j.sam_count)}</td>
+                              <td>{usd(j.sam_valuation)}</td>
+                              <td className="text-[var(--sun)]">{usd(j.som_usd)}</td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                    <div>
+                      <p className="mb-2 text-sm text-[var(--sand)]">
+                        Mesorregiões (parse de endereço)
+                      </p>
+                      <div className="max-h-72 overflow-y-auto">
+                        <table className="w-full text-left text-sm">
+                          <thead>
+                            <tr className="text-[10px] uppercase text-[var(--muted)]">
+                              <th className="pb-1">Área</th>
+                              <th>SAM</th>
+                              <th>SAM $</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {data.regions.miami_dade.mesoregions.map((a) => (
+                              <tr key={a.area} className="table-row">
+                                <td className="py-2 text-[var(--sand)]">{a.area}</td>
+                                <td>{num(a.sam_count)}</td>
+                                <td>{usd(a.sam_valuation)}</td>
+                              </tr>
+                            ))}
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+                  </div>
+                </Panel>
+              </div>
             )}
           </div>
-        </div>
-        <div className="mt-10 grid gap-3 text-sm text-[var(--muted)] md:grid-cols-2">
-          <p>
-            Plumbing material share of plumbing (base):{" "}
-            <span className="text-[var(--sand)]">
-              {pctPlain(
-                Number(som.assumptions_stated.plumbing_material_share_of_plumbing_base) *
-                  100,
-                0
-              )}
-            </span>
-            ; fittings share of material:{" "}
-            <span className="text-[var(--sand)]">
-              {pctPlain(
-                Number(som.assumptions_stated.fittings_share_of_material_base) * 100,
-                0
-              )}
-            </span>
-            .
-          </p>
-          <p>
-            Pool fittings share of project:{" "}
-            <span className="text-[var(--sand)]">
-              {pctPlain(
-                Number(som.assumptions_stated.pool_fittings_share_of_project_base) * 100,
-                0
-              )}
-            </span>
-            ; irrigation:{" "}
-            <span className="text-[var(--sand)]">
-              {pctPlain(
-                Number(som.assumptions_stated.irrigation_fittings_share_of_project_base) *
-                  100,
-                0
-              )}
-            </span>
-            . {som.imputation_method}
-          </p>
-        </div>
-      </Section>
+        )}
 
-      <Section
-        id="near-term"
-        eyebrow="05 · Near-term"
-        title="County opportunity — now through +3 months"
-        lead="Observed current month where available; forward months from prior-year same month × recent growth. Short/medium horizon for rep activation."
-      >
-        <div className="chart-panel p-5">
-          <div className="h-80">
-            <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={nearTerm}>
-                <CartesianGrid stroke="rgba(232,220,200,0.08)" vertical={false} />
-                <XAxis dataKey="county" stroke={SAND} tick={{ fill: SAND, fontSize: 11 }} />
-                <YAxis stroke={SAND} tick={{ fill: SAND, fontSize: 12 }} />
-                <Tooltip
-                  formatter={(v) => `$${Number(v).toFixed(1)}M`}
-                  contentStyle={{
-                    background: "#0c2a32",
-                    border: "1px solid rgba(232,220,200,0.2)",
-                  }}
-                />
-                <Bar dataKey="pipeline" name="0–3m pipeline $M" fill={CORAL} radius={[2, 2, 0, 0]} />
-              </BarChart>
-            </ResponsiveContainer>
-          </div>
-        </div>
-        <div className="mt-8 overflow-x-auto">
-          <table className="w-full min-w-[640px] text-left text-sm">
-            <thead>
-              <tr className="text-xs uppercase tracking-[0.14em] text-[var(--muted)]">
-                <th className="pb-3 font-medium">County</th>
-                <th className="pb-3 font-medium">Current</th>
-                <th className="pb-3 font-medium">+1m</th>
-                <th className="pb-3 font-medium">+2m</th>
-                <th className="pb-3 font-medium">+3m</th>
-                <th className="pb-3 font-medium">0–3m $</th>
-              </tr>
-            </thead>
-            <tbody>
-              {data.q5_near_term.by_county.slice(0, 10).map((row) => (
-                <tr key={row.county} className="table-row">
-                  <td className="py-3 text-[var(--sand)]">{row.county}</td>
-                  {row.horizon.map((h) => (
-                    <td key={h.label} className="py-3 text-[var(--muted)]">
-                      {usd(h.valuation)}
-                      <span className="ml-1 text-[10px] uppercase opacity-60">
-                        {h.kind === "projected" ? "proj" : "obs"}
-                      </span>
-                    </td>
-                  ))}
-                  <td className="py-3 text-[var(--foam)]">
-                    {usd(row.pipeline_0_3m_valuation)}
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      </Section>
+        {tab === "contractors" && (
+          <div className="grid gap-4">
+            <div className="flex flex-wrap items-center gap-3">
+              <div className="inline-flex rounded-full border border-[var(--line)] p-0.5 text-xs">
+                {(
+                  [
+                    ["near", data.contractors.near_term_label],
+                    ["ytd", `YTD Jan–${MONTHS[ytdM - 1]}`],
+                  ] as const
+                ).map(([id, label]) => (
+                  <button
+                    key={id}
+                    type="button"
+                    onClick={() => setContractorScope(id)}
+                    className={`rounded-full px-3 py-1.5 ${
+                      contractorScope === id
+                        ? "bg-[var(--coral,#c45c3e)] bg-[var(--gulf)] text-white"
+                        : "text-[var(--muted)]"
+                    }`}
+                  >
+                    {label}
+                  </button>
+                ))}
+              </div>
+              <div className="inline-flex rounded-full border border-[var(--line)] p-0.5 text-xs">
+                {(
+                  [
+                    ["permits", "Rank por # permits"],
+                    ["valuation", "Rank por $"],
+                  ] as const
+                ).map(([id, label]) => (
+                  <button
+                    key={id}
+                    type="button"
+                    onClick={() => setContractorRank(id)}
+                    className={`rounded-full px-3 py-1.5 ${
+                      contractorRank === id
+                        ? "bg-[var(--gulf)] text-white"
+                        : "text-[var(--muted)]"
+                    }`}
+                  >
+                    {label}
+                  </button>
+                ))}
+              </div>
+              <p className="text-xs text-[var(--muted)]">
+                Cobertura SAM com nome: {pctPlain(data.contractors.coverage.sam_coverage_pct)}
+              </p>
+            </div>
 
-      <Section
-        id="contractors"
-        eyebrow="06 · Activation"
-        title="Contractor ranking for outreach"
-        lead={data.q6_contractors.notes}
-      >
-        <div className="mb-8 grid gap-6 sm:grid-cols-3">
-          <div>
-            <p className="text-xs uppercase tracking-[0.18em] text-[var(--muted)]">
-              SAM contractor coverage
-            </p>
-            <p className="stat-value mt-2 text-4xl text-[var(--sand)]">
-              {pctPlain(data.q6_contractors.coverage.sam_coverage_pct)}
-            </p>
+            <Panel
+              title={
+                contractorScope === "near"
+                  ? `Quem gerar demanda agora · ${data.contractors.near_term_label}`
+                  : `YTD · quem mais colocou projetos SAM`
+              }
+            >
+              <p className="mb-3 text-xs text-[var(--muted)]">{data.contractors.notes}</p>
+              <div className="overflow-x-auto">
+                <table className="w-full min-w-[760px] text-left text-sm">
+                  <thead>
+                    <tr className="text-[10px] uppercase tracking-[0.12em] text-[var(--muted)]">
+                      <th className="pb-2">#</th>
+                      <th className="pb-2">Contractor</th>
+                      <th className="pb-2">Permits</th>
+                      <th className="pb-2">Valor</th>
+                      <th className="pb-2">Condados</th>
+                      <th className="pb-2">Categorias</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {contractorList.slice(0, 30).map((c, i) => (
+                      <tr key={c.contractor_name} className="table-row">
+                        <td className="py-2 text-[var(--muted)]">{i + 1}</td>
+                        <td className="py-2 text-[var(--sand)]">{c.contractor_name}</td>
+                        <td className="py-2">{num(c.permits)}</td>
+                        <td className="py-2">{usd(c.valuation)}</td>
+                        <td className="max-w-[160px] truncate py-2 text-[var(--muted)]">
+                          {c.counties}
+                        </td>
+                        <td className="max-w-[180px] truncate py-2 text-[var(--muted)]">
+                          {c.categories}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </Panel>
           </div>
-          <div>
-            <p className="text-xs uppercase tracking-[0.18em] text-[var(--muted)]">
-              Named SAM permits
-            </p>
-            <p className="stat-value mt-2 text-4xl text-[var(--sand)]">
-              {num(data.q6_contractors.coverage.sam_with_name)}
-            </p>
-          </div>
-          <div>
-            <p className="text-xs uppercase tracking-[0.18em] text-[var(--muted)]">
-              TOM name coverage
-            </p>
-            <p className="stat-value mt-2 text-4xl text-[var(--sand)]">
-              {pctPlain(data.q6_contractors.coverage.tom_coverage_pct)}
-            </p>
-          </div>
-        </div>
-        <div className="overflow-x-auto">
-          <table className="w-full min-w-[720px] text-left text-sm">
-            <thead>
-              <tr className="text-xs uppercase tracking-[0.14em] text-[var(--muted)]">
-                <th className="pb-3 font-medium">#</th>
-                <th className="pb-3 font-medium">Contractor</th>
-                <th className="pb-3 font-medium">SAM permits</th>
-                <th className="pb-3 font-medium">Valuation</th>
-                <th className="pb-3 font-medium">Counties</th>
-              </tr>
-            </thead>
-            <tbody>
-              {data.q6_contractors.top.slice(0, 25).map((c, i) => (
-                <tr key={c.contractor_name} className="table-row">
-                  <td className="py-3 text-[var(--muted)]">{i + 1}</td>
-                  <td className="py-3 text-[var(--sand)]">{c.contractor_name}</td>
-                  <td className="py-3">{num(c.permits)}</td>
-                  <td className="py-3">{usd(c.valuation)}</td>
-                  <td className="max-w-[220px] truncate py-3 text-[var(--muted)]">
-                    {c.counties}
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      </Section>
+        )}
+      </div>
 
-      <footer className="section-band px-5 py-12 md:px-10 lg:px-16">
-        <div className="mx-auto flex max-w-6xl flex-col gap-4 md:flex-row md:items-end md:justify-between">
-          <div>
-            <p className="brand-display text-2xl text-[var(--sand)]">Tigre × Dura</p>
-            <p className="mt-2 max-w-lg text-sm text-[var(--muted)]">
-              Open-data Florida MVP. Valuation USD with peer-median fill. Material
-              shares from config/assumptions.yaml (base scenario). Coverage is
-              jurisdiction-tiered — not full statewide census of every city.
-            </p>
-          </div>
-          <p className="text-xs text-[var(--muted)]">
-            Permit Demand Engine · as of {data.as_of}
-          </p>
-        </div>
+      <footer className="border-t border-[var(--line)] px-5 py-6 text-xs text-[var(--muted)] md:px-8">
+        Tigre × Dura · Permit Demand Engine · {data.definitions.YTD} · Material/labor = premissa
+        calibrável
       </footer>
     </main>
   );

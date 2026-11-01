@@ -37,6 +37,18 @@ body {
   min-height: 100vh;
 }
 
+/* Leaflet dark map tweaks inside dashboard */
+.leaflet-container {
+  background: #071a1f;
+  font: inherit;
+}
+.leaflet-tooltip {
+  background: #0c2a32;
+  border: 1px solid rgba(232, 220, 200, 0.25);
+  color: #f4f7f5;
+  box-shadow: none;
+}
+
 h1,
 h2,
 h3,

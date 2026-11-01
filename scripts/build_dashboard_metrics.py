@@ -1,10 +1,12 @@
 #!/usr/bin/env python3
-"""Build TOM/SAM/SOM dashboard metrics JSON from silver.permits (+ gold if present).
+"""Build interactive dashboard metrics JSON (Power BI-style filters).
 
-Answers executive questions 1–6 with locked definitions:
-  TOM = all permits issued ≥ 2021
-  SAM = plumbing + pool/spa + irrigation + new residential construction
-  SOM = 5% of SAM addressable $ (valuation with peer median fill)
+TOM / SAM / SOM with:
+  - YTD multi-year (2023–2026) same-period YoY
+  - monthly series + dotted projection through Dec
+  - SAM+SOM by category (counts, $, 5% SOM, material vs labor)
+  - county + Miami-Dade mesoregion drill
+  - contractors: YTD + current/near-term month
 """
 
 from __future__ import annotations
@@ -12,6 +14,7 @@ from __future__ import annotations
 import argparse
 import json
 import math
+import re
 import sys
 from datetime import date, datetime, timezone
 from pathlib import Path
@@ -22,13 +25,89 @@ sys.path.insert(0, str(ROOT))
 
 from src.classify.rules import SAM_CATEGORIES  # noqa: E402
 from src.db import connect  # noqa: E402
-from src.model.material import estimate_fittings_value  # noqa: E402
 from src.registry import load_assumptions  # noqa: E402
 
 SOM_SHARE = 0.05
-OUTLIER_CAP = 1_000_000_000.0  # ≥$1B flagged; still included unless --cap-outliers
 YEAR_END_2026 = date(2026, 12, 31)
 AS_OF = date(2026, 11, 1)
+
+MIAMI_AREA_RE = re.compile(
+    r"(MIAMI BEACH|CORAL GABLES|HIALEAH|HOMESTEAD|KENDALL|DORAL|CUTLER BAY|"
+    r"NORTH MIAMI|AVENTURA|KEY BISCAYNE|MIAMI GARDENS|OPA[\s-]?LOCKA|SWEETWATER|"
+    r"FLORIDA CITY|PINECREST|PALMETTO BAY|SUNNY ISLES|MIAMI LAKES|MEDLEY|"
+    r"MIAMI SPRINGS|SOUTH MIAMI|WEST MIAMI|NORTH MIAMI BEACH)",
+    re.I,
+)
+
+COUNTY_FIPS = {
+    "Alachua": "12001",
+    "Baker": "12003",
+    "Bay": "12005",
+    "Bradford": "12007",
+    "Brevard": "12009",
+    "Broward": "12011",
+    "Calhoun": "12013",
+    "Charlotte": "12015",
+    "Citrus": "12017",
+    "Clay": "12019",
+    "Collier": "12021",
+    "Columbia": "12023",
+    "DeSoto": "12027",
+    "Dixie": "12029",
+    "Duval": "12031",
+    "Escambia": "12033",
+    "Flagler": "12035",
+    "Franklin": "12037",
+    "Gadsden": "12039",
+    "Gilchrist": "12041",
+    "Glades": "12043",
+    "Gulf": "12045",
+    "Hamilton": "12047",
+    "Hardee": "12049",
+    "Hendry": "12051",
+    "Hernando": "12053",
+    "Highlands": "12055",
+    "Hillsborough": "12057",
+    "Holmes": "12059",
+    "Indian River": "12061",
+    "Jackson": "12063",
+    "Jefferson": "12065",
+    "Lafayette": "12067",
+    "Lake": "12069",
+    "Lee": "12071",
+    "Leon": "12073",
+    "Levy": "12075",
+    "Liberty": "12077",
+    "Madison": "12079",
+    "Manatee": "12081",
+    "Marion": "12083",
+    "Martin": "12085",
+    "Miami-Dade": "12086",
+    "Monroe": "12087",
+    "Nassau": "12089",
+    "Okaloosa": "12091",
+    "Okeechobee": "12093",
+    "Orange": "12095",
+    "Osceola": "12097",
+    "Palm Beach": "12099",
+    "Pasco": "12101",
+    "Pinellas": "12103",
+    "Polk": "12105",
+    "Putnam": "12107",
+    "St. Johns": "12109",
+    "St. Lucie": "12111",
+    "Santa Rosa": "12113",
+    "Sarasota": "12115",
+    "Seminole": "12117",
+    "Sumter": "12119",
+    "Suwannee": "12121",
+    "Taylor": "12123",
+    "Union": "12125",
+    "Volusia": "12127",
+    "Wakulla": "12129",
+    "Walton": "12131",
+    "Washington": "12133",
+}
 
 
 def _fmt(n: float | None) -> str | None:
@@ -57,9 +136,7 @@ def _yoy(curr: float, prev: float) -> float | None:
 
 
 def _growth_factor(by_ym: dict, y: int, m: int, value_key: str) -> float:
-    """Trailing 3 complete months' average YoY growth (skip sparse current month)."""
     growths = []
-    # Prefer months strictly before `m` in year y, then walk back
     cursor_y, cursor_m = y, m - 1
     checked = 0
     while len(growths) < 3 and checked < 18:
@@ -75,12 +152,10 @@ def _growth_factor(by_ym: dict, y: int, m: int, value_key: str) -> float:
     return sum(growths) / len(growths) if growths else 1.0
 
 
-def _linear_project(months: list[dict], value_key: str, as_of: date, year_end: date) -> dict:
-    """Project remaining months of year from recent YoY / monthly trend.
-
-    If the as-of month is sparse (<25% of prior-year same month), treat it as
-    incomplete: YTD excludes it and the month is re-projected in full.
-    """
+def _project_monthly(
+    months: list[dict], value_key: str, as_of: date
+) -> tuple[list[dict], dict]:
+    """Observed months + projected Nov–Dec (or sparse current) as dotted series."""
     by_ym = {(r["year"], r["month"]): r for r in months}
     y, m = as_of.year, as_of.month
     cur = by_ym.get((y, m))
@@ -90,49 +165,74 @@ def _linear_project(months: list[dict], value_key: str, as_of: date, year_end: d
         sparse = cur[value_key] < 0.25 * prior_same[value_key]
     elif cur is None:
         sparse = True
-
-    last_complete_month = m - 1 if sparse else m
-    if last_complete_month <= 0:
-        last_complete_month = 0
-    ytd = sum(
-        r[value_key]
-        for r in months
-        if r["year"] == y and r["month"] <= last_complete_month
-    )
-    g = _growth_factor(by_ym, y, m if not sparse else m, value_key)
-    start_rm = m if sparse else m + 1
+    last_complete = m - 1 if sparse else m
+    g = _growth_factor(by_ym, y, m, value_key)
+    series = []
+    for r in months:
+        if r["year"] < y or (r["year"] == y and r["month"] <= last_complete):
+            series.append(
+                {
+                    "year": r["year"],
+                    "month": r["month"],
+                    "value": r[value_key],
+                    "kind": "observed",
+                }
+            )
     remaining = []
-    for rm in range(start_rm, 13):
+    start = m if sparse else m + 1
+    for rm in range(start, 13):
         prior = by_ym.get((y - 1, rm))
-        if prior:
-            pred = prior[value_key] * g
-        else:
-            recent = []
-            for back in range(1, 4):
-                mm = last_complete_month - back + 1
-                yy = y
-                while mm <= 0:
-                    mm += 12
-                    yy -= 1
-                if (yy, mm) in by_ym:
-                    recent.append(by_ym[(yy, mm)][value_key])
-            pred = (sum(recent) / len(recent)) if recent else 0.0
-        remaining.append({"year": y, "month": rm, "projected": pred, "growth_factor": g})
-    ytg = sum(r["projected"] for r in remaining)
-    return {
-        "as_of": as_of.isoformat(),
-        "year_end": year_end.isoformat(),
+        pred = prior[value_key] * g if prior else 0.0
+        remaining.append({"year": y, "month": rm, "value": pred, "kind": "projected"})
+        series.append({"year": y, "month": rm, "value": pred, "kind": "projected"})
+    ytd = sum(r["value"] for r in series if r["year"] == y and r["kind"] == "observed")
+    ytg = sum(r["value"] for r in remaining)
+    return series, {
         "ytd": ytd,
-        "ytd_through_month": last_complete_month,
-        "current_month_sparse": sparse,
-        "ytg_expected": ytg,
-        "full_year_expected": ytd + ytg,
-        "remaining_months": remaining,
-        "method": (
-            "prior-year same month × trailing-3m YoY growth; "
-            "sparse as-of month excluded from YTD and fully re-projected"
-        ),
+        "ytg": ytg,
+        "full_year": ytd + ytg,
+        "ytd_through_month": last_complete,
+        "growth_factor": g,
+        "sparse_current_month": sparse,
     }
+
+
+def _miami_area(address: str | None, city: str | None, jid: str) -> str:
+    if jid == "fl_miami_city":
+        return "City of Miami"
+    blob = " ".join(filter(None, [address or "", city or ""]))
+    m = MIAMI_AREA_RE.search(blob.upper())
+    if m:
+        return m.group(1).title().replace("Opa-Locka", "Opa-Locka")
+    if city and city.strip().upper() not in ("", "MIAMI", "FL"):
+        return city.strip().title()
+    return "Unincorporated / other Miami-Dade"
+
+
+def _material_labor(cat: str, valuation: float, assumptions: dict) -> tuple[float, float]:
+    """Return (material_usd, labor_usd) for a SAM category on project valuation."""
+    cfg = assumptions.get("material_content", {})
+    if cat in ("res_new_plumbing", "res_remodel_plumbing"):
+        c = cfg.get(cat, cfg.get("res_new_plumbing", {}))
+        pl = float(c.get("plumbing_share_of_project_value", {}).get("base", 0.045))
+        ms = float(c.get("material_share_of_plumbing", {}).get("base", 0.35))
+        plumbing = valuation * pl
+        material = plumbing * ms
+        labor = plumbing * (1 - ms)
+        return material, labor
+    if cat == "res_repipe":
+        # fixed fittings ≈ material; labor assumed ~2× material (directional)
+        base = float(cfg.get("res_repipe", {}).get("fittings_value_usd", {}).get("base", 450))
+        return base, base * 2.0
+    if cat == "pool_spa":
+        fit = float(cfg.get("pool_spa", {}).get("fittings_share_of_project", {}).get("base", 0.08))
+        return valuation * fit, valuation * (1 - fit)
+    if cat == "irrigation":
+        fit = float(
+            cfg.get("irrigation", {}).get("fittings_share_of_project", {}).get("base", 0.12)
+        )
+        return valuation * fit, valuation * (1 - fit)
+    return 0.0, 0.0
 
 
 def main() -> None:
@@ -143,76 +243,47 @@ def main() -> None:
         type=Path,
         default=ROOT / "dashboard" / "public" / "data" / "metrics.json",
     )
-    p.add_argument("--cap-outliers", action="store_true", help="Exclude valuation ≥ $1B")
     p.add_argument("--as-of", default=AS_OF.isoformat())
     args = p.parse_args()
     as_of = date.fromisoformat(args.as_of)
-
     assumptions = load_assumptions()
     mat_cfg = assumptions.get("material_content", {})
-    # Headline material/labor split for construction $ (plumbing material share base)
-    plumbing_mat_share = float(
-        mat_cfg.get("res_new_plumbing", {})
-        .get("material_share_of_plumbing", {})
-        .get("base", 0.35)
-    )
-    pool_fit_share = float(
-        mat_cfg.get("pool_spa", {}).get("fittings_share_of_project", {}).get("base", 0.08)
-    )
-    irrig_fit_share = float(
-        mat_cfg.get("irrigation", {}).get("fittings_share_of_project", {}).get("base", 0.12)
-    )
 
     con = connect(args.db)
     cats = sorted(SAM_CATEGORIES)
     ph = ",".join("?" * len(cats))
 
-    # Cap outliers for analytics valuation if requested
     val_expr = (
-        f"CASE WHEN declared_valuation IS NOT NULL AND declared_valuation > 0 "
-        f"AND declared_valuation < {OUTLIER_CAP} THEN declared_valuation ELSE NULL END"
-        if args.cap_outliers
-        else "CASE WHEN declared_valuation IS NOT NULL AND declared_valuation > 0 "
+        "CASE WHEN declared_valuation IS NOT NULL AND declared_valuation > 0 "
         "THEN declared_valuation ELSE NULL END"
     )
-
-    # --- Peer median valuation by (category, county) for imputation ---
     con.execute(
         f"""
         CREATE OR REPLACE TEMP TABLE peer_medians AS
-        SELECT category, county,
-               median({val_expr}) AS median_val,
-               COUNT(*) FILTER (WHERE {val_expr} IS NOT NULL) AS n_decl
+        SELECT category, county, median({val_expr}) AS median_val
         FROM silver.permits
         WHERE issued_date >= DATE '2021-01-01'
         GROUP BY 1, 2
         """
     )
-    # County-only fallback
     con.execute(
         f"""
         CREATE OR REPLACE TEMP TABLE county_medians AS
-        SELECT county,
-               median({val_expr}) AS median_val
+        SELECT county, median({val_expr}) AS median_val
         FROM silver.permits
-        WHERE issued_date >= DATE '2021-01-01'
-          AND {val_expr} IS NOT NULL
+        WHERE issued_date >= DATE '2021-01-01' AND {val_expr} IS NOT NULL
         GROUP BY 1
         """
     )
-    # Category-only fallback
     con.execute(
         f"""
         CREATE OR REPLACE TEMP TABLE cat_medians AS
-        SELECT category,
-               median({val_expr}) AS median_val
+        SELECT category, median({val_expr}) AS median_val
         FROM silver.permits
-        WHERE issued_date >= DATE '2021-01-01'
-          AND {val_expr} IS NOT NULL
+        WHERE issued_date >= DATE '2021-01-01' AND {val_expr} IS NOT NULL
         GROUP BY 1
         """
     )
-
     con.execute(
         f"""
         CREATE OR REPLACE TEMP TABLE permits_v AS
@@ -225,13 +296,6 @@ def main() -> None:
             WHEN cat.median_val IS NOT NULL THEN cat.median_val
             ELSE 0
           END AS valuation_filled,
-          CASE
-            WHEN {val_expr} IS NOT NULL THEN 'declared'
-            WHEN pm.median_val IS NOT NULL THEN 'peer_category_county_median'
-            WHEN cm.median_val IS NOT NULL THEN 'peer_county_median'
-            WHEN cat.median_val IS NOT NULL THEN 'peer_category_median'
-            ELSE 'zero'
-          END AS valuation_method,
           CASE WHEN category IN ({ph}) THEN TRUE ELSE FALSE END AS is_sam,
           EXTRACT(year FROM issued_date)::INT AS yr,
           EXTRACT(month FROM issued_date)::INT AS mo
@@ -245,143 +309,99 @@ def main() -> None:
         cats,
     )
 
-    meta = con.execute(
-        """
-        SELECT COUNT(*) AS tom,
-               COUNT(*) FILTER (WHERE is_sam) AS sam,
-               MIN(issued_date) AS min_d,
-               MAX(issued_date) AS max_d,
-               COUNT(DISTINCT county) AS counties,
-               COUNT(DISTINCT jurisdiction_id) AS jurisdictions
-        FROM permits_v
-        """
-    ).fetchone()
-
-    # --- Q1 TOM YoY + 2026 YTG ---
-    tom_monthly = [
-        {"year": int(r[0]), "month": int(r[1]), "count": int(r[2]), "valuation": float(r[3] or 0)}
-        for r in con.execute(
-            """
-            SELECT yr, mo, COUNT(*), SUM(valuation_filled)
-            FROM permits_v
-            GROUP BY 1, 2
-            ORDER BY 1, 2
-            """
-        ).fetchall()
-    ]
-    tom_annual = [
-        {"year": int(r[0]), "count": int(r[1]), "valuation": float(r[2] or 0)}
-        for r in con.execute(
-            """
-            SELECT yr, COUNT(*), SUM(valuation_filled)
-            FROM permits_v
-            GROUP BY 1
-            ORDER BY 1
-            """
-        ).fetchall()
-    ]
-    by_year = {r["year"]: r for r in tom_annual}
-    # For the incomplete as-of year, YoY uses YTD vs same months prior year
-    max_complete_month = max(
-        (r["month"] for r in tom_monthly if r["year"] == as_of.year),
-        default=0,
-    )
-    # If current month sparse (<25% of prior), exclude it from YTD YoY
-    cur_m_row = next(
-        (r for r in tom_monthly if r["year"] == as_of.year and r["month"] == as_of.month),
-        None,
-    )
-    prior_m_row = next(
-        (
-            r
-            for r in tom_monthly
-            if r["year"] == as_of.year - 1 and r["month"] == as_of.month
-        ),
-        None,
-    )
+    # --- YTD through month (sparse Nov excluded) ---
     ytd_through = as_of.month
-    if (
-        cur_m_row
-        and prior_m_row
-        and prior_m_row["count"] > 0
-        and cur_m_row["count"] < 0.25 * prior_m_row["count"]
-    ):
+    cur_n = con.execute(
+        f"SELECT COUNT(*) FROM permits_v WHERE yr={as_of.year} AND mo={as_of.month}"
+    ).fetchone()[0]
+    prior_n = con.execute(
+        f"SELECT COUNT(*) FROM permits_v WHERE yr={as_of.year-1} AND mo={as_of.month}"
+    ).fetchone()[0]
+    if prior_n and cur_n < 0.25 * prior_n:
         ytd_through = as_of.month - 1
-    tom_yoy = []
-    for y in sorted(by_year):
-        if y == as_of.year and ytd_through > 0:
-            ytd_count = sum(
-                r["count"]
-                for r in tom_monthly
-                if r["year"] == y and r["month"] <= ytd_through
-            )
-            ytd_val = sum(
-                r["valuation"]
-                for r in tom_monthly
-                if r["year"] == y and r["month"] <= ytd_through
-            )
-            prior_count = sum(
-                r["count"]
-                for r in tom_monthly
-                if r["year"] == y - 1 and r["month"] <= ytd_through
-            )
-            prior_val = sum(
-                r["valuation"]
-                for r in tom_monthly
-                if r["year"] == y - 1 and r["month"] <= ytd_through
-            )
-            tom_yoy.append(
-                {
-                    "year": y,
-                    "count": by_year[y]["count"],
-                    "valuation": by_year[y]["valuation"],
-                    "ytd_through_month": ytd_through,
-                    "ytd_count": ytd_count,
-                    "ytd_valuation": ytd_val,
-                    "count_yoy_pct": _yoy(ytd_count, prior_count),
-                    "valuation_yoy_pct": _yoy(ytd_val, prior_val),
-                    "yoy_basis": f"YTD Jan–{ytd_through} vs prior-year same months",
-                }
-            )
-        elif y - 1 in by_year:
-            tom_yoy.append(
-                {
-                    "year": y,
-                    "count": by_year[y]["count"],
-                    "valuation": by_year[y]["valuation"],
-                    "count_yoy_pct": _yoy(by_year[y]["count"], by_year[y - 1]["count"]),
-                    "valuation_yoy_pct": _yoy(
-                        by_year[y]["valuation"], by_year[y - 1]["valuation"]
-                    ),
-                    "yoy_basis": "full_year",
-                }
-            )
-        else:
-            tom_yoy.append(
-                {
-                    "year": y,
-                    "count": by_year[y]["count"],
-                    "valuation": by_year[y]["valuation"],
-                    "count_yoy_pct": None,
-                    "valuation_yoy_pct": None,
-                    "yoy_basis": None,
-                }
-            )
 
-    tom_proj_count = _linear_project(tom_monthly, "count", as_of, YEAR_END_2026)
-    tom_proj_val = _linear_project(tom_monthly, "valuation", as_of, YEAR_END_2026)
+    def monthly(where: str = "1=1") -> list[dict]:
+        rows = con.execute(
+            f"""
+            SELECT yr, mo, COUNT(*), SUM(valuation_filled)
+            FROM permits_v WHERE {where}
+            GROUP BY 1, 2 ORDER BY 1, 2
+            """
+        ).fetchall()
+        return [
+            {
+                "year": int(r[0]),
+                "month": int(r[1]),
+                "count": int(r[2]),
+                "valuation": float(r[3] or 0),
+            }
+            for r in rows
+        ]
 
-    # --- Q2 Segment trends ---
-    segment_map_sql = """
-      CASE
-        WHEN category IN ('res_new_plumbing','res_repipe','res_remodel_plumbing') THEN 'plumbing'
-        WHEN category = 'pool_spa' THEN 'pool_spa'
-        WHEN category = 'irrigation' THEN 'irrigation'
-        WHEN category = 'res_new_plumbing' THEN 'new_residential'
-        ELSE 'other'
-      END
-    """
-    # More precise: split plumbing subtypes + other
+    tom_monthly = monthly()
+    sam_monthly = monthly("is_sam")
+
+    tom_count_series, tom_count_proj = _project_monthly(tom_monthly, "count", as_of)
+    tom_val_series, tom_val_proj = _project_monthly(tom_monthly, "valuation", as_of)
+    sam_count_series, sam_count_proj = _project_monthly(sam_monthly, "count", as_of)
+    sam_val_series, sam_val_proj = _project_monthly(sam_monthly, "valuation", as_of)
+
+    # YTD by year for 2021–as_of.year (same months 1..ytd_through)
+    def ytd_table(where: str = "1=1") -> list[dict]:
+        out = []
+        for y in range(2021, as_of.year + 1):
+            r = con.execute(
+                f"""
+                SELECT COUNT(*), SUM(valuation_filled)
+                FROM permits_v
+                WHERE {where} AND yr = ? AND mo <= ?
+                """,
+                [y, ytd_through],
+            ).fetchone()
+            out.append(
+                {
+                    "year": y,
+                    "through_month": ytd_through,
+                    "count": int(r[0]),
+                    "valuation": float(r[1] or 0),
+                }
+            )
+        # attach YoY vs prior year same YTD
+        for i, row in enumerate(out):
+            if i == 0:
+                row["count_yoy_pct"] = None
+                row["valuation_yoy_pct"] = None
+            else:
+                row["count_yoy_pct"] = _yoy(row["count"], out[i - 1]["count"])
+                row["valuation_yoy_pct"] = _yoy(row["valuation"], out[i - 1]["valuation"])
+        return out
+
+    tom_ytd = ytd_table()
+    sam_ytd = ytd_table("is_sam")
+
+    # Full annual
+    def annual(where: str = "1=1") -> list[dict]:
+        rows = con.execute(
+            f"""
+            SELECT yr, COUNT(*), SUM(valuation_filled)
+            FROM permits_v WHERE {where}
+            GROUP BY 1 ORDER BY 1
+            """
+        ).fetchall()
+        out = [
+            {"year": int(r[0]), "count": int(r[1]), "valuation": float(r[2] or 0)}
+            for r in rows
+        ]
+        for i, row in enumerate(out):
+            if i == 0:
+                row["count_yoy_pct"] = None
+                row["valuation_yoy_pct"] = None
+            else:
+                row["count_yoy_pct"] = _yoy(row["count"], out[i - 1]["count"])
+                row["valuation_yoy_pct"] = _yoy(row["valuation"], out[i - 1]["valuation"])
+        return out
+
+    # Segment / category annual + YTD
     seg_annual = [
         {
             "segment": r[0],
@@ -401,190 +421,100 @@ def main() -> None:
               END AS segment,
               yr, COUNT(*), SUM(valuation_filled)
             FROM permits_v
-            GROUP BY 1, 2
-            ORDER BY 1, 2
-            """
-        ).fetchall()
-    ]
-    seg_monthly = [
-        {
-            "segment": r[0],
-            "year": int(r[1]),
-            "month": int(r[2]),
-            "count": int(r[3]),
-            "valuation": float(r[4] or 0),
-        }
-        for r in con.execute(
-            """
-            SELECT
-              CASE
-                WHEN category = 'res_new_plumbing' THEN 'new_residential_plumbing'
-                WHEN category IN ('res_repipe','res_remodel_plumbing') THEN 'plumbing_repipe_remodel'
-                WHEN category = 'pool_spa' THEN 'pool_spa'
-                WHEN category = 'irrigation' THEN 'irrigation'
-                ELSE 'other'
-              END AS segment,
-              yr, mo, COUNT(*), SUM(valuation_filled)
-            FROM permits_v
-            GROUP BY 1, 2, 3
-            ORDER BY 1, 2, 3
-            """
-        ).fetchall()
-    ]
-
-    # --- Q3 SAM share, county trend, YE projection ---
-    sam_share = {
-        "tom_count": int(meta[0]),
-        "sam_count": int(meta[1]),
-        "sam_share_of_tom_count_pct": _pct(meta[1], meta[0]),
-    }
-    sam_usd = con.execute(
-        """
-        SELECT
-          SUM(valuation_filled) FILTER (WHERE is_sam) AS sam_v,
-          SUM(valuation_filled) AS tom_v
-        FROM permits_v
-        """
-    ).fetchone()
-    sam_share["sam_valuation"] = float(sam_usd[0] or 0)
-    sam_share["tom_valuation"] = float(sam_usd[1] or 0)
-    sam_share["sam_share_of_tom_valuation_pct"] = _pct(
-        float(sam_usd[0] or 0), float(sam_usd[1] or 0)
-    )
-
-    sam_by_cat = [
-        {
-            "category": r[0],
-            "count": int(r[1]),
-            "valuation": float(r[2] or 0),
-            "pct_of_sam_count": float(r[3] or 0),
-            "pct_of_sam_valuation": float(r[4] or 0),
-        }
-        for r in con.execute(
-            f"""
-            WITH s AS (
-              SELECT category, COUNT(*) AS c, SUM(valuation_filled) AS v
-              FROM permits_v WHERE is_sam GROUP BY 1
-            ), t AS (SELECT SUM(c) AS tc, SUM(v) AS tv FROM s)
-            SELECT category, c, v,
-                   100.0 * c / NULLIF(t.tc,0),
-                   100.0 * v / NULLIF(t.tv,0)
-            FROM s, t
-            ORDER BY v DESC
-            """
-        ).fetchall()
-    ]
-
-    sam_county_monthly = [
-        {
-            "county": r[0] or "Unknown",
-            "year": int(r[1]),
-            "month": int(r[2]),
-            "count": int(r[3]),
-            "valuation": float(r[4] or 0),
-        }
-        for r in con.execute(
-            """
-            SELECT COALESCE(county, 'Unknown'), yr, mo, COUNT(*), SUM(valuation_filled)
-            FROM permits_v
-            WHERE is_sam
-            GROUP BY 1, 2, 3
-            ORDER BY 1, 2, 3
-            """
-        ).fetchall()
-    ]
-    sam_county_annual = [
-        {
-            "county": r[0] or "Unknown",
-            "year": int(r[1]),
-            "count": int(r[2]),
-            "valuation": float(r[3] or 0),
-        }
-        for r in con.execute(
-            """
-            SELECT COALESCE(county, 'Unknown'), yr, COUNT(*), SUM(valuation_filled)
-            FROM permits_v
-            WHERE is_sam
-            GROUP BY 1, 2
-            ORDER BY 4 DESC
-            """
-        ).fetchall()
-    ]
-    # Top counties for dashboard
-    top_counties = [
-        {
-            "county": r[0] or "Unknown",
-            "count": int(r[1]),
-            "valuation": float(r[2] or 0),
-        }
-        for r in con.execute(
-            """
-            SELECT COALESCE(county, 'Unknown'), COUNT(*), SUM(valuation_filled)
-            FROM permits_v WHERE is_sam
-            GROUP BY 1 ORDER BY 3 DESC LIMIT 15
-            """
-        ).fetchall()
-    ]
-
-    sam_monthly = [
-        {"year": int(r[0]), "month": int(r[1]), "count": int(r[2]), "valuation": float(r[3] or 0)}
-        for r in con.execute(
-            """
-            SELECT yr, mo, COUNT(*), SUM(valuation_filled)
-            FROM permits_v WHERE is_sam
             GROUP BY 1, 2 ORDER BY 1, 2
             """
         ).fetchall()
     ]
-    sam_proj_count = _linear_project(sam_monthly, "count", as_of, YEAR_END_2026)
-    sam_proj_val = _linear_project(sam_monthly, "valuation", as_of, YEAR_END_2026)
 
-    # --- Q4 SOM 5% + material/labor + imputation stats ---
-    imput = con.execute(
-        """
-        SELECT valuation_method, COUNT(*), SUM(valuation_filled)
-        FROM permits_v WHERE is_sam
-        GROUP BY 1 ORDER BY 2 DESC
-        """
-    ).fetchall()
-    imputation = [
-        {"method": r[0], "count": int(r[1]), "valuation": float(r[2] or 0)} for r in imput
-    ]
-
-    sam_addressable = float(sam_usd[0] or 0)
-    som_total = sam_addressable * SOM_SHARE
-
-    # Material vs labor on SAM addressable construction $ using category weights
-    # Plumbing cats: material_share_of_plumbing on the plumbing portion of project;
-    # for exec split we apply material_share directly to SAM valuation for plumbing,
-    # and fittings_share_of_project for pool/irrigation as the "material" share.
-    mat_rows = con.execute(
+    # SAM by category by year with material/labor + SOM
+    cat_year_rows = con.execute(
         f"""
-        SELECT category, SUM(valuation_filled)
+        SELECT category, yr, COUNT(*), SUM(valuation_filled)
         FROM permits_v WHERE is_sam
-        GROUP BY 1
+        GROUP BY 1, 2 ORDER BY 1, 2
         """
     ).fetchall()
-    material_usd = 0.0
-    for cat, v in mat_rows:
+    sam_by_cat_year = []
+    for cat, yr, n, v in cat_year_rows:
         v = float(v or 0)
-        if cat in ("res_new_plumbing", "res_repipe", "res_remodel_plumbing"):
-            # For new construction valuation is whole project; apply plumbing×material chain base
-            cfg = mat_cfg.get(cat, mat_cfg.get("res_new_plumbing", {}))
-            if cfg.get("method") == "fixed_per_project":
-                # Use fittings base × count approx — recompute from gold if available
-                material_usd += 0.0  # filled below via fittings if present
-            else:
-                pl = float(cfg.get("plumbing_share_of_project_value", {}).get("base", 0.045))
-                ms = float(cfg.get("material_share_of_plumbing", {}).get("base", plumbing_mat_share))
-                material_usd += v * pl * ms
-        elif cat == "pool_spa":
-            material_usd += v * pool_fit_share
-        elif cat == "irrigation":
-            material_usd += v * irrig_fit_share
+        # for repipe, material is per-project fixed × count
+        if cat == "res_repipe":
+            mat = float(
+                mat_cfg.get("res_repipe", {}).get("fittings_value_usd", {}).get("base", 450)
+            ) * int(n)
+            lab = mat * 2.0
+        else:
+            mat, lab = _material_labor(cat, v, assumptions)
+        sam_by_cat_year.append(
+            {
+                "category": cat,
+                "year": int(yr),
+                "count": int(n),
+                "valuation": v,
+                "material_usd": mat,
+                "labor_usd": lab,
+                "som_usd": v * SOM_SHARE,
+                "som_material_usd": mat * SOM_SHARE,
+                "som_labor_usd": lab * SOM_SHARE,
+            }
+        )
 
-    # Prefer gold fittings if table exists
-    has_gold = (
+    # YTD by category (current as_of year through ytd_through)
+    cat_ytd = []
+    for cat, n, v in con.execute(
+        f"""
+        SELECT category, COUNT(*), SUM(valuation_filled)
+        FROM permits_v
+        WHERE is_sam AND yr = ? AND mo <= ?
+        GROUP BY 1
+        """,
+        [as_of.year, ytd_through],
+    ).fetchall():
+        v = float(v or 0)
+        if cat == "res_repipe":
+            mat = float(
+                mat_cfg.get("res_repipe", {}).get("fittings_value_usd", {}).get("base", 450)
+            ) * int(n)
+            lab = mat * 2.0
+        else:
+            mat, lab = _material_labor(cat, v, assumptions)
+        # prior year same YTD
+        pn, pv = con.execute(
+            f"""
+            SELECT COUNT(*), SUM(valuation_filled)
+            FROM permits_v
+            WHERE is_sam AND category = ? AND yr = ? AND mo <= ?
+            """,
+            [cat, as_of.year - 1, ytd_through],
+        ).fetchone()
+        cat_ytd.append(
+            {
+                "category": cat,
+                "year": as_of.year,
+                "through_month": ytd_through,
+                "count": int(n),
+                "valuation": v,
+                "material_usd": mat,
+                "labor_usd": lab,
+                "som_usd": v * SOM_SHARE,
+                "count_yoy_pct": _yoy(int(n), int(pn or 0)),
+                "valuation_yoy_pct": _yoy(v, float(pv or 0)),
+            }
+        )
+
+    # Overall SAM/TOM
+    tot = con.execute(
+        """
+        SELECT COUNT(*), COUNT(*) FILTER (WHERE is_sam),
+               SUM(valuation_filled), SUM(valuation_filled) FILTER (WHERE is_sam)
+        FROM permits_v
+        """
+    ).fetchone()
+    tom_n, sam_n, tom_v, sam_v = int(tot[0]), int(tot[1]), float(tot[2] or 0), float(tot[3] or 0)
+
+    # gold fittings if present
+    fittings_base = None
+    if (
         con.execute(
             """
             SELECT COUNT(*) FROM information_schema.tables
@@ -592,297 +522,348 @@ def main() -> None:
             """
         ).fetchone()[0]
         > 0
-    )
-    fittings_base = None
-    if has_gold:
+    ):
         fittings_base = float(
             con.execute("SELECT SUM(fittings_base) FROM gold.material_estimates").fetchone()[0]
             or 0
         )
-        # Align material with fittings demand for SOM narrative
-        material_usd = fittings_base
 
-    labor_usd = max(0.0, sam_addressable - material_usd)
-    # SOM splits proportional
-    if sam_addressable > 0:
-        mat_share = material_usd / sam_addressable
-        lab_share = labor_usd / sam_addressable
-    else:
-        mat_share = plumbing_mat_share
-        lab_share = 1 - mat_share
-
-    fittings_sam = float(fittings_base) if fittings_base is not None else material_usd
-    fittings_som = fittings_sam * SOM_SHARE
-    som = {
-        "share_pct": SOM_SHARE * 100,
-        "sam_addressable_usd": sam_addressable,
-        "som_usd": som_total,
-        "material_usd": som_total * mat_share,
-        "labor_usd": som_total * lab_share,
-        "fittings_sam_usd": fittings_sam,
-        "fittings_som_usd": fittings_som,
-        "material_share_of_sam_pct": round(mat_share * 100, 2),
-        "labor_share_of_sam_pct": round(lab_share * 100, 2),
-        "assumptions_stated": {
-            "plumbing_material_share_of_plumbing_base": plumbing_mat_share,
-            "plumbing_share_of_new_construction_base": float(
-                mat_cfg.get("res_new_plumbing", {})
-                .get("plumbing_share_of_project_value", {})
-                .get("base", 0.045)
-            ),
-            "fittings_share_of_material_base": float(
-                mat_cfg.get("res_new_plumbing", {})
-                .get("fittings_share_of_material", {})
-                .get("base", 0.18)
-            ),
-            "pool_fittings_share_of_project_base": pool_fit_share,
-            "irrigation_fittings_share_of_project_base": irrig_fit_share,
-            "material_basis": "gold.fittings_base" if has_gold else "assumptions_chain_on_valuation",
-        },
-        "imputation": imputation,
-        "imputation_method": (
-            "Missing/≤0 declared_valuation filled with median of peer "
-            "(category×county → county → category)."
-        ),
-        "formatted": {
-            "sam_addressable": _fmt(sam_addressable),
-            "som": _fmt(som_total),
-            "material": _fmt(som_total * mat_share),
-            "labor": _fmt(som_total * lab_share),
-            "fittings_sam": _fmt(fittings_sam),
-            "fittings_som": _fmt(fittings_som),
-        },
-    }
-
-    # --- Q5 Near-term opportunity by county ---
-    # Current month + next 1–3 months projected from seasonality
-    cur_m = as_of.month
-    cur_y = as_of.year
-    near_term = []
-    for county_row in top_counties[:12]:
-        county = county_row["county"]
-        series = [r for r in sam_county_monthly if r["county"] == county]
-        by_ym = {(r["year"], r["month"]): r for r in series}
-        current = by_ym.get((cur_y, cur_m), {"count": 0, "valuation": 0.0})
-        horizon = []
-        for ahead in range(0, 4):
-            mm = cur_m + ahead
-            yy = cur_y
-            while mm > 12:
-                mm -= 12
-                yy += 1
-            if ahead == 0 and (cur_y, cur_m) in by_ym:
-                horizon.append(
-                    {
-                        "year": yy,
-                        "month": mm,
-                        "label": "current" if ahead == 0 else f"+{ahead}m",
-                        "count": by_ym[(cur_y, cur_m)]["count"],
-                        "valuation": by_ym[(cur_y, cur_m)]["valuation"],
-                        "kind": "observed",
-                    }
-                )
-            else:
-                prior = by_ym.get((yy - 1, mm))
-                # growth from last available same-offset
-                g = 1.0
-                last = by_ym.get((cur_y, cur_m)) or by_ym.get((cur_y, cur_m - 1))
-                last_prior = None
-                if last:
-                    last_prior = by_ym.get((last["year"] - 1, last["month"]))
-                if last and last_prior and last_prior["valuation"] > 0:
-                    g = last["valuation"] / last_prior["valuation"]
-                pred_v = (prior["valuation"] * g) if prior else (current.get("valuation", 0) or 0)
-                pred_c = (prior["count"] * g) if prior else (current.get("count", 0) or 0)
-                horizon.append(
-                    {
-                        "year": yy,
-                        "month": mm,
-                        "label": "current" if ahead == 0 else f"+{ahead}m",
-                        "count": round(pred_c),
-                        "valuation": pred_v,
-                        "kind": "projected" if ahead or (cur_y, cur_m) not in by_ym else "observed",
-                    }
-                )
-        near_term.append(
+    # Counties for map
+    counties = []
+    for r in con.execute(
+        """
+        SELECT COALESCE(county,'Unknown'),
+               COUNT(*), COUNT(*) FILTER (WHERE is_sam),
+               SUM(valuation_filled), SUM(valuation_filled) FILTER (WHERE is_sam)
+        FROM permits_v
+        GROUP BY 1 ORDER BY 4 DESC
+        """
+    ).fetchall():
+        name = r[0]
+        counties.append(
             {
-                "county": county,
-                "horizon": horizon,
-                "pipeline_0_3m_valuation": sum(h["valuation"] for h in horizon),
+                "county": name,
+                "fips": COUNTY_FIPS.get(name),
+                "tom_count": int(r[1]),
+                "sam_count": int(r[2]),
+                "tom_valuation": float(r[3] or 0),
+                "sam_valuation": float(r[4] or 0),
+                "som_usd": float(r[4] or 0) * SOM_SHARE,
             }
         )
-    near_term.sort(key=lambda x: -x["pipeline_0_3m_valuation"])
 
-    # --- Q6 Contractor activation ranking ---
-    contractor_cov = con.execute(
+    # County monthly for near-term (SAM)
+    county_monthly = [
+        {
+            "county": r[0],
+            "year": int(r[1]),
+            "month": int(r[2]),
+            "count": int(r[3]),
+            "valuation": float(r[4] or 0),
+        }
+        for r in con.execute(
+            """
+            SELECT COALESCE(county,'Unknown'), yr, mo, COUNT(*), SUM(valuation_filled)
+            FROM permits_v WHERE is_sam
+            GROUP BY 1, 2, 3 ORDER BY 1, 2, 3
+            """
+        ).fetchall()
+    ]
+
+    # Miami-Dade mesoregions
+    miami_rows = con.execute(
         """
-        SELECT
-          COUNT(*) AS tom,
-          COUNT(*) FILTER (WHERE contractor_name IS NOT NULL AND TRIM(contractor_name) <> '') AS with_name,
-          COUNT(*) FILTER (WHERE is_sam AND contractor_name IS NOT NULL AND TRIM(contractor_name) <> '') AS sam_with_name,
-          COUNT(*) FILTER (WHERE is_sam) AS sam
+        SELECT jurisdiction_id, address_raw, city, is_sam, valuation_filled, yr, mo,
+               contractor_name, category
         FROM permits_v
+        WHERE county = 'Miami-Dade'
         """
-    ).fetchone()
-    top_contractors = [
-        {
-            "contractor_name": r[0],
-            "permits": int(r[1]),
-            "valuation": float(r[2] or 0),
-            "counties": r[3],
-            "top_categories": r[4],
-        }
-        for r in con.execute(
-            """
-            SELECT
-              UPPER(TRIM(contractor_name)) AS cname,
-              COUNT(*) AS n,
-              SUM(valuation_filled) AS v,
-              STRING_AGG(DISTINCT county, ', ') AS counties,
-              STRING_AGG(DISTINCT category, ', ') AS cats
-            FROM permits_v
-            WHERE is_sam
-              AND contractor_name IS NOT NULL
-              AND TRIM(contractor_name) <> ''
-              AND UPPER(TRIM(contractor_name)) NOT IN ('OWNER', 'OWNER BUILDER', 'OWNER/BUILDER', 'N/A', 'NA', 'NONE', 'UNKNOWN')
-              AND COALESCE(is_owner_builder, FALSE) = FALSE
-            GROUP BY 1
-            ORDER BY v DESC
-            LIMIT 40
-            """
-        ).fetchall()
-    ]
-    # Coverage gaps by jurisdiction
-    contractor_gaps = [
-        {
-            "jurisdiction_id": r[0],
-            "sam": int(r[1]),
-            "with_contractor": int(r[2]),
-            "coverage_pct": float(r[3] or 0),
-        }
-        for r in con.execute(
-            """
-            SELECT jurisdiction_id,
-                   COUNT(*) FILTER (WHERE is_sam),
-                   COUNT(*) FILTER (WHERE is_sam AND contractor_name IS NOT NULL AND TRIM(contractor_name) <> ''),
-                   100.0 * COUNT(*) FILTER (WHERE is_sam AND contractor_name IS NOT NULL AND TRIM(contractor_name) <> '')
-                     / NULLIF(COUNT(*) FILTER (WHERE is_sam), 0)
-            FROM permits_v
-            GROUP BY 1
-            ORDER BY 2 DESC
-            """
-        ).fetchall()
-    ]
+    ).fetchall()
+    meso: dict[str, dict[str, float | int]] = {}
+    for jid, addr, city, is_sam, val, yr, mo, _cname, _cat in miami_rows:
+        area = _miami_area(addr, city, jid)
+        bucket = meso.setdefault(
+            area,
+            {
+                "area": area,
+                "tom_count": 0,
+                "sam_count": 0,
+                "tom_valuation": 0.0,
+                "sam_valuation": 0.0,
+            },
+        )
+        bucket["tom_count"] = int(bucket["tom_count"]) + 1
+        bucket["tom_valuation"] = float(bucket["tom_valuation"]) + float(val or 0)
+        if is_sam:
+            bucket["sam_count"] = int(bucket["sam_count"]) + 1
+            bucket["sam_valuation"] = float(bucket["sam_valuation"]) + float(val or 0)
+    miami_meso = sorted(
+        (
+            {
+                **b,
+                "som_usd": float(b["sam_valuation"]) * SOM_SHARE,
+                "note": (
+                    "Most Miami-Dade Hub rows lack city/ZIP; "
+                    "'Unincorporated / other' dominates unless address matches a municipality."
+                ),
+            }
+            for b in meso.values()
+        ),
+        key=lambda x: -float(x["sam_valuation"]),
+    )
 
-    # Jurisdiction coverage for notes
-    by_jur = [
+    # Jurisdiction split for Miami
+    miami_jur = [
         {
             "jurisdiction_id": r[0],
-            "tom": int(r[1]),
-            "sam": int(r[2]),
-            "valuation_sam": float(r[3] or 0),
+            "tom_count": int(r[1]),
+            "sam_count": int(r[2]),
+            "tom_valuation": float(r[3] or 0),
+            "sam_valuation": float(r[4] or 0),
+            "som_usd": float(r[4] or 0) * SOM_SHARE,
         }
         for r in con.execute(
             """
-            SELECT jurisdiction_id, COUNT(*),
-                   COUNT(*) FILTER (WHERE is_sam),
-                   SUM(valuation_filled) FILTER (WHERE is_sam)
-            FROM permits_v
+            SELECT jurisdiction_id, COUNT(*), COUNT(*) FILTER (WHERE is_sam),
+                   SUM(valuation_filled), SUM(valuation_filled) FILTER (WHERE is_sam)
+            FROM permits_v WHERE county='Miami-Dade'
             GROUP BY 1 ORDER BY 2 DESC
             """
         ).fetchall()
     ]
 
-    payload: dict[str, Any] = {
+    # Contractors: YTD + last complete month (near-term demand)
+    near_month = ytd_through  # e.g. October 2026
+    near_year = as_of.year
+
+    def top_contractors(extra_where: str, params: list[Any], limit: int = 30) -> list[dict]:
+        rows = con.execute(
+            f"""
+            SELECT UPPER(TRIM(contractor_name)) AS cname,
+                   COUNT(*) AS n,
+                   SUM(valuation_filled) AS v,
+                   STRING_AGG(DISTINCT county, ', ') AS counties,
+                   STRING_AGG(DISTINCT category, ', ') AS cats
+            FROM permits_v
+            WHERE is_sam
+              AND contractor_name IS NOT NULL
+              AND TRIM(contractor_name) <> ''
+              AND UPPER(TRIM(contractor_name)) NOT IN
+                ('OWNER','OWNER BUILDER','OWNER/BUILDER','N/A','NA','NONE','UNKNOWN')
+              AND COALESCE(is_owner_builder, FALSE) = FALSE
+              AND {extra_where}
+            GROUP BY 1
+            ORDER BY n DESC
+            LIMIT {limit}
+            """,
+            params,
+        ).fetchall()
+        # also rank by valuation version
+        return [
+            {
+                "contractor_name": r[0],
+                "permits": int(r[1]),
+                "valuation": float(r[2] or 0),
+                "counties": r[3],
+                "categories": r[4],
+            }
+            for r in rows
+        ]
+
+    contractors_ytd = top_contractors(
+        "yr = ? AND mo <= ?", [as_of.year, ytd_through], 40
+    )
+    contractors_ytd_by_val = con.execute(
+        f"""
+        SELECT UPPER(TRIM(contractor_name)), COUNT(*), SUM(valuation_filled),
+               STRING_AGG(DISTINCT county, ', '), STRING_AGG(DISTINCT category, ', ')
+        FROM permits_v
+        WHERE is_sam AND contractor_name IS NOT NULL AND TRIM(contractor_name) <> ''
+          AND UPPER(TRIM(contractor_name)) NOT IN
+            ('OWNER','OWNER BUILDER','OWNER/BUILDER','N/A','NA','NONE','UNKNOWN')
+          AND COALESCE(is_owner_builder, FALSE) = FALSE
+          AND yr = ? AND mo <= ?
+        GROUP BY 1 ORDER BY 3 DESC LIMIT 40
+        """,
+        [as_of.year, ytd_through],
+    ).fetchall()
+    contractors_near = top_contractors("yr = ? AND mo = ?", [near_year, near_month], 40)
+    contractors_near_by_val = [
+        {
+            "contractor_name": r[0],
+            "permits": int(r[1]),
+            "valuation": float(r[2] or 0),
+            "counties": r[3],
+            "categories": r[4],
+        }
+        for r in con.execute(
+            f"""
+            SELECT UPPER(TRIM(contractor_name)), COUNT(*), SUM(valuation_filled),
+                   STRING_AGG(DISTINCT county, ', '), STRING_AGG(DISTINCT category, ', ')
+            FROM permits_v
+            WHERE is_sam AND contractor_name IS NOT NULL AND TRIM(contractor_name) <> ''
+              AND UPPER(TRIM(contractor_name)) NOT IN
+                ('OWNER','OWNER BUILDER','OWNER/BUILDER','N/A','NA','NONE','UNKNOWN')
+              AND COALESCE(is_owner_builder, FALSE) = FALSE
+              AND yr = ? AND mo = ?
+            GROUP BY 1 ORDER BY 3 DESC LIMIT 40
+            """,
+            [near_year, near_month],
+        ).fetchall()
+    ]
+
+    cov = con.execute(
+        """
+        SELECT COUNT(*), 
+               COUNT(*) FILTER (WHERE contractor_name IS NOT NULL AND TRIM(contractor_name)<>''),
+               COUNT(*) FILTER (WHERE is_sam),
+               COUNT(*) FILTER (WHERE is_sam AND contractor_name IS NOT NULL AND TRIM(contractor_name)<>'')
+        FROM permits_v
+        """
+    ).fetchone()
+
+    # Material/labor annual totals for SAM
+    mat_lab_year: dict[int, dict[str, float]] = {}
+    for row in sam_by_cat_year:
+        y = row["year"]
+        b = mat_lab_year.setdefault(y, {"material_usd": 0.0, "labor_usd": 0.0, "valuation": 0.0})
+        b["material_usd"] += row["material_usd"]
+        b["labor_usd"] += row["labor_usd"]
+        b["valuation"] += row["valuation"]
+    material_labor_annual = [
+        {
+            "year": y,
+            **vals,
+            "som_usd": vals["valuation"] * SOM_SHARE,
+            "som_material_usd": vals["material_usd"] * SOM_SHARE,
+            "som_labor_usd": vals["labor_usd"] * SOM_SHARE,
+        }
+        for y, vals in sorted(mat_lab_year.items())
+    ]
+
+    payload = {
         "generated_at": datetime.now(timezone.utc).isoformat(),
         "as_of": as_of.isoformat(),
+        "ytd_through_month": ytd_through,
+        "near_term_month": {"year": near_year, "month": near_month},
         "definitions": {
-            "TOM": "All permits issued ≥ 2021-01-01 in silver.permits",
+            "TOM": "All permits issued ≥ 2021-01-01",
             "SAM": "plumbing (new/repipe/remodel incl. new residential) + pool/spa + irrigation",
-            "SOM": "5% market share of SAM addressable $ (valuation with peer median fill)",
-            "valuation": "USD declared project value; missing filled with peer median",
-            "outlier_cap_applied": bool(args.cap_outliers),
-        },
-        "universe": {
-            "tom": int(meta[0]),
-            "sam": int(meta[1]),
-            "sam_share_pct": _pct(meta[1], meta[0]),
-            "min_issued": str(meta[2]),
-            "max_issued": str(meta[3]),
-            "counties": int(meta[4]),
-            "jurisdictions": int(meta[5]),
-        },
-        "q1_tom_yoy": {
-            "annual": tom_yoy,
-            "monthly": tom_monthly,
-            "projection_2026_count": tom_proj_count,
-            "projection_2026_valuation": tom_proj_val,
-            "headline": {
-                "latest_full_year": max((y for y in by_year if y < as_of.year), default=None),
-                "yoy_count_pct": next(
-                    (x["count_yoy_pct"] for x in reversed(tom_yoy) if x["count_yoy_pct"] is not None),
-                    None,
-                ),
-                "yoy_valuation_pct": next(
-                    (
-                        x["valuation_yoy_pct"]
-                        for x in reversed(tom_yoy)
-                        if x["valuation_yoy_pct"] is not None
-                    ),
-                    None,
-                ),
-                "y2026_ytd_count": tom_proj_count["ytd"],
-                "y2026_ytg_count": tom_proj_count["ytg_expected"],
-                "y2026_full_year_count": tom_proj_count["full_year_expected"],
-                "y2026_ytd_valuation": tom_proj_val["ytd"],
-                "y2026_ytg_valuation": tom_proj_val["ytg_expected"],
-                "y2026_full_year_valuation": tom_proj_val["full_year_expected"],
-            },
-        },
-        "q2_segment_trends": {
-            "annual": seg_annual,
-            "monthly": seg_monthly,
-        },
-        "q3_sam": {
-            "share": sam_share,
-            "by_category": sam_by_cat,
-            "top_counties": top_counties,
-            "county_annual": sam_county_annual,
-            "county_monthly": sam_county_monthly,
-            "projection_2026_count": sam_proj_count,
-            "projection_2026_valuation": sam_proj_val,
-        },
-        "q4_som": som,
-        "q5_near_term": {
-            "horizon_months": 4,
-            "by_county": near_term,
-        },
-        "q6_contractors": {
-            "coverage": {
-                "tom": int(contractor_cov[0]),
-                "tom_with_name": int(contractor_cov[1]),
-                "tom_coverage_pct": _pct(contractor_cov[1], contractor_cov[0]),
-                "sam": int(contractor_cov[3]),
-                "sam_with_name": int(contractor_cov[2]),
-                "sam_coverage_pct": _pct(contractor_cov[2], contractor_cov[3]),
-            },
-            "top": top_contractors,
-            "gaps_by_jurisdiction": contractor_gaps,
-            "notes": (
-                "Owner-builder and blank/NA names excluded from ranking. "
-                "Several jurisdictions lack contractor fields entirely — see gaps."
+            "SOM": "5% of SAM addressable project $",
+            "YTD": f"Jan–{ytd_through} same months across years (sparse as-of month excluded)",
+            "material_labor": (
+                "Plumbing: project$ × plumbing_share(4.5%) split 35% material / 65% labor; "
+                "pool/irrigation: fittings_share of project = material, remainder labor/other; "
+                "repipe: fixed fittings$ material + 2× labor proxy"
+            ),
+            "miami_mesoregions": (
+                "City of Miami jurisdiction vs county Hub; Hub mesoregions from address "
+                "municipality regex when present — most Hub rows lack city/ZIP"
             ),
         },
-        "jurisdictions": by_jur,
+        "assumptions": {
+            "som_share": SOM_SHARE,
+            "plumbing_share_of_project": 0.045,
+            "material_share_of_plumbing": 0.35,
+            "fittings_share_of_material": 0.18,
+            "pool_fittings_share": 0.08,
+            "irrigation_fittings_share": 0.12,
+        },
+        "universe": {
+            "tom": tom_n,
+            "sam": sam_n,
+            "sam_share_count_pct": _pct(sam_n, tom_n),
+            "tom_valuation": tom_v,
+            "sam_valuation": sam_v,
+            "sam_share_valuation_pct": _pct(sam_v, tom_v),
+            "som_usd": sam_v * SOM_SHARE,
+            "fittings_sam_usd": fittings_base,
+            "fittings_som_usd": (fittings_base or 0) * SOM_SHARE,
+            "counties": len(counties),
+            "jurisdictions": int(
+                con.execute("SELECT COUNT(DISTINCT jurisdiction_id) FROM permits_v").fetchone()[0]
+            ),
+        },
+        "tom": {
+            "annual": annual(),
+            "ytd_comparison": tom_ytd,
+            "monthly": tom_monthly,
+            "monthly_count_with_projection": tom_count_series,
+            "monthly_valuation_with_projection": tom_val_series,
+            "projection_count": tom_count_proj,
+            "projection_valuation": tom_val_proj,
+        },
+        "sam_som": {
+            "share": {
+                "sam_count": sam_n,
+                "tom_count": tom_n,
+                "sam_share_count_pct": _pct(sam_n, tom_n),
+                "sam_valuation": sam_v,
+                "tom_valuation": tom_v,
+                "sam_share_valuation_pct": _pct(sam_v, tom_v),
+                "som_usd": sam_v * SOM_SHARE,
+            },
+            "annual": annual("is_sam"),
+            "ytd_comparison": sam_ytd,
+            "monthly": sam_monthly,
+            "monthly_count_with_projection": sam_count_series,
+            "monthly_valuation_with_projection": sam_val_series,
+            "projection_count": sam_count_proj,
+            "projection_valuation": sam_val_proj,
+            "by_category_year": sam_by_cat_year,
+            "by_category_ytd": cat_ytd,
+            "material_labor_annual": material_labor_annual,
+            "segment_annual": seg_annual,
+        },
+        "regions": {
+            "counties": counties,
+            "county_monthly_sam": county_monthly,
+            "miami_dade": {
+                "jurisdictions": miami_jur,
+                "mesoregions": miami_meso,
+                "coverage_note": (
+                    "ZIP/lat mostly missing on Miami feeds. Drill = City of Miami layer vs "
+                    "county Hub + municipality tokens parsed from address when available."
+                ),
+            },
+        },
+        "contractors": {
+            "coverage": {
+                "tom": int(cov[0]),
+                "tom_with_name": int(cov[1]),
+                "tom_coverage_pct": _pct(cov[1], cov[0]),
+                "sam": int(cov[2]),
+                "sam_with_name": int(cov[3]),
+                "sam_coverage_pct": _pct(cov[3], cov[2]),
+            },
+            "ytd_by_permits": contractors_ytd,
+            "ytd_by_valuation": [
+                {
+                    "contractor_name": r[0],
+                    "permits": int(r[1]),
+                    "valuation": float(r[2] or 0),
+                    "counties": r[3],
+                    "categories": r[4],
+                }
+                for r in contractors_ytd_by_val
+            ],
+            "near_term_by_permits": contractors_near,
+            "near_term_by_valuation": contractors_near_by_val,
+            "near_term_label": f"{near_year}-{near_month:02d} (last complete month)",
+            "notes": (
+                "Near-term = last complete month of permit issuance — best proxy for "
+                "purchase window now. Owner-builder / blank excluded."
+            ),
+        },
         "formatted_headlines": {
-            "tom_count": f"{int(meta[0]):,}",
-            "sam_count": f"{int(meta[1]):,}",
-            "sam_share": f"{_pct(meta[1], meta[0])}%" if meta[0] else "n/a",
-            "tom_valuation": _fmt(float(sam_usd[1] or 0)),
-            "sam_valuation": _fmt(float(sam_usd[0] or 0)),
-            "som": _fmt(som_total),
-            "som_material": _fmt(som_total * mat_share),
-            "som_labor": _fmt(som_total * lab_share),
+            "tom_count": f"{tom_n:,}",
+            "sam_count": f"{sam_n:,}",
+            "sam_share": f"{_pct(sam_n, tom_n)}%",
+            "sam_share_val": f"{_pct(sam_v, tom_v)}%",
+            "tom_valuation": _fmt(tom_v),
+            "sam_valuation": _fmt(sam_v),
+            "som": _fmt(sam_v * SOM_SHARE),
+            "fittings_som": _fmt((fittings_base or 0) * SOM_SHARE),
         },
     }
 
@@ -890,7 +871,8 @@ def main() -> None:
     args.out.write_text(json.dumps(payload, indent=2))
     print(f"Wrote {args.out} ({args.out.stat().st_size:,} bytes)")
     print(
-        f"TOM={meta[0]:,} SAM={meta[1]:,} SAM$={_fmt(sam_addressable)} SOM={_fmt(som_total)}"
+        f"TOM={tom_n:,} SAM={sam_n:,} SOM={_fmt(sam_v * SOM_SHARE)} "
+        f"YTD through m{ytd_through} near={near_year}-{near_month:02d}"
     )
 
 

@@ -1,17 +1,33 @@
+export type MonthlyPoint = {
+  year: number;
+  month: number;
+  count?: number;
+  valuation?: number;
+  value?: number;
+  kind?: "observed" | "projected";
+};
+
 export type Metrics = {
   generated_at: string;
   as_of: string;
-  definitions: Record<string, string | boolean>;
+  ytd_through_month: number;
+  near_term_month: { year: number; month: number };
+  definitions: Record<string, string>;
+  assumptions: Record<string, number>;
   universe: {
     tom: number;
     sam: number;
-    sam_share_pct: number | null;
-    min_issued: string;
-    max_issued: string;
+    sam_share_count_pct: number | null;
+    tom_valuation: number;
+    sam_valuation: number;
+    sam_share_valuation_pct: number | null;
+    som_usd: number;
+    fittings_sam_usd: number | null;
+    fittings_som_usd: number;
     counties: number;
     jurisdictions: number;
   };
-  q1_tom_yoy: {
+  tom: {
     annual: Array<{
       year: number;
       count: number;
@@ -19,91 +35,118 @@ export type Metrics = {
       count_yoy_pct: number | null;
       valuation_yoy_pct: number | null;
     }>;
-    monthly: Array<{
+    ytd_comparison: Array<{
       year: number;
-      month: number;
+      through_month: number;
       count: number;
       valuation: number;
+      count_yoy_pct: number | null;
+      valuation_yoy_pct: number | null;
     }>;
-    projection_2026_count: Projection;
-    projection_2026_valuation: Projection;
-    headline: {
-      latest_full_year: number | null;
-      yoy_count_pct: number | null;
-      yoy_valuation_pct: number | null;
-      y2026_ytd_count: number;
-      y2026_ytg_count: number;
-      y2026_full_year_count: number;
-      y2026_ytd_valuation: number;
-      y2026_ytg_valuation: number;
-      y2026_full_year_valuation: number;
-    };
+    monthly: MonthlyPoint[];
+    monthly_count_with_projection: MonthlyPoint[];
+    monthly_valuation_with_projection: MonthlyPoint[];
+    projection_count: Record<string, number | boolean>;
+    projection_valuation: Record<string, number | boolean>;
   };
-  q2_segment_trends: {
-    annual: Array<{
-      segment: string;
-      year: number;
-      count: number;
-      valuation: number;
-    }>;
-    monthly: Array<{
-      segment: string;
-      year: number;
-      month: number;
-      count: number;
-      valuation: number;
-    }>;
-  };
-  q3_sam: {
+  sam_som: {
     share: {
-      tom_count: number;
       sam_count: number;
-      sam_share_of_tom_count_pct: number | null;
+      tom_count: number;
+      sam_share_count_pct: number | null;
       sam_valuation: number;
       tom_valuation: number;
-      sam_share_of_tom_valuation_pct: number | null;
+      sam_share_valuation_pct: number | null;
+      som_usd: number;
     };
-    by_category: Array<{
-      category: string;
+    annual: Array<{
+      year: number;
       count: number;
       valuation: number;
-      pct_of_sam_count: number;
-      pct_of_sam_valuation: number;
+      count_yoy_pct: number | null;
+      valuation_yoy_pct: number | null;
     }>;
-    top_counties: Array<{ county: string; count: number; valuation: number }>;
-    projection_2026_count: Projection;
-    projection_2026_valuation: Projection;
+    ytd_comparison: Array<{
+      year: number;
+      through_month: number;
+      count: number;
+      valuation: number;
+      count_yoy_pct: number | null;
+      valuation_yoy_pct: number | null;
+    }>;
+    monthly_count_with_projection: MonthlyPoint[];
+    monthly_valuation_with_projection: MonthlyPoint[];
+    by_category_year: Array<{
+      category: string;
+      year: number;
+      count: number;
+      valuation: number;
+      material_usd: number;
+      labor_usd: number;
+      som_usd: number;
+      som_material_usd: number;
+      som_labor_usd: number;
+    }>;
+    by_category_ytd: Array<{
+      category: string;
+      year: number;
+      through_month: number;
+      count: number;
+      valuation: number;
+      material_usd: number;
+      labor_usd: number;
+      som_usd: number;
+      count_yoy_pct: number | null;
+      valuation_yoy_pct: number | null;
+    }>;
+    material_labor_annual: Array<{
+      year: number;
+      material_usd: number;
+      labor_usd: number;
+      valuation: number;
+      som_usd: number;
+      som_material_usd: number;
+      som_labor_usd: number;
+    }>;
+    segment_annual: Array<{
+      segment: string;
+      year: number;
+      count: number;
+      valuation: number;
+    }>;
   };
-  q4_som: {
-    share_pct: number;
-    sam_addressable_usd: number;
-    som_usd: number;
-    material_usd: number;
-    labor_usd: number;
-    fittings_sam_usd?: number;
-    fittings_som_usd?: number;
-    material_share_of_sam_pct: number;
-    labor_share_of_sam_pct: number;
-    assumptions_stated: Record<string, number | string>;
-    imputation_method: string;
-    formatted: Record<string, string | null>;
-  };
-  q5_near_term: {
-    horizon_months: number;
-    by_county: Array<{
+  regions: {
+    counties: Array<{
       county: string;
-      pipeline_0_3m_valuation: number;
-      horizon: Array<{
-        year: number;
-        month: number;
-        label: string;
-        count: number;
-        valuation: number;
-        kind: string;
-      }>;
+      fips: string | null;
+      tom_count: number;
+      sam_count: number;
+      tom_valuation: number;
+      sam_valuation: number;
+      som_usd: number;
     }>;
+    miami_dade: {
+      jurisdictions: Array<{
+        jurisdiction_id: string;
+        tom_count: number;
+        sam_count: number;
+        tom_valuation: number;
+        sam_valuation: number;
+        som_usd: number;
+      }>;
+      mesoregions: Array<{
+        area: string;
+        tom_count: number;
+        sam_count: number;
+        tom_valuation: number;
+        sam_valuation: number;
+        som_usd: number;
+        note?: string;
+      }>;
+      coverage_note: string;
+    };
   };
-  q6_contractors: {
+  contractors: {
     coverage: {
       tom: number;
       tom_with_name: number;
@@ -112,23 +155,23 @@ export type Metrics = {
       sam_with_name: number;
       sam_coverage_pct: number | null;
     };
-    top: Array<{
-      contractor_name: string;
-      permits: number;
-      valuation: number;
-      counties: string;
-      top_categories: string;
-    }>;
+    ytd_by_permits: Contractor[];
+    ytd_by_valuation: Contractor[];
+    near_term_by_permits: Contractor[];
+    near_term_by_valuation: Contractor[];
+    near_term_label: string;
     notes: string;
   };
   formatted_headlines: Record<string, string | null>;
 };
 
-type Projection = {
-  as_of: string;
-  year_end: string;
-  ytd: number;
-  ytg_expected: number;
-  full_year_expected: number;
-  method: string;
+export type Contractor = {
+  contractor_name: string;
+  permits: number;
+  valuation: number;
+  counties: string;
+  categories: string;
 };
+
+export type TabId = "tom" | "sam" | "regions" | "contractors";
+export type MetricMode = "count" | "valuation";
