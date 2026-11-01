@@ -18,6 +18,14 @@ material_content:
     fittings_value_usd: { low: 320, base: 450, high: 640 }
     confidence: low
 
+  # Included in SAM (classify) though V1 narrative focuses on four headline cats.
+  res_remodel_plumbing:
+    method: share_of_valuation
+    plumbing_share_of_project_value: { low: 0.08, base: 0.12, high: 0.16 }
+    material_share_of_plumbing:      { low: 0.30,  base: 0.35,  high: 0.40  }
+    fittings_share_of_material:      { low: 0.14,  base: 0.18,  high: 0.22  }
+    confidence: low
+
   irrigation:
     method: share_of_valuation
     fittings_share_of_project: { low: 0.08, base: 0.12, high: 0.16 }

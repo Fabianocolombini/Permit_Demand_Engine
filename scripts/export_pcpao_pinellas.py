@@ -22,8 +22,10 @@ import httpx
 ROOT = Path(__file__).resolve().parents[1]
 ENDPOINT = "https://www.pcpao.gov/dal/databasefile/downloadDatabaseFile"
 UA = (
-    "PermitDemandEngine/1.0 (+https://github.com/Fabianocolombini/Permit_Demand_Engine)"
+    "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) "
+    "Chrome/120.0.0.0 Safari/537.36"
 )
+WARM_URL = "https://www.pcpao.gov/tools-data/data-downloads/raw-database-files"
 
 
 def parse_issue(row: dict[str, str]) -> date | None:
@@ -54,11 +56,22 @@ def main() -> None:
     meta_path = bronze / "fl_pinellas_county_extract_meta.json"
 
     print("POST", ENDPOINT, "RP_PERMITS csv …", flush=True)
-    with httpx.Client(timeout=600.0, follow_redirects=True, headers={"User-Agent": UA}) as client:
+    with httpx.Client(
+        timeout=600.0,
+        follow_redirects=True,
+        headers={
+            "User-Agent": UA,
+            "Accept": "*/*",
+            "Origin": "https://www.pcpao.gov",
+            "Referer": WARM_URL,
+        },
+    ) as client:
+        # Session warm-up — bare bot UA gets 403 without a prior page hit.
+        warm = client.get(WARM_URL)
+        print(f"  warm-up {WARM_URL} → {warm.status_code}", flush=True)
         resp = client.post(
             ENDPOINT,
             data={"hdn_tbl_name": "RP_PERMITS", "hdn_ftype": "csv"},
-            headers={"Referer": "https://www.pcpao.gov/tools-data/data-downloads/raw-database-files"},
         )
         resp.raise_for_status()
         raw_zip = bronze / "RP_PERMITS_csv.zip"

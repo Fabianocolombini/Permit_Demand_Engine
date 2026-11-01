@@ -22,6 +22,15 @@ def parse_date(value: Any, fmt_hint: str = "mixed") -> date | None:
     if isinstance(value, datetime):
         return value.date()
     if isinstance(value, (int, float)):
+        # St. Pete PermitsExternal stores PERMITISSUEDATE as YYMMDD int (e.g. 210413).
+        # Must run before epoch heuristics (210413 as seconds → 1970-01-03).
+        if float(value).is_integer():
+            s = str(int(value))
+            if len(s) == 6:
+                try:
+                    return datetime.strptime(s, "%y%m%d").date()
+                except ValueError:
+                    pass
         # Heuristic: epoch ns / µs / ms / seconds (2021 ms ≈ 1.6e12)
         ts = float(value)
         if ts > 1e17:  # nanoseconds
@@ -47,6 +56,12 @@ def parse_date(value: Any, fmt_hint: str = "mixed") -> date | None:
                 return date(int(s[:4]), int(s[5:]), 1)
             except ValueError:
                 return None
+        # St. Pete PermitsExternal: YYMMDD text (e.g. 210413 → 2021-04-13)
+        if len(s) == 6 and s.isdigit():
+            try:
+                return datetime.strptime(s, "%y%m%d").date()
+            except ValueError:
+                pass
         for f in (
             "%Y-%m-%d",
             "%m/%d/%Y",
@@ -54,11 +69,20 @@ def parse_date(value: Any, fmt_hint: str = "mixed") -> date | None:
             "%Y-%m-%dT%H:%M:%S.%f",
             "%Y-%m-%d %H:%M:%S",
             "%Y_%m",
+            "%d-%b-%y",  # Auburn Sarasota In_Date e.g. 4-Jan-21
+            "%d-%b-%Y",
         ):
             try:
                 return datetime.strptime(s[:26], f).date()
             except ValueError:
                 continue
+        # Lee Auburn Record_Num embeds year: RES2022-09504 → 2022-01-01
+        m = re.search(r"(20\d{2})", s)
+        if m and ("RES" in s.upper() or "COM" in s.upper() or "-" in s):
+            try:
+                return date(int(m.group(1)), 1, 1)
+            except ValueError:
+                pass
     return None
 
 

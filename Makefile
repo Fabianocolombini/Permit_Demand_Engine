@@ -1,4 +1,4 @@
-.PHONY: install export export-full discover probe ingest normalize classify enrich pipeline coverage manifest
+.PHONY: install export export-full discover probe ingest normalize classify enrich pipeline coverage manifest census material bronze-pipeline valuation
 
 PYTHON ?= python3
 
@@ -37,8 +37,21 @@ pipeline: ingest normalize classify enrich
 tier-a-pipeline:
 	$(PYTHON) scripts/run_tier_a_pipeline.py
 
+# Tier A + open Tier B bronze → silver → classify (excludes Shovels stubs)
+bronze-pipeline:
+	$(PYTHON) scripts/run_bronze_pipeline.py --exclude fl_cape_coral_city --exclude fl_manatee_active_residential
+
+census:
+	$(PYTHON) scripts/06_census.py
+
+valuation:
+	$(PYTHON) scripts/report_valuation_tom_sam.py
+
+material:
+	$(PYTHON) scripts/07_model_material.py
+
 manifest:
 	$(PYTHON) scripts/build_extract_manifest.py
 
 coverage:
-	@python -c "from pathlib import Path; p=Path('data/reference/coverage_fl_miami_dade_county.md'); print(p.read_text() if p.exists() else 'Run make enrich first')"
+	@python -c "from pathlib import Path; p=Path('data/reference/bps_bronze_coverage_fl.md'); print(p.read_text() if p.exists() else 'Run make census first')"

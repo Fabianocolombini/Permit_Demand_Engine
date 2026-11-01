@@ -843,20 +843,20 @@
   export_date_field: Date
   export_where: "layer = 'Lee County permits'"
   field_map:
-    permit_id: Permit_Num
-    issued_date: Date
+    permit_id: Record_Num
+    issued_date: Record_Num
     address_raw: Address
     description_raw: Descriptio
     work_class_raw: Permit_Typ
-    permit_type_raw: Permit_Typ
+    permit_type_raw: Record_Typ
     status_raw: Status
   date_format: mixed
   issued_date_min: "2021-01-01"
   notes: >
     Third-party Auburn University AGOL layer of geocoded new residential SF
-    permits post-2021 (~7.4k Lee). NOT official Lee County feed — Accela LEECO
-    still portal-only; Lee GIS DataExplorer/Permitting is zoning/coastal only.
-    Use as thin SAM-relevant supplement only.
+    permits post-2021 (~7.4k Lee). Date/Permit_Num columns empty in export —
+    use Record_Num (RESYYYY-#####) as id + year proxy for issued_date.
+    NOT official Lee County feed — Accela LEECO still portal-only.
 
 - id: fl_sarasota_new_sf_auburn
   name: "Sarasota County new SF permits post-2021 (Auburn research layer)"
@@ -870,11 +870,11 @@
   endpoint: "https://services.arcgis.com/5UFHFK7ZmWoapZj1/arcgis/rest/services/NewPermits_Post2021_LeeManateeSarasotaCharlotte/FeatureServer"
   layer: 0
   bronze_glob: "data/bronze/fl_sarasota_new_sf_auburn/*.{csv,xlsx,xls}"
-  export_date_field: Date
+  export_date_field: In_Date
   export_where: "layer = 'Sarasota County permits'"
   field_map:
-    permit_id: Permit_Num
-    issued_date: Date
+    permit_id: FID
+    issued_date: In_Date
     address_raw: Address
     description_raw: Descriptio
     work_class_raw: Permit_Typ
@@ -883,8 +883,9 @@
   date_format: mixed
   issued_date_min: "2021-01-01"
   notes: >
-    Same Auburn research layer filtered to Sarasota (~0.5k new SF). Thin
-    supplement only; scgov Accela Civic Application remains portal/login.
+    Same Auburn research layer filtered to Sarasota (~0.5k new SF). Permit_Num
+    empty — use FID as id and In_Date (e.g. 4-Jan-21). Thin supplement only;
+    Accela SARASOTACO CapHome requires login for Building.
 
 
 - id: fl_cape_coral_history
