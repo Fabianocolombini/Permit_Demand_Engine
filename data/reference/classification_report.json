@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-11-01T02:48:29.359060+00:00",
+  "generated_at": "2026-11-01T04:22:43.389958+00:00",
   "definitions": {
     "TOM": "Total permits ingested (all rows; raw universe).",
     "SAM": "Subset affecting Tigre USA / Dura: res_new_plumbing (incl. new residential construction / SFR/townhouse \u2014 implied plumbing rough-in), res_repipe, res_remodel_plumbing, pool_spa, irrigation. Excludes roof/windows/AC-only/fence/demo/electrical-only noise.",
@@ -38,11 +38,11 @@
     "fl_tampa_city_active",
     "fl_volusia_active_permits"
   ],
-  "TOM": 2726677,
+  "TOM": 2726669,
   "SAM": 712689,
   "SAM_pct_of_TOM": 26.14,
   "category_counts": {
-    "other": 1974329,
+    "other": 1974321,
     "res_new_plumbing": 533608,
     "pool_spa": 121324,
     "irrigation": 41213,
@@ -61,18 +61,18 @@
     "res_remodel_plumbing": 4561
   },
   "method_counts": {
-    "unclassified": 784101,
+    "unclassified": 784103,
     "regex": 752348,
-    "excluded_roof": 451517,
+    "excluded_roof": 451514,
     "excluded_windows_doors": 237050,
-    "excluded_electrical": 159324,
-    "excluded_ac_mechanical": 154557,
-    "excluded_misc_non_plumbing": 150110,
+    "excluded_electrical": 159317,
+    "excluded_ac_mechanical": 154558,
+    "excluded_misc_non_plumbing": 150109,
     "excluded_demolition": 37670
   },
-  "excluded_noise_rows": 1190228,
+  "excluded_noise_rows": 1190218,
   "excluded_noise_pct": 43.65,
-  "unclassified_rows": 784101,
+  "unclassified_rows": 784103,
   "unclassified_pct": 28.76,
   "top_unclassified": [
     {
@@ -85,7 +85,7 @@
     },
     {
       "text": "Mechanical Permit | Repair",
-      "n": 14799
+      "n": 14802
     },
     {
       "text": "98 | 98 | DAMAGE FIRE/FLOOD/VEHICLE",
@@ -105,7 +105,7 @@
     },
     {
       "text": "Building Permit | Repair",
-      "n": 8946
+      "n": 8945
     },
     {
       "text": "Building Permit | Alteration",
@@ -117,11 +117,11 @@
     },
     {
       "text": "Mechanical Permit | New",
-      "n": 7433
+      "n": 7432
     },
     {
       "text": "Engineering | Other",
-      "n": 7248
+      "n": 7245
     },
     {
       "text": "Commercial | BUILDING RECERTIFICATION/MILESTONE INSPECTION | BUILDING RECERTIFICATION/MILESTONE INSPECTION",
@@ -129,11 +129,11 @@
     },
     {
       "text": "Engineering | SFR",
-      "n": 6062
+      "n": 6063
     },
     {
       "text": "Fire Permit | FireSupp",
-      "n": 5984
+      "n": 5983
     },
     {
       "text": "100 | 100 | TPP USE",
@@ -149,7 +149,7 @@
     },
     {
       "text": "Fire Permit | FA",
-      "n": 4647
+      "n": 4649
     },
     {
       "text": "29 | 29 | SHUTTERS",
@@ -165,7 +165,7 @@
     },
     {
       "text": "Mechanical Permit | Alteration",
-      "n": 3288
+      "n": 3289
     },
     {
       "text": "1 | 1 | PATIO/DECK",
@@ -197,7 +197,7 @@
     },
     {
       "text": "GAS | Natural",
-      "n": 1941
+      "n": 1939
     },
     {
       "text": "10 | 10 | PORCH",
@@ -221,7 +221,7 @@
     },
     {
       "text": "Engineering | Comm",
-      "n": 1739
+      "n": 1740
     },
     {
       "text": "Residential | Existing Building | Existing Change Out",
@@ -291,9 +291,9 @@
     },
     {
       "jurisdiction_id": "fl_orlando_city",
-      "TOM": 191663,
+      "TOM": 191647,
       "SAM": 36674,
-      "SAM_pct_of_TOM": 19.13,
+      "SAM_pct_of_TOM": 19.14,
       "sam_category_counts": {
         "res_new_plumbing": 27829,
         "irrigation": 4685,
@@ -344,9 +344,9 @@
     },
     {
       "jurisdiction_id": "fl_cape_coral_history",
-      "TOM": 278675,
+      "TOM": 278683,
       "SAM": 63776,
-      "SAM_pct_of_TOM": 22.89,
+      "SAM_pct_of_TOM": 22.88,
       "sam_category_counts": {
         "pool_spa": 31887,
         "res_new_plumbing": 16660,
@@ -1087,11 +1087,11 @@
     },
     {
       "jurisdiction_id": "fl_orlando_city",
-      "TOM": 191663,
+      "TOM": 191647,
       "SAM": 36674,
-      "SAM_pct_of_TOM": 19.13,
+      "SAM_pct_of_TOM": 19.14,
       "category_counts": {
-        "other": 154989,
+        "other": 154973,
         "res_new_plumbing": 27829,
         "irrigation": 4685,
         "pool_spa": 4160
@@ -1102,25 +1102,25 @@
         "pool_spa": 4160
       },
       "method_counts": {
-        "unclassified": 79361,
-        "excluded_electrical": 36919,
+        "unclassified": 79357,
+        "excluded_electrical": 36912,
         "regex": 36674,
-        "excluded_roof": 28795,
-        "excluded_misc_non_plumbing": 8808,
+        "excluded_roof": 28792,
+        "excluded_misc_non_plumbing": 8806,
         "excluded_demolition": 1106
       },
-      "excluded_noise_rows": 75628,
+      "excluded_noise_rows": 75616,
       "excluded_noise_pct": 39.46,
-      "unclassified_rows": 79361,
+      "unclassified_rows": 79357,
       "unclassified_pct": 41.41,
       "top_unclassified": [
         {
           "text": "Mechanical Permit | Repair",
-          "n": 14799
+          "n": 14802
         },
         {
           "text": "Building Permit | Repair",
-          "n": 8946
+          "n": 8945
         },
         {
           "text": "Building Permit | Alteration",
@@ -1128,31 +1128,31 @@
         },
         {
           "text": "Mechanical Permit | New",
-          "n": 7433
+          "n": 7432
         },
         {
           "text": "Engineering | Other",
-          "n": 7248
+          "n": 7245
         },
         {
           "text": "Engineering | SFR",
-          "n": 6062
+          "n": 6063
         },
         {
           "text": "Fire Permit | FireSupp",
-          "n": 5984
+          "n": 5983
         },
         {
           "text": "Fire Permit | FA",
-          "n": 4647
+          "n": 4649
         },
         {
           "text": "Mechanical Permit | Alteration",
-          "n": 3288
+          "n": 3289
         },
         {
           "text": "GAS | Natural",
-          "n": 1941
+          "n": 1939
         },
         {
           "text": "Building Permit | Accessory",
@@ -1160,15 +1160,15 @@
         },
         {
           "text": "Engineering | Comm",
-          "n": 1739
+          "n": 1740
         },
         {
           "text": "Engineering | SiteWO",
-          "n": 1401
+          "n": 1400
         },
         {
           "text": "GAS | Propane",
-          "n": 915
+          "n": 914
         },
         {
           "text": "Building Permit | Addition",
@@ -1176,7 +1176,7 @@
         },
         {
           "text": "FloodPlain | ElevCert",
-          "n": 794
+          "n": 792
         },
         {
           "text": "Building Permit | Tent",
@@ -1312,6 +1312,10 @@
           "n": 6
         },
         {
+          "text": "Mechanical | NA | Commercial | Equal change out Goodman 2 ton condenser with 5kW heater / 30 WEST APARTMENTS",
+          "n": 5
+        },
+        {
           "text": "Commercial | NA | Commercial | Addition/Alteration | NCRQD: Replace steel structural columns with new CMU continuous columns. Replace",
           "n": 5
         },
@@ -1325,10 +1329,6 @@
         },
         {
           "text": "Residential | NA | Residential | Single Family | NCRQD: **PP WEINTRAUB INSPECTIONS & FORENSIC, INC**  CONSTRUCTION OF A SINGLE FA",
-          "n": 5
-        },
-        {
-          "text": "Mechanical | NA | Commercial | Equal change out Goodman 2 ton condenser with 5kW heater / 30 WEST APARTMENTS",
           "n": 5
         },
         {
@@ -1636,11 +1636,11 @@
     },
     {
       "jurisdiction_id": "fl_cape_coral_history",
-      "TOM": 278675,
+      "TOM": 278683,
       "SAM": 63776,
-      "SAM_pct_of_TOM": 22.89,
+      "SAM_pct_of_TOM": 22.88,
       "category_counts": {
-        "other": 213906,
+        "other": 213914,
         "pool_spa": 31887,
         "res_new_plumbing": 16660,
         "irrigation": 12735,
@@ -1658,18 +1658,18 @@
         "res_remodel_plumbing": 193
       },
       "method_counts": {
-        "unclassified": 81779,
+        "unclassified": 81785,
         "regex": 64769,
         "excluded_roof": 55953,
-        "excluded_ac_mechanical": 24238,
+        "excluded_ac_mechanical": 24239,
         "excluded_windows_doors": 23301,
-        "excluded_misc_non_plumbing": 20300,
+        "excluded_misc_non_plumbing": 20301,
         "excluded_electrical": 7596,
         "excluded_demolition": 739
       },
-      "excluded_noise_rows": 132127,
+      "excluded_noise_rows": 132129,
       "excluded_noise_pct": 47.41,
-      "unclassified_rows": 81779,
+      "unclassified_rows": 81785,
       "unclassified_pct": 29.35,
       "top_unclassified": [
         {
@@ -1729,11 +1729,11 @@
           "n": 300
         },
         {
-          "text": "Wells | Wells | DOMESTIC WELL",
+          "text": "Accessories | Shed",
           "n": 278
         },
         {
-          "text": "Accessories | Shed",
+          "text": "Wells | Wells | DOMESTIC WELL",
           "n": 278
         },
         {
@@ -1984,11 +1984,11 @@
           "n": 21
         },
         {
-          "text": "Permit | Mechanical | Air handler and condenser replacement 2.5 ton unit",
+          "text": "Permit | Mechanical | Change out existing 2.5 ton HEATPUMP",
           "n": 20
         },
         {
-          "text": "Permit | Mechanical | Change out existing 2.5 ton HEATPUMP",
+          "text": "Permit | Mechanical | Air handler and condenser replacement 2.5 ton unit",
           "n": 20
         },
         {
@@ -2004,15 +2004,15 @@
           "n": 18
         },
         {
+          "text": "Permit | Building Commercial | Dumpster Enclosure",
+          "n": 17
+        },
+        {
           "text": "Permit | Mechanical | REPLACE 3 TON STRAIGHT COOL SPLIT SYSTEM",
           "n": 17
         },
         {
           "text": "Permit | Mechanical | Install one 18k mini split and one 9k mini split",
-          "n": 17
-        },
-        {
-          "text": "Permit | Building Commercial | Dumpster Enclosure",
           "n": 17
         },
         {
@@ -2028,23 +2028,23 @@
           "n": 14
         },
         {
-          "text": "Permit | Mechanical | REPLACE 2 TON HEAT PUMP SPLIT SYSTEM",
-          "n": 12
-        },
-        {
           "text": "Permit | Mechanical | Change out existing 3.5 ton heatpump",
           "n": 12
         },
         {
+          "text": "Permit | Mechanical | REPLACE 2 TON HEAT PUMP SPLIT SYSTEM",
+          "n": 12
+        },
+        {
+          "text": "Permit | Mechanical | REPLACE 2 TON STRAIGHT COOL SPLIT SYSTEM",
+          "n": 11
+        },
+        {
+          "text": "Permit | Mechanical | Change out",
+          "n": 11
+        },
+        {
           "text": "Permit | Mechanical | REPLACE 3 TON AIR HANDLER",
-          "n": 11
-        },
-        {
-          "text": "Permit | Mechanical | REPLACE 2 1/2 TON STRAIGHT COOL SPLIT SYSTEM",
-          "n": 11
-        },
-        {
-          "text": "Permit | Mechanical | Air handler and condenser replacement 3.5 ton unit",
           "n": 11
         }
       ]

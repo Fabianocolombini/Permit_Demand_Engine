@@ -25,3 +25,7 @@ __pycache__/
 .DS_Store
 *.egg-info/
 logs/
+dashboard/node_modules/
+dashboard/.next/
+dashboard/out/
+*.log

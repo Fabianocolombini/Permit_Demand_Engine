@@ -1,11 +1,11 @@
 # Classification report — TOM / SAM (Tigre USA + Dura)
 
-Generated: 2026-11-01T02:48:29.359060+00:00
+Generated: 2026-11-01T04:22:43.389958+00:00
 
 - **TOM** = total permits ingested (raw universe).
 - **SAM** = plumbing (new/repipe/remodel) **including new residential construction** (implied rough-in) + pool/spa + irrigation (excludes roof/windows/AC-only/fence noise).
 
-**Overall:** TOM **2,726,677** · SAM **712,689** · SAM/TOM **26.14%**  ·  excluded noise 43.65% · unclassified 28.76%
+**Overall:** TOM **2,726,669** · SAM **712,689** · SAM/TOM **26.14%**  ·  excluded noise 43.65% · unclassified 28.76%
 
 ## TOM / SAM by jurisdiction
 
@@ -15,11 +15,11 @@ Generated: 2026-11-01T02:48:29.359060+00:00
 | fl_miami_city | 169,928 | 41,990 | 24.71 |
 | fl_broward_county | 2,350 | 16 | 0.68 |
 | fl_hillsborough_county | 38,632 | 26,367 | 68.25 |
-| fl_orlando_city | 191,663 | 36,674 | 19.13 |
+| fl_orlando_city | 191,647 | 36,674 | 19.14 |
 | fl_manatee_county | 247,964 | 82,074 | 33.1 |
 | fl_duval_jacksonville | 712,300 | 273,456 | 38.39 |
 | fl_boca_raton_city | 883 | 117 | 13.25 |
-| fl_cape_coral_history | 278,675 | 63,776 | 22.89 |
+| fl_cape_coral_history | 278,683 | 63,776 | 22.88 |
 | fl_fort_lauderdale_city | 11,568 | 1,543 | 13.34 |
 | fl_lakeland_city | 26,090 | 3,656 | 14.01 |
 | fl_lee_new_sf_auburn | 7,419 | 7,184 | 96.83 |
@@ -36,7 +36,7 @@ Generated: 2026-11-01T02:48:29.359060+00:00
 | fl_st_petersburg_sf_new | 43 | 43 | 100.0 |
 | fl_tampa_city_active | 2,410 | 1,785 | 74.07 |
 | fl_volusia_active_permits | 2,851 | 920 | 32.27 |
-| **TOTAL** | **2,726,677** | **712,689** | **26.14** |
+| **TOTAL** | **2,726,669** | **712,689** | **26.14** |
 
 ## SAM category mix (overall)
 
@@ -52,7 +52,7 @@ Generated: 2026-11-01T02:48:29.359060+00:00
 
 | Category | Rows | % of TOM | in SAM? |
 |---|---:|---:|:---:|
-| other | 1,974,329 | 72.41 |  |
+| other | 1,974,321 | 72.41 |  |
 | res_new_plumbing | 533,608 | 19.57 | yes |
 | pool_spa | 121,324 | 4.45 | yes |
 | irrigation | 41,213 | 1.51 | yes |
@@ -69,26 +69,26 @@ Generated: 2026-11-01T02:48:29.359060+00:00
 |---:|---|
 | 100,656 | `95 \| 95 \| HEAT/AIR` |
 | 48,790 | `51 \| 51 \| ADDITION/REMODEL/RENOVATION` |
-| 14,799 | `Mechanical Permit \| Repair` |
+| 14,802 | `Mechanical Permit \| Repair` |
 | 13,156 | `98 \| 98 \| DAMAGE FIRE/FLOOD/VEHICLE` |
 | 11,869 | `Residential \| Existing Building` |
 | 10,120 | `50 \| 50 \| NEW IMPROVEMENT` |
 | 8,949 | `99 \| 99 \| MISCELLANEOUS` |
-| 8,946 | `Building Permit \| Repair` |
+| 8,945 | `Building Permit \| Repair` |
 | 8,492 | `Building Permit \| Alteration` |
 | 8,191 | `6 \| 6 \| DOCK` |
-| 7,433 | `Mechanical Permit \| New` |
-| 7,248 | `Engineering \| Other` |
+| 7,432 | `Mechanical Permit \| New` |
+| 7,245 | `Engineering \| Other` |
 | 6,157 | `Commercial \| BUILDING RECERTIFICATION/MILESTONE INSPECTION \| BUILDING RECERTIFICATION/MILESTONE INSPECTION` |
-| 6,062 | `Engineering \| SFR` |
-| 5,984 | `Fire Permit \| FireSupp` |
+| 6,063 | `Engineering \| SFR` |
+| 5,983 | `Fire Permit \| FireSupp` |
 | 5,139 | `100 \| 100 \| TPP USE` |
 | 4,988 | `49 \| 49 \| FIRESPRINK` |
 | 4,878 | `87 \| 87 \| GENERATORS` |
-| 4,647 | `Fire Permit \| FA` |
+| 4,649 | `Fire Permit \| FA` |
 | 4,484 | `29 \| 29 \| SHUTTERS` |
 | 4,157 | `Non-Residential \| Existing Building` |
 | 3,568 | `3 \| 3 \| ENCLOSURE` |
-| 3,288 | `Mechanical Permit \| Alteration` |
+| 3,289 | `Mechanical Permit \| Alteration` |
 | 3,158 | `1 \| 1 \| PATIO/DECK` |
 | 3,076 | `Building Residential \| Residential Construction` |
