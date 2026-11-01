@@ -90,11 +90,11 @@ export default function CountyMap({ counties, selected, onSelect, mode }: Props)
           });
           if (row) {
             lyr.bindTooltip(
-              `<strong>${row.county}</strong><br/>SAM ${num(row.sam_count)} · ${usd(row.sam_valuation)}<br/>SOM ${usd(row.som_usd)}<br/>SOM material ${usd(row.som_material_usd || 0)}`,
+              `<strong>${row.county}</strong><br/>Total Market ${num(row.sam_count)} · ${usd(row.sam_valuation)}<br/>Potential · Tigre 5% ${usd(row.som_usd)}<br/>Materials Potential ${usd(row.som_material_usd || 0)}`,
               { sticky: true }
             );
           } else {
-            lyr.bindTooltip(`${name}<br/><em>sem bronze nesta cobertura</em>`, {
+            lyr.bindTooltip(`${name}<br/><em>no bronze coverage here</em>`, {
               sticky: true,
             });
           }
