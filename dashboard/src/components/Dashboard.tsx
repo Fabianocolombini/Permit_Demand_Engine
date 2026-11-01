@@ -177,6 +177,29 @@ function ModeToggle({
   );
 }
 
+/** Recharts Bar/Cell click payloads vary by version — normalize to a year. */
+function yearFromChartClick(raw: unknown, index?: number, rows?: Array<{ year: number | string }>): number | null {
+  if (typeof index === "number" && rows && rows[index]) {
+    const y = Number(rows[index].year);
+    if (Number.isFinite(y) && y >= 2000) return y;
+  }
+  if (raw == null || typeof raw !== "object") return null;
+  const d = raw as Record<string, unknown>;
+  const candidates = [
+    d.year,
+    (d.payload as Record<string, unknown> | undefined)?.year,
+    d.label,
+    (d.payload as Record<string, unknown> | undefined)?.label,
+    (d.activePayload as Array<{ payload?: { year?: unknown } }> | undefined)?.[0]
+      ?.payload?.year,
+  ];
+  for (const c of candidates) {
+    const y = Number(c);
+    if (Number.isFinite(y) && y >= 2000) return y;
+  }
+  return null;
+}
+
 export default function Dashboard({ data }: { data: Metrics }) {
   const yearOptions = useMemo(
     () =>
@@ -560,20 +583,19 @@ export default function Dashboard({ data }: { data: Metrics }) {
                       dataKey={mode === "count" ? "count" : "valuationB"}
                       radius={[2, 2, 0, 0]}
                       cursor="pointer"
-                      onClick={(d) => {
-                        const y = Number(
-                          (d as { payload?: { year?: string | number } })?.payload
-                            ?.year ?? (d as { year?: string | number })?.year
-                        );
+                      onClick={(d, index) => {
+                        const y = yearFromChartClick(d, index, ytdCompareChart);
                         if (y) onlyYear(y);
                       }}
                     >
                       {ytdCompareChart.map((r) => (
                         <Cell
                           key={r.year}
+                          cursor="pointer"
                           fill={
                             selectedYears.includes(Number(r.year)) ? GULF : "#35555a"
                           }
+                          onClick={() => onlyYear(Number(r.year))}
                         />
                       ))}
                     </Bar>
@@ -826,11 +848,9 @@ export default function Dashboard({ data }: { data: Metrics }) {
                         dataKey={mode === "count" ? "count" : "valuationB"}
                         radius={[2, 2, 0, 0]}
                         cursor="pointer"
-                        onClick={(d) => {
-                          const y = Number(
-                            (d as { payload?: { year?: number } })?.payload?.year ??
-                              (d as { year?: number })?.year
-                          );
+                        onClick={(d, index) => {
+                          const rows = samYtd.filter((r) => r.year >= 2023);
+                          const y = yearFromChartClick(d, index, rows);
                           if (y) onlyYear(y);
                         }}
                       >
@@ -839,9 +859,11 @@ export default function Dashboard({ data }: { data: Metrics }) {
                           .map((r) => (
                             <Cell
                               key={r.year}
+                              cursor="pointer"
                               fill={
                                 selectedYears.includes(r.year) ? MANGROVE : "#35555a"
                               }
+                              onClick={() => onlyYear(r.year)}
                             />
                           ))}
                       </Bar>
