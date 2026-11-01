@@ -331,9 +331,9 @@
   date_format: iso_text
   issued_date_min: "2021-01-01"
   notes: >
-    Shovels county pull. Open ePermits MapServer is ROW/utility only; building
-    search was portal-only (discover.pbcgov.org). covers=full_county pending
-    jurisdiction-level validation against incorporated cities.
+    Paid Shovels deferred. Thin city fill via fl_boca_raton_city (~1k, stale→2022).
+    County ePZB / PAO Permit_Portal FeatureServer host unreachable (internal).
+    ENG ePermits MapServer remains ROW/utility only.
 
 - id: fl_orange_county
   name: "Orange County (Shovels)"
@@ -556,7 +556,9 @@
     declared_valuation: job_value_usd
   date_format: iso_text
   issued_date_min: "2021-01-01"
-  notes: "Shovels county pull. No open FeatureServer in prior probe."
+  notes: >
+    Paid Shovels deferred. Partial open fill via fl_pasco_permit_job_values
+    (~20k May24–May25 geocoded Accela jobs). Full Accela CapHome still portal-only.
 
 - id: fl_osceola_county
   name: "Osceola County (Shovels)"
@@ -582,7 +584,9 @@
     declared_valuation: job_value_usd
   date_format: iso_text
   issued_date_min: "2021-01-01"
-  notes: "Shovels county pull. No open FeatureServer in prior probe."
+  notes: >
+    Paid Shovels deferred. Partial open fill via fl_osceola_new_construction (+_a)
+    AGOL new-construction layers (~6k). Accela CapHome still portal-only for bulk.
 
 - id: fl_sarasota_county
   name: "Sarasota County (Shovels)"
@@ -639,8 +643,8 @@
   date_format: iso_text
   issued_date_min: "2021-01-01"
   notes: >
-    Shovels city geo backfill — preferred over Cape Coral Active Building
-    Permits ArcGIS layer for post-2021 history.
+    Paid Shovels deferred. Prefer fl_cape_coral_history (Excel+OpenData merge,
+    ~279k issued >= 2021) over Active-only Tier A ArcGIS layer.
 
 - id: fl_manatee_county_shovels
   name: "Manatee County (Shovels historical)"
@@ -863,3 +867,167 @@
   notes: >
     Same Auburn research layer filtered to Sarasota (~0.5k new SF). Thin
     supplement only; scgov Accela Civic Application remains portal/login.
+
+
+- id: fl_cape_coral_history
+  name: "City of Cape Coral issued permits history (Excel + OpenData)"
+  state: FL
+  county: "Lee"
+  county_fips: "12071"
+  level: city
+  covers: city
+  tier: B
+  connector: file
+  endpoint: "https://www.capecoral.gov/departments/development_services/building_permit_reports/index.php"
+  bronze_glob: "data/bronze/fl_cape_coral_history/*.{csv,xlsx,xls}"
+  export_date_field: issued_date
+  field_map:
+    permit_id: permit_number
+    issued_date: issued_date
+    applied_date: applied_date
+    final_date: finalized_date
+    address_raw: address
+    zip: zip
+    description_raw: description
+    work_class_raw: work_class
+    permit_type_raw: permit_type
+    status_raw: status
+    declared_valuation: valuation
+    contractor_name: contractor_name
+    owner_name: owner_name
+    parcel_id: parcel
+  date_format: iso_text
+  issued_date_min: "2021-01-01"
+  notes: >
+    Path B history fill: official All Issued Permits Excel (2021–2025) merged with
+    OpenData/OpenData MapServer layer 1 Building Permits table. Deduped by
+    permit_number. Prefer over Active-only Tier A layer for TOM/SAM.
+
+- id: fl_osceola_new_construction
+  name: "Osceola County new construction P+A permits (AGOL)"
+  state: FL
+  county: "Osceola"
+  county_fips: "12097"
+  level: county
+  covers: unknown
+  tier: B
+  connector: arcgis
+  endpoint: "https://services6.arcgis.com/9zKHLCgIwu2HFA5O/arcgis/rest/services/New_Construction_P_Permits/FeatureServer"
+  layer: 6
+  bronze_glob: "data/bronze/fl_osceola_new_construction/*.{csv,xlsx,xls}"
+  export_date_field: File_Date
+  arcgis_date_format: sql_date
+  export_monthly: true
+  page_size: 2000
+  field_map:
+    permit_id: Record_ID
+    issued_date: File_Date
+    address_raw: Full_Address
+    description_raw: Description
+    work_class_raw: SubType
+    permit_type_raw: Permit_For
+    status_raw: Record_Status
+    declared_valuation: Construction_Value
+    parcel_id: Parcel
+  date_format: epoch_ms
+  issued_date_min: "2021-01-01"
+  notes: >
+    Osceola GIS AGOL new-construction P permits (~4.6k File_Date>=2021). Companion
+    A-permits layer exported separately as fl_osceola_new_construction_a. Not full
+    Accela building volume — Accela CapHome remains portal-only for bulk history.
+
+- id: fl_osceola_new_construction_a
+  name: "Osceola County new construction A permits (AGOL)"
+  state: FL
+  county: "Osceola"
+  county_fips: "12097"
+  level: county
+  covers: unknown
+  tier: B
+  connector: arcgis
+  endpoint: "https://services6.arcgis.com/9zKHLCgIwu2HFA5O/arcgis/rest/services/New_Construction_A_Permits/FeatureServer"
+  layer: 7
+  bronze_glob: "data/bronze/fl_osceola_new_construction_a/*.{csv,xlsx,xls}"
+  export_date_field: File_Date
+  arcgis_date_format: sql_date
+  export_monthly: true
+  page_size: 2000
+  field_map:
+    permit_id: Record_ID
+    issued_date: File_Date
+    address_raw: Full_Address
+    description_raw: Description
+    work_class_raw: SubType
+    permit_type_raw: Permit_For
+    status_raw: Record_Status
+    declared_valuation: Construction_Value
+    parcel_id: Parcel
+  date_format: epoch_ms
+  issued_date_min: "2021-01-01"
+  notes: >
+    Osceola GIS AGOL A-permits (~1.3k). Thin new-construction/trade supplement;
+    Notify layer is planning hearings only (skipped).
+
+- id: fl_pasco_permit_job_values
+  name: "Pasco County Permit Job Values May24–May25 (geocoded)"
+  state: FL
+  county: "Pasco"
+  county_fips: "12101"
+  level: county
+  covers: unknown
+  tier: B
+  connector: arcgis
+  endpoint: "https://pascogis.pascocountyfl.net/giswebeserver/rest/services/Hosted/Performance_Mgt_ECON_gdb/FeatureServer"
+  layer: 0
+  bronze_glob: "data/bronze/fl_pasco_permit_job_values/*.{csv,xlsx,xls}"
+  export_date_field: user_col_k
+  export_where: "1=1"
+  page_size: 2000
+  field_map:
+    permit_id: user_col_b
+    issued_date: user_col_k
+    address_raw: user_col_v
+    description_raw: user_col_g
+    work_class_raw: user_col_h
+    permit_type_raw: user_col_c
+    status_raw: user_col_m
+    declared_valuation: user_col_p
+    parcel_id: match_addr
+  date_format: mixed
+  issued_date_min: "2021-01-01"
+  notes: >
+    Pasco Performance Management geocode of Accela job values — window appears
+    May 2024–May 2025 only (~20k). Opaque user_col_* field names from geocoder
+    join. Accela CapHome still required for full history. PascoAccela_OP
+    FeatureServer is basemap/zones only (no permit records).
+
+- id: fl_boca_raton_city
+  name: "City of Boca Raton Building Permits (SunGard)"
+  state: FL
+  county: "Palm Beach"
+  county_fips: "12099"
+  level: city
+  covers: city
+  tier: B
+  connector: arcgis
+  endpoint: "https://bocagis.ci.boca-raton.fl.us/gisweb/rest/services/Basemap/SunGard/MapServer"
+  layer: 0
+  bronze_glob: "data/bronze/fl_boca_raton_city/*.{csv,xlsx,xls}"
+  export_date_field: ISSUED_ON
+  export_where: "ISSUED_ON >= '2021-01-01'"
+  page_size: 1000
+  field_map:
+    permit_id: PERMITNUM
+    issued_date: ISSUED_ON
+    address_raw: LOCATION
+    description_raw: ADD_DESC
+    work_class_raw: TYPE
+    permit_type_raw: TYPE
+    status_raw: STATUS
+    declared_valuation: VALUATION
+  date_format: iso_text
+  issued_date_min: "2021-01-01"
+  notes: >
+    Boca Raton SunGard MapServer. Post-2021 ≈1.0k and appears stale (newest
+    ISSUED_ON ~2022-05). Thin Palm Beach city fill only — county ePZB / PAO
+    Permit_Portal still unreachable from this VM (internal host).
