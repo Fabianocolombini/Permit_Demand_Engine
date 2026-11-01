@@ -98,6 +98,7 @@ def iter_rows(
     if connector in ("arcgis", "file", "arcgis_file"):
         # file jurisdictions still document an ArcGIS endpoint for export
         layer = int(jur.get("layer") or 0)
+        extra_headers = jur.get("arcgis_headers") or None
         with ArcGISConnector(
             endpoint=endpoint,
             layer=layer,
@@ -106,6 +107,8 @@ def iter_rows(
             page_size=jur.get("page_size"),
             return_geometry=return_geometry or bool(jur.get("return_geometry")),
             order_by_fields=jur.get("order_by_fields"),
+            endpoint_is_layer=bool(jur.get("endpoint_is_layer")),
+            extra_headers=extra_headers,
         ) as conn:
             conn.probe()
             if export_where:
@@ -337,6 +340,8 @@ def _count(jur: dict[str, Any], since: date, until: date) -> int | None:
             layer=int(jur.get("layer") or 0),
             date_field=date_field,
             date_format=date_format,
+            endpoint_is_layer=bool(jur.get("endpoint_is_layer")),
+            extra_headers=jur.get("arcgis_headers") or None,
         ) as conn:
             if jur.get("export_where"):
                 payload = conn._get_json(

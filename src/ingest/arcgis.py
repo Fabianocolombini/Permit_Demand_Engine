@@ -32,9 +32,12 @@ class ArcGISConnector(Connector):
         order_by_fields: str | None = None,
         return_geometry: bool = False,
         out_sr: int = 4326,
+        endpoint_is_layer: bool = False,
+        extra_headers: dict[str, str] | None = None,
         client: httpx.Client | None = None,
     ) -> None:
-        self.endpoint = endpoint.rstrip("/")
+        # Keep trailing query (e.g. Esri proxy targets) — only strip a bare slash.
+        self.endpoint = endpoint[:-1] if endpoint.endswith("/") else endpoint
         self.layer = layer
         self.date_field = date_field
         self.date_format = date_format
@@ -42,15 +45,19 @@ class ArcGISConnector(Connector):
         self.order_by_fields = order_by_fields
         self.return_geometry = return_geometry
         self.out_sr = out_sr
+        self.endpoint_is_layer = endpoint_is_layer
+        self.extra_headers = dict(extra_headers or {})
         self._client = client
         self._owns_client = client is None
         self._meta: dict[str, Any] | None = None
 
     def _new_client(self) -> httpx.Client:
+        headers = dict(DEFAULT_HEADERS)
+        headers.update(self.extra_headers)
         return httpx.Client(
             timeout=DEFAULT_TIMEOUT,
             follow_redirects=True,
-            headers=DEFAULT_HEADERS,
+            headers=headers,
         )
 
     def __enter__(self) -> "ArcGISConnector":
@@ -71,6 +78,10 @@ class ArcGISConnector(Connector):
         return self._client
 
     def layer_url(self) -> str:
+        # Some hosts (e.g. COJ BID duval.ashx proxy targets) expose the layer
+        # URL directly — do not append /{layer}.
+        if self.endpoint_is_layer:
+            return self.endpoint
         return f"{self.endpoint}/{self.layer}"
 
     def probe(self) -> dict[str, Any]:
@@ -207,9 +218,32 @@ class ArcGISConnector(Connector):
             raise RuntimeError(f"ArcGIS error: {payload['error']}")
         return payload.get("count")
 
+    def _merge_params(self, url: str, params: dict[str, Any]) -> str:
+        """Append query params without letting httpx re-parse an existing ``?`` target.
+
+        COJ BID uses ``duval.ashx?HTTPS://HOST/Z4`` — the opaque target lives in the
+        ashx query string. ArcGIS params must attach to that *target*
+        (``.../Z4?f=json`` / ``.../Z4/query?where=...``), not as ashx ``&f=json``
+        (which returns HTML). httpx params= also drops the ``://`` target.
+        """
+        from urllib.parse import urlencode
+
+        if not params:
+            return url
+        flat = {k: ("" if v is None else str(v)) for k, v in params.items()}
+        qs = urlencode(flat)
+        # Opaque Esri-proxy target: ashx?SCHEME://HOST/path — attach with ?/& on target.
+        if "://" in url.split("?", 1)[-1]:
+            # Target may already carry a query (rare); prefer & then.
+            target = url.split("?", 1)[-1]
+            sep = "&" if ("?" in target) else "?"
+            return f"{url}{sep}{qs}"
+        return f"{url}&{qs}" if ("?" in url) else f"{url}?{qs}"
+
     def _get_json(self, url: str, params: dict[str, Any], attempt: int = 0) -> dict[str, Any]:
         try:
-            r = self.client.get(url, params=params)
+            full = self._merge_params(url, params)
+            r = self.client.get(full)
             r.raise_for_status()
             data = r.json()
             # Soft errors sometimes return 200 with error object — retry transient codes
