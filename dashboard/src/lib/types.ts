@@ -35,6 +35,16 @@ export type PipelineWindow = {
     som_usd: number;
     som_material_usd: number;
   }>;
+  by_county_category?: Array<{
+    county: string;
+    category: string;
+    sam_count: number;
+    sam_valuation: number;
+    material_usd: number;
+    labor_usd: number;
+    som_usd: number;
+    som_material_usd: number;
+  }>;
   by_contractor: Array<{
     contractor_name: string;
     permits: number;
@@ -180,6 +190,16 @@ export type Metrics = {
       som_usd: number;
       material_usd?: number;
       som_material_usd?: number;
+    }>;
+    county_by_category?: Array<{
+      county: string;
+      category: string;
+      sam_count: number;
+      sam_valuation: number;
+      material_usd: number;
+      labor_usd: number;
+      som_usd: number;
+      som_material_usd: number;
     }>;
     county_monthly_sam: Array<{
       county: string;

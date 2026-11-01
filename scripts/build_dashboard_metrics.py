@@ -824,6 +824,37 @@ def main() -> None:
         c["material_usd"] = county_mat.get(c["county"], 0.0)
         c["som_material_usd"] = float(c["material_usd"]) * SOM_SHARE
 
+    # County × category for map drill (materials potential)
+    county_by_category: list[dict[str, Any]] = []
+    for cat, county, n, v in con.execute(
+        """
+        SELECT category, COALESCE(county,'Unknown'), COUNT(*), SUM(valuation_filled)
+        FROM permits_v WHERE is_sam GROUP BY 1, 2
+        """
+    ).fetchall():
+        n_i = int(n)
+        v_f = float(v or 0)
+        if cat == "res_repipe":
+            mat = float(
+                mat_cfg.get("res_repipe", {}).get("fittings_value_usd", {}).get("base", 450)
+            ) * n_i
+            lab = mat * 2.0
+        else:
+            mat, lab = _material_labor(cat, v_f, assumptions)
+        county_by_category.append(
+            {
+                "county": county,
+                "category": cat,
+                "sam_count": n_i,
+                "sam_valuation": v_f,
+                "material_usd": mat,
+                "labor_usd": lab,
+                "som_usd": v_f * SOM_SHARE,
+                "som_material_usd": mat * SOM_SHARE,
+            }
+        )
+    county_by_category.sort(key=lambda x: -float(x["som_material_usd"]))
+
     # --- Pipeline short-term: last 30 / 60 days ---
     def pipeline_window(days: int) -> dict:
         from datetime import timedelta
@@ -842,6 +873,7 @@ def main() -> None:
         ).fetchall()
         by_county: dict[str, dict[str, float | int]] = {}
         by_cat: dict[str, dict[str, float | int]] = {}
+        by_county_cat: dict[tuple[str, str], dict[str, float | int | str]] = {}
         by_contractor: dict[str, dict[str, Any]] = {}
         for cat, county, n, v, cname in rows:
             v = float(v or 0)
@@ -882,6 +914,21 @@ def main() -> None:
             bcat["sam_valuation"] = float(bcat["sam_valuation"]) + v
             bcat["material_usd"] = float(bcat["material_usd"]) + mat
             bcat["labor_usd"] = float(bcat["labor_usd"]) + lab
+            bcc = by_county_cat.setdefault(
+                (county, cat),
+                {
+                    "county": county,
+                    "category": cat,
+                    "sam_count": 0,
+                    "sam_valuation": 0.0,
+                    "material_usd": 0.0,
+                    "labor_usd": 0.0,
+                },
+            )
+            bcc["sam_count"] = int(bcc["sam_count"]) + n
+            bcc["sam_valuation"] = float(bcc["sam_valuation"]) + v
+            bcc["material_usd"] = float(bcc["material_usd"]) + mat
+            bcc["labor_usd"] = float(bcc["labor_usd"]) + lab
             if cname and cname not in (
                 "",
                 "OWNER",
@@ -931,6 +978,17 @@ def main() -> None:
             ),
             key=lambda x: -float(x["som_material_usd"]),
         )
+        county_cats_out = sorted(
+            (
+                {
+                    **b,
+                    "som_usd": float(b["sam_valuation"]) * SOM_SHARE,
+                    "som_material_usd": float(b["material_usd"]) * SOM_SHARE,
+                }
+                for b in by_county_cat.values()
+            ),
+            key=lambda x: -float(x["som_material_usd"]),
+        )
         contractors_out = sorted(
             (
                 {
@@ -960,6 +1018,7 @@ def main() -> None:
             "som_material_usd": tot_mat * SOM_SHARE,
             "by_county": counties_out,
             "by_category": cats_out,
+            "by_county_category": county_cats_out,
             "by_contractor": contractors_out,
         }
 
@@ -1003,9 +1062,15 @@ def main() -> None:
         "ytd_through_month": ytd_through,
         "near_term_month": {"year": near_year, "month": near_month},
         "definitions": {
-            "TOM": "All permits issued ≥ 2021-01-01",
-            "SAM": "plumbing (new/repipe/remodel incl. new residential) + pool/spa + irrigation",
-            "SOM": "5% of SAM addressable project $",
+            "Total Construction Market": "All building permits issued ≥ 2021-01-01 (formerly TOM)",
+            "Plumbing Irrigation Pool Market": (
+                "Addressable total market: new/repipe/remodel plumbing + pool/spa + irrigation "
+                "(formerly SAM)"
+            ),
+            "Potential Market Share Tigre": (
+                "5% of addressable project construction $ (formerly SOM). "
+                "Materials Potential = 5% of estimated materials only — the Tigre-relevant slice."
+            ),
             "YTD": f"Jan–{ytd_through} same months across years (sparse as-of month excluded)",
             "material_labor": (
                 "Plumbing: project$ × plumbing_share(4.5%) split 35% material / 65% labor; "
@@ -1075,6 +1140,7 @@ def main() -> None:
         "pipeline": pipeline,
         "regions": {
             "counties": counties,
+            "county_by_category": county_by_category,
             "county_monthly_sam": county_monthly,
             "miami_dade": {
                 "jurisdictions": miami_jur,
