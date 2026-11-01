@@ -3,6 +3,7 @@ data/bronze/**/*.xlsx
 data/bronze/**/*.xls
 data/bronze/**/*.parquet
 data/bronze/**/*.json
+data/bronze/**/*.zip
 data/bronze/**/_staging/
 # Allow small committed previews under bronze
 !data/bronze/**/sample_preview.csv
