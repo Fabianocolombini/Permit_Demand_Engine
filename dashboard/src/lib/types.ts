@@ -214,6 +214,21 @@ export type Metrics = {
       coverage_note: string;
     };
   };
+  valuation_quality?: {
+    policy: string;
+    hard_ceiling_usd: number;
+    pool_irrigation_soft_cap_usd: number;
+    rows_ge_1b: number;
+    declared_sum_ge_1b: number;
+    rows_pool_irr_soft_capped: number;
+    declared_sum_pool_irr_soft_capped: number;
+    examples: Array<{
+      contractor: string;
+      permit_id: string;
+      declared: number;
+      descr: string;
+    }>;
+  };
   contractors: {
     coverage: {
       tom: number;

@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-11-01T16:30:27.684939+00:00",
+  "generated_at": "2026-11-01T16:40:41.195095+00:00",
   "as_of": "2026-11-01",
   "ytd_through_month": 10,
   "near_term_month": {
@@ -26,12 +26,12 @@
     "tom": 2726628,
     "sam": 712689,
     "sam_share_count_pct": 26.14,
-    "tom_valuation": 901447819576.917,
-    "sam_valuation": 326072118970.9043,
-    "sam_share_valuation_pct": 36.17,
-    "som_usd": 16303605948.545216,
-    "fittings_sam_usd": 3301933415.27625,
-    "fittings_som_usd": 165096670.7638125,
+    "tom_valuation": 422188846323.3261,
+    "sam_valuation": 186943421425.52203,
+    "sam_share_valuation_pct": 44.28,
+    "som_usd": 9347171071.276102,
+    "fittings_sam_usd": 3301933415.2762504,
+    "fittings_som_usd": 165096670.76381254,
     "counties": 15,
     "jurisdictions": 25
   },
@@ -40,44 +40,44 @@
       {
         "year": 2021,
         "count": 486016,
-        "valuation": 120907767437.42883,
+        "valuation": 53621659715.4313,
         "count_yoy_pct": null,
         "valuation_yoy_pct": null
       },
       {
         "year": 2022,
         "count": 475021,
-        "valuation": 100331135405.6673,
+        "valuation": 57724037694.31749,
         "count_yoy_pct": -2.26,
-        "valuation_yoy_pct": -17.02
+        "valuation_yoy_pct": 7.65
       },
       {
         "year": 2023,
         "count": 476180,
-        "valuation": 139880332659.97366,
+        "valuation": 67284888015.983246,
         "count_yoy_pct": 0.24,
-        "valuation_yoy_pct": 39.42
+        "valuation_yoy_pct": 16.56
       },
       {
         "year": 2024,
         "count": 466076,
-        "valuation": 148089758721.1641,
+        "valuation": 81680667075.99416,
         "count_yoy_pct": -2.12,
-        "valuation_yoy_pct": 5.87
+        "valuation_yoy_pct": 21.4
       },
       {
         "year": 2025,
         "count": 469922,
-        "valuation": 180458054833.76126,
+        "valuation": 84722315962.76215,
         "count_yoy_pct": 0.83,
-        "valuation_yoy_pct": 21.86
+        "valuation_yoy_pct": 3.72
       },
       {
         "year": 2026,
         "count": 353413,
-        "valuation": 211780770518.89685,
+        "valuation": 77155277859.03734,
         "count_yoy_pct": -24.79,
-        "valuation_yoy_pct": 17.36
+        "valuation_yoy_pct": -8.93
       }
     ],
     "ytd_comparison": [
@@ -85,7 +85,7 @@
         "year": 2021,
         "through_month": 10,
         "count": 413524,
-        "valuation": 96420675191.42078,
+        "valuation": 44911304158.418594,
         "count_yoy_pct": null,
         "valuation_yoy_pct": null
       },
@@ -93,41 +93,41 @@
         "year": 2022,
         "through_month": 10,
         "count": 400783,
-        "valuation": 91551585101.33928,
+        "valuation": 48950682409.98918,
         "count_yoy_pct": -3.08,
-        "valuation_yoy_pct": -5.05
+        "valuation_yoy_pct": 8.99
       },
       {
         "year": 2023,
         "through_month": 10,
         "count": 409805,
-        "valuation": 116752199200.5665,
+        "valuation": 56441113701.56608,
         "count_yoy_pct": 2.25,
-        "valuation_yoy_pct": 27.53
+        "valuation_yoy_pct": 15.3
       },
       {
         "year": 2024,
         "through_month": 10,
         "count": 390567,
-        "valuation": 125166652748.71465,
+        "valuation": 67312005072.54477,
         "count_yoy_pct": -4.69,
-        "valuation_yoy_pct": 7.21
+        "valuation_yoy_pct": 19.26
       },
       {
         "year": 2025,
         "through_month": 10,
         "count": 409837,
-        "valuation": 134718599757.78775,
+        "valuation": 72394484333.80673,
         "count_yoy_pct": 4.93,
-        "valuation_yoy_pct": 7.63
+        "valuation_yoy_pct": 7.55
       },
       {
         "year": 2026,
         "through_month": 10,
         "count": 353407,
-        "valuation": 211780692009.31686,
+        "valuation": 77155199349.45528,
         "count_yoy_pct": -13.77,
-        "valuation_yoy_pct": 57.2
+        "valuation_yoy_pct": 6.58
       }
     ],
     "monthly": [
@@ -135,421 +135,421 @@
         "year": 2021,
         "month": 1,
         "count": 39031,
-        "valuation": 11660573586.729996
+        "valuation": 3633579337.730012
       },
       {
         "year": 2021,
         "month": 2,
         "count": 36101,
-        "valuation": 12911381320.129988
+        "valuation": 3968678922.129967
       },
       {
         "year": 2021,
         "month": 3,
         "count": 45433,
-        "valuation": 4337434004.267998
+        "valuation": 4278561771.2679696
       },
       {
         "year": 2021,
         "month": 4,
         "count": 43566,
-        "valuation": 15221641845.696968
+        "valuation": 5662577038.696985
       },
       {
         "year": 2021,
         "month": 5,
         "count": 41654,
-        "valuation": 4684221256.324976
+        "valuation": 4666296128.324993
       },
       {
         "year": 2021,
         "month": 6,
         "count": 44705,
-        "valuation": 6198943856.489982
+        "valuation": 4600655042.490036
       },
       {
         "year": 2021,
         "month": 7,
         "count": 40696,
-        "valuation": 4252113016.714558
+        "valuation": 4199940128.7145576
       },
       {
         "year": 2021,
         "month": 8,
         "count": 42069,
-        "valuation": 12742757835.990002
+        "valuation": 4872340531.989976
       },
       {
         "year": 2021,
         "month": 9,
         "count": 41054,
-        "valuation": 14002641294.599998
+        "valuation": 4495614684.599998
       },
       {
         "year": 2021,
         "month": 10,
         "count": 39215,
-        "valuation": 10408967174.475002
+        "valuation": 4533060572.475004
       },
       {
         "year": 2021,
         "month": 11,
         "count": 36984,
-        "valuation": 19774196742.040146
+        "valuation": 4047319025.0400195
       },
       {
         "year": 2021,
         "month": 12,
         "count": 35508,
-        "valuation": 4712895503.969931
+        "valuation": 4663036531.97
       },
       {
         "year": 2022,
         "month": 1,
         "count": 39715,
-        "valuation": 7996549512.101015
+        "valuation": 4741102120.101002
       },
       {
         "year": 2022,
         "month": 2,
         "count": 36804,
-        "valuation": 4437655090.469977
+        "valuation": 4413477306.469998
       },
       {
         "year": 2022,
         "month": 3,
         "count": 44525,
-        "valuation": 8119790927.550002
+        "valuation": 6437543798.200014
       },
       {
         "year": 2022,
         "month": 4,
         "count": 42011,
-        "valuation": 11731075881.134
+        "valuation": 5611487422.1339855
       },
       {
         "year": 2022,
         "month": 5,
         "count": 40642,
-        "valuation": 4642303612.09
+        "valuation": 4632713361.089998
       },
       {
         "year": 2022,
         "month": 6,
         "count": 42337,
-        "valuation": 3937062187.904001
+        "valuation": 3887121967.9040003
       },
       {
         "year": 2022,
         "month": 7,
         "count": 38983,
-        "valuation": 4364563461.405001
+        "valuation": 4236467953.405
       },
       {
         "year": 2022,
         "month": 8,
         "count": 44130,
-        "valuation": 23650624667.45
+        "valuation": 4988162865.449995
       },
       {
         "year": 2022,
         "month": 9,
         "count": 34812,
-        "valuation": 4358828898.785
+        "valuation": 4350648575.784994
       },
       {
         "year": 2022,
         "month": 10,
         "count": 36824,
-        "valuation": 18313130862.45
+        "valuation": 5651957039.449987
       },
       {
         "year": 2022,
         "month": 11,
         "count": 36465,
-        "valuation": 4010489054.7980003
+        "valuation": 4010489042.797995
       },
       {
         "year": 2022,
         "month": 12,
         "count": 37773,
-        "valuation": 4769061249.529999
+        "valuation": 4762866241.529992
       },
       {
         "year": 2023,
         "month": 1,
         "count": 42069,
-        "valuation": 5314515188.7119465
+        "valuation": 5288947183.71195
       },
       {
         "year": 2023,
         "month": 2,
         "count": 40130,
-        "valuation": 9789552629.003
+        "valuation": 5697180168.002985
       },
       {
         "year": 2023,
         "month": 3,
         "count": 45074,
-        "valuation": 17070788115.492027
+        "valuation": 7189967890.492031
       },
       {
         "year": 2023,
         "month": 4,
         "count": 39983,
-        "valuation": 5247280006.09001
+        "valuation": 5232844032.090028
       },
       {
         "year": 2023,
         "month": 5,
         "count": 41927,
-        "valuation": 4836700240.570012
+        "valuation": 4812756127.57003
       },
       {
         "year": 2023,
         "month": 6,
         "count": 43971,
-        "valuation": 5641477675.463982
+        "valuation": 5585362259.463981
       },
       {
         "year": 2023,
         "month": 7,
         "count": 38751,
-        "valuation": 12929289012.249031
+        "valuation": 5066594865.248995
       },
       {
         "year": 2023,
         "month": 8,
         "count": 42563,
-        "valuation": 7378255171.196071
+        "valuation": 7124785771.195983
       },
       {
         "year": 2023,
         "month": 9,
         "count": 36965,
-        "valuation": 13459807267.10009
+        "valuation": 4550111232.1
       },
       {
         "year": 2023,
         "month": 10,
         "count": 38372,
-        "valuation": 35084533894.689995
+        "valuation": 5892564171.689949
       },
       {
         "year": 2023,
         "month": 11,
         "count": 34283,
-        "valuation": 17844808219.306004
+        "valuation": 5692713655.305937
       },
       {
         "year": 2023,
         "month": 12,
         "count": 32092,
-        "valuation": 5283325240.109981
+        "valuation": 5151060659.109955
       },
       {
         "year": 2024,
         "month": 1,
         "count": 37505,
-        "valuation": 12418518141.810009
+        "valuation": 7207140441.8100815
       },
       {
         "year": 2024,
         "month": 2,
         "count": 35673,
-        "valuation": 5142364020.274007
+        "valuation": 5081188612.274028
       },
       {
         "year": 2024,
         "month": 3,
         "count": 38978,
-        "valuation": 13127434019.159983
+        "valuation": 5184817620.160004
       },
       {
         "year": 2024,
         "month": 4,
         "count": 41997,
-        "valuation": 18520232612.859966
+        "valuation": 6665298546.860002
       },
       {
         "year": 2024,
         "month": 5,
         "count": 43495,
-        "valuation": 22227177484.299995
+        "valuation": 6912282637.300001
       },
       {
         "year": 2024,
         "month": 6,
         "count": 38153,
-        "valuation": 6551278746.919979
+        "valuation": 6510838115.919995
       },
       {
         "year": 2024,
         "month": 7,
         "count": 41122,
-        "valuation": 11706043124.189949
+        "valuation": 8380469376.18999
       },
       {
         "year": 2024,
         "month": 8,
         "count": 40182,
-        "valuation": 13613772382.559992
+        "valuation": 7485964655.559987
       },
       {
         "year": 2024,
         "month": 9,
         "count": 34824,
-        "valuation": 6345721162.859999
+        "valuation": 6279381127.690005
       },
       {
         "year": 2024,
         "month": 10,
         "count": 38638,
-        "valuation": 15514111053.779999
+        "valuation": 7604623938.78001
       },
       {
         "year": 2024,
         "month": 11,
         "count": 37036,
-        "valuation": 17707509290.149014
+        "valuation": 9223614802.149002
       },
       {
         "year": 2024,
         "month": 12,
         "count": 38473,
-        "valuation": 5215596682.3003235
+        "valuation": 5145047201.300322
       },
       {
         "year": 2025,
         "month": 1,
         "count": 41126,
-        "valuation": 17637376274.370003
+        "valuation": 6704724944.370001
       },
       {
         "year": 2025,
         "month": 2,
         "count": 40820,
-        "valuation": 17280978668.340008
+        "valuation": 6176652621.339998
       },
       {
         "year": 2025,
         "month": 3,
         "count": 44110,
-        "valuation": 8983662111.329952
+        "valuation": 6912863611.330006
       },
       {
         "year": 2025,
         "month": 4,
         "count": 45607,
-        "valuation": 12427645148.266922
+        "valuation": 7584342516.266993
       },
       {
         "year": 2025,
         "month": 5,
         "count": 43360,
-        "valuation": 10724104559.831003
+        "valuation": 7573219998.831005
       },
       {
         "year": 2025,
         "month": 6,
         "count": 39639,
-        "valuation": 13338929101.089996
+        "valuation": 6509310613.089963
       },
       {
         "year": 2025,
         "month": 7,
         "count": 40919,
-        "valuation": 9573282623.242977
+        "valuation": 9314579681.242977
       },
       {
         "year": 2025,
         "month": 8,
         "count": 38820,
-        "valuation": 16724315254.974987
+        "valuation": 7159691712.974955
       },
       {
         "year": 2025,
         "month": 9,
         "count": 37272,
-        "valuation": 11733430827.967005
+        "valuation": 6316950820.967012
       },
       {
         "year": 2025,
         "month": 10,
         "count": 38164,
-        "valuation": 16294875188.392963
+        "valuation": 8142147813.392962
       },
       {
         "year": 2025,
         "month": 11,
         "count": 29122,
-        "valuation": 39760072796.47996
+        "valuation": 6385036088.479968
       },
       {
         "year": 2025,
         "month": 12,
         "count": 30963,
-        "valuation": 5979382279.474947
+        "valuation": 5942795540.474962
       },
       {
         "year": 2026,
         "month": 1,
         "count": 32076,
-        "valuation": 22956404238.521004
+        "valuation": 6380187728.520967
       },
       {
         "year": 2026,
         "month": 2,
         "count": 33207,
-        "valuation": 30735935564.489975
+        "valuation": 7522310694.490011
       },
       {
         "year": 2026,
         "month": 3,
         "count": 39925,
-        "valuation": 17771606157.42993
+        "valuation": 9753250075.070087
       },
       {
         "year": 2026,
         "month": 4,
         "count": 38394,
-        "valuation": 16056552349.874008
+        "valuation": 8037547411.873945
       },
       {
         "year": 2026,
         "month": 5,
         "count": 35932,
-        "valuation": 27463908962.31
+        "valuation": 6178056945.309961
       },
       {
         "year": 2026,
         "month": 6,
         "count": 39619,
-        "valuation": 19820648721.599934
+        "valuation": 8434815865.599993
       },
       {
         "year": 2026,
         "month": 7,
         "count": 38543,
-        "valuation": 33071477499.020985
+        "valuation": 9445658935.021204
       },
       {
         "year": 2026,
         "month": 8,
         "count": 36866,
-        "valuation": 19901077911.03897
+        "valuation": 7776524540.039166
       },
       {
         "year": 2026,
         "month": 9,
         "count": 32500,
-        "valuation": 7576072204.449993
+        "valuation": 7401677000.450174
       },
       {
         "year": 2026,
         "month": 10,
         "count": 26345,
-        "valuation": 16427008400.580006
+        "valuation": 6225170153.080172
       },
       {
         "year": 2026,
@@ -996,433 +996,433 @@
       {
         "year": 2021,
         "month": 1,
-        "value": 11660573586.729996,
+        "value": 3633579337.730012,
         "kind": "observed"
       },
       {
         "year": 2021,
         "month": 2,
-        "value": 12911381320.129988,
+        "value": 3968678922.129967,
         "kind": "observed"
       },
       {
         "year": 2021,
         "month": 3,
-        "value": 4337434004.267998,
+        "value": 4278561771.2679696,
         "kind": "observed"
       },
       {
         "year": 2021,
         "month": 4,
-        "value": 15221641845.696968,
+        "value": 5662577038.696985,
         "kind": "observed"
       },
       {
         "year": 2021,
         "month": 5,
-        "value": 4684221256.324976,
+        "value": 4666296128.324993,
         "kind": "observed"
       },
       {
         "year": 2021,
         "month": 6,
-        "value": 6198943856.489982,
+        "value": 4600655042.490036,
         "kind": "observed"
       },
       {
         "year": 2021,
         "month": 7,
-        "value": 4252113016.714558,
+        "value": 4199940128.7145576,
         "kind": "observed"
       },
       {
         "year": 2021,
         "month": 8,
-        "value": 12742757835.990002,
+        "value": 4872340531.989976,
         "kind": "observed"
       },
       {
         "year": 2021,
         "month": 9,
-        "value": 14002641294.599998,
+        "value": 4495614684.599998,
         "kind": "observed"
       },
       {
         "year": 2021,
         "month": 10,
-        "value": 10408967174.475002,
+        "value": 4533060572.475004,
         "kind": "observed"
       },
       {
         "year": 2021,
         "month": 11,
-        "value": 19774196742.040146,
+        "value": 4047319025.0400195,
         "kind": "observed"
       },
       {
         "year": 2021,
         "month": 12,
-        "value": 4712895503.969931,
+        "value": 4663036531.97,
         "kind": "observed"
       },
       {
         "year": 2022,
         "month": 1,
-        "value": 7996549512.101015,
+        "value": 4741102120.101002,
         "kind": "observed"
       },
       {
         "year": 2022,
         "month": 2,
-        "value": 4437655090.469977,
+        "value": 4413477306.469998,
         "kind": "observed"
       },
       {
         "year": 2022,
         "month": 3,
-        "value": 8119790927.550002,
+        "value": 6437543798.200014,
         "kind": "observed"
       },
       {
         "year": 2022,
         "month": 4,
-        "value": 11731075881.134,
+        "value": 5611487422.1339855,
         "kind": "observed"
       },
       {
         "year": 2022,
         "month": 5,
-        "value": 4642303612.09,
+        "value": 4632713361.089998,
         "kind": "observed"
       },
       {
         "year": 2022,
         "month": 6,
-        "value": 3937062187.904001,
+        "value": 3887121967.9040003,
         "kind": "observed"
       },
       {
         "year": 2022,
         "month": 7,
-        "value": 4364563461.405001,
+        "value": 4236467953.405,
         "kind": "observed"
       },
       {
         "year": 2022,
         "month": 8,
-        "value": 23650624667.45,
+        "value": 4988162865.449995,
         "kind": "observed"
       },
       {
         "year": 2022,
         "month": 9,
-        "value": 4358828898.785,
+        "value": 4350648575.784994,
         "kind": "observed"
       },
       {
         "year": 2022,
         "month": 10,
-        "value": 18313130862.45,
+        "value": 5651957039.449987,
         "kind": "observed"
       },
       {
         "year": 2022,
         "month": 11,
-        "value": 4010489054.7980003,
+        "value": 4010489042.797995,
         "kind": "observed"
       },
       {
         "year": 2022,
         "month": 12,
-        "value": 4769061249.529999,
+        "value": 4762866241.529992,
         "kind": "observed"
       },
       {
         "year": 2023,
         "month": 1,
-        "value": 5314515188.7119465,
+        "value": 5288947183.71195,
         "kind": "observed"
       },
       {
         "year": 2023,
         "month": 2,
-        "value": 9789552629.003,
+        "value": 5697180168.002985,
         "kind": "observed"
       },
       {
         "year": 2023,
         "month": 3,
-        "value": 17070788115.492027,
+        "value": 7189967890.492031,
         "kind": "observed"
       },
       {
         "year": 2023,
         "month": 4,
-        "value": 5247280006.09001,
+        "value": 5232844032.090028,
         "kind": "observed"
       },
       {
         "year": 2023,
         "month": 5,
-        "value": 4836700240.570012,
+        "value": 4812756127.57003,
         "kind": "observed"
       },
       {
         "year": 2023,
         "month": 6,
-        "value": 5641477675.463982,
+        "value": 5585362259.463981,
         "kind": "observed"
       },
       {
         "year": 2023,
         "month": 7,
-        "value": 12929289012.249031,
+        "value": 5066594865.248995,
         "kind": "observed"
       },
       {
         "year": 2023,
         "month": 8,
-        "value": 7378255171.196071,
+        "value": 7124785771.195983,
         "kind": "observed"
       },
       {
         "year": 2023,
         "month": 9,
-        "value": 13459807267.10009,
+        "value": 4550111232.1,
         "kind": "observed"
       },
       {
         "year": 2023,
         "month": 10,
-        "value": 35084533894.689995,
+        "value": 5892564171.689949,
         "kind": "observed"
       },
       {
         "year": 2023,
         "month": 11,
-        "value": 17844808219.306004,
+        "value": 5692713655.305937,
         "kind": "observed"
       },
       {
         "year": 2023,
         "month": 12,
-        "value": 5283325240.109981,
+        "value": 5151060659.109955,
         "kind": "observed"
       },
       {
         "year": 2024,
         "month": 1,
-        "value": 12418518141.810009,
+        "value": 7207140441.8100815,
         "kind": "observed"
       },
       {
         "year": 2024,
         "month": 2,
-        "value": 5142364020.274007,
+        "value": 5081188612.274028,
         "kind": "observed"
       },
       {
         "year": 2024,
         "month": 3,
-        "value": 13127434019.159983,
+        "value": 5184817620.160004,
         "kind": "observed"
       },
       {
         "year": 2024,
         "month": 4,
-        "value": 18520232612.859966,
+        "value": 6665298546.860002,
         "kind": "observed"
       },
       {
         "year": 2024,
         "month": 5,
-        "value": 22227177484.299995,
+        "value": 6912282637.300001,
         "kind": "observed"
       },
       {
         "year": 2024,
         "month": 6,
-        "value": 6551278746.919979,
+        "value": 6510838115.919995,
         "kind": "observed"
       },
       {
         "year": 2024,
         "month": 7,
-        "value": 11706043124.189949,
+        "value": 8380469376.18999,
         "kind": "observed"
       },
       {
         "year": 2024,
         "month": 8,
-        "value": 13613772382.559992,
+        "value": 7485964655.559987,
         "kind": "observed"
       },
       {
         "year": 2024,
         "month": 9,
-        "value": 6345721162.859999,
+        "value": 6279381127.690005,
         "kind": "observed"
       },
       {
         "year": 2024,
         "month": 10,
-        "value": 15514111053.779999,
+        "value": 7604623938.78001,
         "kind": "observed"
       },
       {
         "year": 2024,
         "month": 11,
-        "value": 17707509290.149014,
+        "value": 9223614802.149002,
         "kind": "observed"
       },
       {
         "year": 2024,
         "month": 12,
-        "value": 5215596682.3003235,
+        "value": 5145047201.300322,
         "kind": "observed"
       },
       {
         "year": 2025,
         "month": 1,
-        "value": 17637376274.370003,
+        "value": 6704724944.370001,
         "kind": "observed"
       },
       {
         "year": 2025,
         "month": 2,
-        "value": 17280978668.340008,
+        "value": 6176652621.339998,
         "kind": "observed"
       },
       {
         "year": 2025,
         "month": 3,
-        "value": 8983662111.329952,
+        "value": 6912863611.330006,
         "kind": "observed"
       },
       {
         "year": 2025,
         "month": 4,
-        "value": 12427645148.266922,
+        "value": 7584342516.266993,
         "kind": "observed"
       },
       {
         "year": 2025,
         "month": 5,
-        "value": 10724104559.831003,
+        "value": 7573219998.831005,
         "kind": "observed"
       },
       {
         "year": 2025,
         "month": 6,
-        "value": 13338929101.089996,
+        "value": 6509310613.089963,
         "kind": "observed"
       },
       {
         "year": 2025,
         "month": 7,
-        "value": 9573282623.242977,
+        "value": 9314579681.242977,
         "kind": "observed"
       },
       {
         "year": 2025,
         "month": 8,
-        "value": 16724315254.974987,
+        "value": 7159691712.974955,
         "kind": "observed"
       },
       {
         "year": 2025,
         "month": 9,
-        "value": 11733430827.967005,
+        "value": 6316950820.967012,
         "kind": "observed"
       },
       {
         "year": 2025,
         "month": 10,
-        "value": 16294875188.392963,
+        "value": 8142147813.392962,
         "kind": "observed"
       },
       {
         "year": 2025,
         "month": 11,
-        "value": 39760072796.47996,
+        "value": 6385036088.479968,
         "kind": "observed"
       },
       {
         "year": 2025,
         "month": 12,
-        "value": 5979382279.474947,
+        "value": 5942795540.474962,
         "kind": "observed"
       },
       {
         "year": 2026,
         "month": 1,
-        "value": 22956404238.521004,
+        "value": 6380187728.520967,
         "kind": "observed"
       },
       {
         "year": 2026,
         "month": 2,
-        "value": 30735935564.489975,
+        "value": 7522310694.490011,
         "kind": "observed"
       },
       {
         "year": 2026,
         "month": 3,
-        "value": 17771606157.42993,
+        "value": 9753250075.070087,
         "kind": "observed"
       },
       {
         "year": 2026,
         "month": 4,
-        "value": 16056552349.874008,
+        "value": 8037547411.873945,
         "kind": "observed"
       },
       {
         "year": 2026,
         "month": 5,
-        "value": 27463908962.31,
+        "value": 6178056945.309961,
         "kind": "observed"
       },
       {
         "year": 2026,
         "month": 6,
-        "value": 19820648721.599934,
+        "value": 8434815865.599993,
         "kind": "observed"
       },
       {
         "year": 2026,
         "month": 7,
-        "value": 33071477499.020985,
+        "value": 9445658935.021204,
         "kind": "observed"
       },
       {
         "year": 2026,
         "month": 8,
-        "value": 19901077911.03897,
+        "value": 7776524540.039166,
         "kind": "observed"
       },
       {
         "year": 2026,
         "month": 9,
-        "value": 7576072204.449993,
+        "value": 7401677000.450174,
         "kind": "observed"
       },
       {
         "year": 2026,
         "month": 10,
-        "value": 16427008400.580006,
+        "value": 6225170153.080172,
         "kind": "observed"
       },
       {
         "year": 2026,
         "month": 11,
-        "value": 37689106201.318275,
+        "value": 6432777990.389248,
         "kind": "projected"
       },
       {
         "year": 2026,
         "month": 12,
-        "value": 5667936648.480261,
+        "value": 5987230741.439942,
         "kind": "projected"
       }
     ],
@@ -1435,11 +1435,11 @@
       "sparse_current_month": true
     },
     "projection_valuation": {
-      "ytd": 211780692009.31482,
-      "ytg": 43357042849.79854,
-      "full_year": 255137734859.11334,
+      "ytd": 77155199349.45569,
+      "ytg": 12420008731.82919,
+      "full_year": 89575208081.28488,
       "ytd_through_month": 10,
-      "growth_factor": 0.9479134103762247,
+      "growth_factor": 1.0074771545920338,
       "sparse_current_month": true
     }
   },
@@ -1448,53 +1448,53 @@
       "sam_count": 712689,
       "tom_count": 2726628,
       "sam_share_count_pct": 26.14,
-      "sam_valuation": 326072118970.9043,
-      "tom_valuation": 901447819576.917,
-      "sam_share_valuation_pct": 36.17,
-      "som_usd": 16303605948.545216
+      "sam_valuation": 186943421425.52203,
+      "tom_valuation": 422188846323.3261,
+      "sam_share_valuation_pct": 44.28,
+      "som_usd": 9347171071.276102
     },
     "annual": [
       {
         "year": 2021,
         "count": 135878,
-        "valuation": 45345647095.591545,
+        "valuation": 24571780859.59153,
         "count_yoy_pct": null,
         "valuation_yoy_pct": null
       },
       {
         "year": 2022,
         "count": 126800,
-        "valuation": 30265975794.703,
+        "valuation": 23617913739.35294,
         "count_yoy_pct": -6.68,
-        "valuation_yoy_pct": -33.25
+        "valuation_yoy_pct": -3.88
       },
       {
         "year": 2023,
         "count": 124490,
-        "valuation": 34288504750.800064,
+        "valuation": 30171613878.799965,
         "count_yoy_pct": -1.82,
-        "valuation_yoy_pct": 13.29
+        "valuation_yoy_pct": 27.75
       },
       {
         "year": 2024,
         "count": 121043,
-        "valuation": 80155817848.05997,
+        "valuation": 38794596511.890015,
         "count_yoy_pct": -2.77,
-        "valuation_yoy_pct": 133.77
+        "valuation_yoy_pct": 28.58
       },
       {
         "year": 2025,
         "count": 111146,
-        "valuation": 62429364853.89093,
+        "valuation": 37909475943.89096,
         "count_yoy_pct": -8.18,
-        "valuation_yoy_pct": -22.11
+        "valuation_yoy_pct": -2.28
       },
       {
         "year": 2026,
         "count": 93332,
-        "valuation": 73586808627.85594,
+        "valuation": 31878040491.995987,
         "count_yoy_pct": -16.03,
-        "valuation_yoy_pct": 17.87
+        "valuation_yoy_pct": -15.91
       }
     ],
     "ytd_comparison": [
@@ -1502,7 +1502,7 @@
         "year": 2021,
         "through_month": 10,
         "count": 114540,
-        "valuation": 32865567912.261536,
+        "valuation": 20005441716.26155,
         "count_yoy_pct": null,
         "valuation_yoy_pct": null
       },
@@ -1510,41 +1510,41 @@
         "year": 2022,
         "through_month": 10,
         "count": 109573,
-        "valuation": 27190951325.67301,
+        "valuation": 20549084290.322994,
         "count_yoy_pct": -4.34,
-        "valuation_yoy_pct": -17.27
+        "valuation_yoy_pct": 2.72
       },
       {
         "year": 2023,
         "through_month": 10,
         "count": 105223,
-        "valuation": 27513589084.86998,
+        "valuation": 24755364856.869995,
         "count_yoy_pct": -3.97,
-        "valuation_yoy_pct": 1.19
+        "valuation_yoy_pct": 20.47
       },
       {
         "year": 2024,
         "through_month": 10,
         "count": 103506,
-        "valuation": 72426997842.20006,
+        "valuation": 31751729401.03,
         "count_yoy_pct": -1.63,
-        "valuation_yoy_pct": 163.24
+        "valuation_yoy_pct": 28.26
       },
       {
         "year": 2025,
         "through_month": 10,
         "count": 95957,
-        "valuation": 56014057546.221016,
+        "valuation": 31765602388.221024,
         "count_yoy_pct": -7.29,
-        "valuation_yoy_pct": -22.66
+        "valuation_yoy_pct": 0.04
       },
       {
         "year": 2026,
         "through_month": 10,
         "count": 93332,
-        "valuation": 73586808627.85596,
+        "valuation": 31878040491.99592,
         "count_yoy_pct": -2.74,
-        "valuation_yoy_pct": 31.37
+        "valuation_yoy_pct": 0.35
       }
     ],
     "monthly": [
@@ -1552,421 +1552,421 @@
         "year": 2021,
         "month": 1,
         "count": 13205,
-        "valuation": 1889971199.97
+        "valuation": 1729052955.9699998
       },
       {
         "year": 2021,
         "month": 2,
         "count": 9506,
-        "valuation": 1372134140.6099997
+        "valuation": 1343373543.6100001
       },
       {
         "year": 2021,
         "month": 3,
         "count": 11813,
-        "valuation": 1853830471.3999999
+        "valuation": 1794958238.4
       },
       {
         "year": 2021,
         "month": 4,
         "count": 11577,
-        "valuation": 2716210933.3069997
+        "valuation": 2705285813.307
       },
       {
         "year": 2021,
         "month": 5,
         "count": 10920,
-        "valuation": 1946777326.5600002
+        "valuation": 1928852198.5600002
       },
       {
         "year": 2021,
         "month": 6,
         "count": 11947,
-        "valuation": 2070163586.320001
+        "valuation": 1871860772.3200006
       },
       {
         "year": 2021,
         "month": 7,
         "count": 11473,
-        "valuation": 2417669275.5145555
+        "valuation": 2365496387.514555
       },
       {
         "year": 2021,
         "month": 8,
         "count": 11177,
-        "valuation": 10106578503.73
+        "valuation": 2236161199.7299995
       },
       {
         "year": 2021,
         "month": 9,
         "count": 11829,
-        "valuation": 3620022276.9700003
+        "valuation": 1977009892.97
       },
       {
         "year": 2021,
         "month": 10,
         "count": 11093,
-        "valuation": 4872210197.880003
+        "valuation": 2053390713.88
       },
       {
         "year": 2021,
         "month": 11,
         "count": 10646,
-        "valuation": 10042947390.649988
+        "valuation": 2179066322.6500006
       },
       {
         "year": 2021,
         "month": 12,
         "count": 10692,
-        "valuation": 2437131792.680001
+        "valuation": 2387272820.6800003
       },
       {
         "year": 2022,
         "month": 1,
         "count": 14072,
-        "valuation": 5334445136.872991
+        "valuation": 2078997744.8730001
       },
       {
         "year": 2022,
         "month": 2,
         "count": 10500,
-        "valuation": 1618705683.97
+        "valuation": 1594527899.97
       },
       {
         "year": 2022,
         "month": 3,
         "count": 12267,
-        "valuation": 2202456570.9800005
+        "valuation": 2165232295.6299996
       },
       {
         "year": 2022,
         "month": 4,
         "count": 11203,
-        "valuation": 5150123381.684
+        "valuation": 2082580256.684
       },
       {
         "year": 2022,
         "month": 5,
         "count": 10997,
-        "valuation": 2378459429.46
+        "valuation": 2368869178.46
       },
       {
         "year": 2022,
         "month": 6,
         "count": 10649,
-        "valuation": 1851728898.111
+        "valuation": 1801788678.1109996
       },
       {
         "year": 2022,
         "month": 7,
         "count": 9652,
-        "valuation": 1931398194.0
+        "valuation": 1803302685.9999998
       },
       {
         "year": 2022,
         "month": 8,
         "count": 10913,
-        "valuation": 2280776956.94
+        "valuation": 2270926061.94
       },
       {
         "year": 2022,
         "month": 9,
         "count": 9126,
-        "valuation": 1702779482.0750003
+        "valuation": 1694599159.0749998
       },
       {
         "year": 2022,
         "month": 10,
         "count": 10194,
-        "valuation": 2740077591.58
+        "valuation": 2688260329.580001
       },
       {
         "year": 2022,
         "month": 11,
         "count": 8738,
-        "valuation": 1492725099.02
+        "valuation": 1492725087.02
       },
       {
         "year": 2022,
         "month": 12,
         "count": 8489,
-        "valuation": 1582299370.0099998
+        "valuation": 1576104362.01
       },
       {
         "year": 2023,
         "month": 1,
         "count": 10016,
-        "valuation": 2309577406.36
+        "valuation": 2284009401.36
       },
       {
         "year": 2023,
         "month": 2,
         "count": 9866,
-        "valuation": 2486387522.0499997
+        "valuation": 2470492394.049999
       },
       {
         "year": 2023,
         "month": 3,
         "count": 10457,
-        "valuation": 5493140139.49
+        "valuation": 3475731256.4900007
       },
       {
         "year": 2023,
         "month": 4,
         "count": 10207,
-        "valuation": 2322703681.0699997
+        "valuation": 2308267707.0699997
       },
       {
         "year": 2023,
         "month": 5,
         "count": 10702,
-        "valuation": 2093676120.3300004
+        "valuation": 2069732007.3300004
       },
       {
         "year": 2023,
         "month": 6,
         "count": 11884,
-        "valuation": 2994243115.66
+        "valuation": 2938127699.6600003
       },
       {
         "year": 2023,
         "month": 7,
         "count": 10042,
-        "valuation": 2461428594.0999994
+        "valuation": 2461428562.0999985
       },
       {
         "year": 2023,
         "month": 8,
         "count": 11349,
-        "valuation": 2723051170.230001
+        "valuation": 2469581770.2299995
       },
       {
         "year": 2023,
         "month": 9,
         "count": 10142,
-        "valuation": 1933575701.6499996
+        "valuation": 1811966869.6499987
       },
       {
         "year": 2023,
         "month": 10,
         "count": 10558,
-        "valuation": 2695805633.9300003
+        "valuation": 2466027188.9300003
       },
       {
         "year": 2023,
         "month": 11,
         "count": 9864,
-        "valuation": 4217440606.2400002
+        "valuation": 2991038543.2400002
       },
       {
         "year": 2023,
         "month": 12,
         "count": 9403,
-        "valuation": 2557475059.6900043
+        "valuation": 2425210478.6900005
       },
       {
         "year": 2024,
         "month": 1,
         "count": 10490,
-        "valuation": 3526172090.579997
+        "valuation": 3272925387.5800004
       },
       {
         "year": 2024,
         "month": 2,
         "count": 9820,
-        "valuation": 2373289735.539998
+        "valuation": 2312114327.54
       },
       {
         "year": 2024,
         "month": 3,
         "count": 10680,
-        "valuation": 10415795318.49
+        "valuation": 2473178919.4900007
       },
       {
         "year": 2024,
         "month": 4,
         "count": 11158,
-        "valuation": 14857635470.80999
+        "valuation": 3002701404.809999
       },
       {
         "year": 2024,
         "month": 5,
         "count": 11549,
-        "valuation": 6041430569.349999
+        "valuation": 2947783960.3499994
       },
       {
         "year": 2024,
         "month": 6,
         "count": 10072,
-        "valuation": 3659796985.450001
+        "valuation": 3619356354.45
       },
       {
         "year": 2024,
         "month": 7,
         "count": 11008,
-        "valuation": 6700603818.110001
+        "valuation": 3375030070.1099977
       },
       {
         "year": 2024,
         "month": 8,
         "count": 10463,
-        "valuation": 9054317934.609999
+        "valuation": 2926510207.6099997
       },
       {
         "year": 2024,
         "month": 9,
         "count": 9067,
-        "valuation": 3415324434.3300004
+        "valuation": 3348984399.160001
       },
       {
         "year": 2024,
         "month": 10,
         "count": 9199,
-        "valuation": 12382631484.929996
+        "valuation": 4473144369.930002
       },
       {
         "year": 2024,
         "month": 11,
         "count": 8654,
-        "valuation": 5462601507.339999
+        "valuation": 4847198093.34
       },
       {
         "year": 2024,
         "month": 12,
         "count": 8883,
-        "valuation": 2266218498.5200005
+        "valuation": 2195669017.52
       },
       {
         "year": 2025,
         "month": 1,
         "count": 9730,
-        "valuation": 5746318772.690003
+        "valuation": 2683374380.69
       },
       {
         "year": 2025,
         "month": 2,
         "count": 9372,
-        "valuation": 6471984274.410011
+        "valuation": 3232829435.41
       },
       {
         "year": 2025,
         "month": 3,
         "count": 10458,
-        "valuation": 5551617681.109999
+        "valuation": 3480819181.11
       },
       {
         "year": 2025,
         "month": 4,
         "count": 9959,
-        "valuation": 6349093525.726999
+        "valuation": 3205776893.726999
       },
       {
         "year": 2025,
         "month": 5,
         "count": 10093,
-        "valuation": 3370657644.7209997
+        "valuation": 3279631291.7209997
       },
       {
         "year": 2025,
         "month": 6,
         "count": 8914,
-        "valuation": 3250571324.880001
+        "valuation": 3083434836.8800006
       },
       {
         "year": 2025,
         "month": 7,
         "count": 9465,
-        "valuation": 4087188237.973
+        "valuation": 3828485295.973
       },
       {
         "year": 2025,
         "month": 8,
         "count": 9093,
-        "valuation": 12313084696.6
+        "valuation": 2748461154.6
       },
       {
         "year": 2025,
         "month": 9,
         "count": 8897,
-        "valuation": 4996036863.45
+        "valuation": 2635863910.45
       },
       {
         "year": 2025,
         "month": 10,
         "count": 9976,
-        "valuation": 3877504524.6600056
+        "valuation": 3586926007.6600056
       },
       {
         "year": 2025,
         "month": 11,
         "count": 7317,
-        "valuation": 3433644820.7900004
+        "valuation": 3198797807.79
       },
       {
         "year": 2025,
         "month": 12,
         "count": 7872,
-        "valuation": 2981662486.879999
+        "valuation": 2945075747.8799996
       },
       {
         "year": 2026,
         "month": 1,
         "count": 8888,
-        "valuation": 8406276995.884
+        "valuation": 2750583043.884
       },
       {
         "year": 2026,
         "month": 2,
         "count": 8560,
-        "valuation": 13778496814.189999
+        "valuation": 2802224330.19
       },
       {
         "year": 2026,
         "month": 3,
         "count": 10552,
-        "valuation": 4438136805.749999
+        "valuation": 4282892044.3899994
       },
       {
         "year": 2026,
         "month": 4,
         "count": 9786,
-        "valuation": 3748696229.88
+        "valuation": 3598301300.88
       },
       {
         "year": 2026,
         "month": 5,
         "count": 9235,
-        "valuation": 23839142715.930004
+        "valuation": 2553290698.930001
       },
       {
         "year": 2026,
         "month": 6,
         "count": 10635,
-        "valuation": 4627442642.959993
+        "valuation": 2785794529.960001
       },
       {
         "year": 2026,
         "month": 7,
         "count": 9528,
-        "valuation": 4233121995.272
+        "valuation": 4202201775.2720003
       },
       {
         "year": 2026,
         "month": 8,
         "count": 9964,
-        "valuation": 3546773944.6399994
+        "valuation": 2765291652.6400003
       },
       {
         "year": 2026,
         "month": 9,
         "count": 8685,
-        "valuation": 3149479960.9300003
+        "valuation": 2975084756.9300003
       },
       {
         "year": 2026,
         "month": 10,
         "count": 7499,
-        "valuation": 3819240522.42
+        "valuation": 3162376358.92
       }
     ],
     "monthly_count_with_projection": [
@@ -2407,433 +2407,433 @@
       {
         "year": 2021,
         "month": 1,
-        "value": 1889971199.97,
+        "value": 1729052955.9699998,
         "kind": "observed"
       },
       {
         "year": 2021,
         "month": 2,
-        "value": 1372134140.6099997,
+        "value": 1343373543.6100001,
         "kind": "observed"
       },
       {
         "year": 2021,
         "month": 3,
-        "value": 1853830471.3999999,
+        "value": 1794958238.4,
         "kind": "observed"
       },
       {
         "year": 2021,
         "month": 4,
-        "value": 2716210933.3069997,
+        "value": 2705285813.307,
         "kind": "observed"
       },
       {
         "year": 2021,
         "month": 5,
-        "value": 1946777326.5600002,
+        "value": 1928852198.5600002,
         "kind": "observed"
       },
       {
         "year": 2021,
         "month": 6,
-        "value": 2070163586.320001,
+        "value": 1871860772.3200006,
         "kind": "observed"
       },
       {
         "year": 2021,
         "month": 7,
-        "value": 2417669275.5145555,
+        "value": 2365496387.514555,
         "kind": "observed"
       },
       {
         "year": 2021,
         "month": 8,
-        "value": 10106578503.73,
+        "value": 2236161199.7299995,
         "kind": "observed"
       },
       {
         "year": 2021,
         "month": 9,
-        "value": 3620022276.9700003,
+        "value": 1977009892.97,
         "kind": "observed"
       },
       {
         "year": 2021,
         "month": 10,
-        "value": 4872210197.880003,
+        "value": 2053390713.88,
         "kind": "observed"
       },
       {
         "year": 2021,
         "month": 11,
-        "value": 10042947390.649988,
+        "value": 2179066322.6500006,
         "kind": "observed"
       },
       {
         "year": 2021,
         "month": 12,
-        "value": 2437131792.680001,
+        "value": 2387272820.6800003,
         "kind": "observed"
       },
       {
         "year": 2022,
         "month": 1,
-        "value": 5334445136.872991,
+        "value": 2078997744.8730001,
         "kind": "observed"
       },
       {
         "year": 2022,
         "month": 2,
-        "value": 1618705683.97,
+        "value": 1594527899.97,
         "kind": "observed"
       },
       {
         "year": 2022,
         "month": 3,
-        "value": 2202456570.9800005,
+        "value": 2165232295.6299996,
         "kind": "observed"
       },
       {
         "year": 2022,
         "month": 4,
-        "value": 5150123381.684,
+        "value": 2082580256.684,
         "kind": "observed"
       },
       {
         "year": 2022,
         "month": 5,
-        "value": 2378459429.46,
+        "value": 2368869178.46,
         "kind": "observed"
       },
       {
         "year": 2022,
         "month": 6,
-        "value": 1851728898.111,
+        "value": 1801788678.1109996,
         "kind": "observed"
       },
       {
         "year": 2022,
         "month": 7,
-        "value": 1931398194.0,
+        "value": 1803302685.9999998,
         "kind": "observed"
       },
       {
         "year": 2022,
         "month": 8,
-        "value": 2280776956.94,
+        "value": 2270926061.94,
         "kind": "observed"
       },
       {
         "year": 2022,
         "month": 9,
-        "value": 1702779482.0750003,
+        "value": 1694599159.0749998,
         "kind": "observed"
       },
       {
         "year": 2022,
         "month": 10,
-        "value": 2740077591.58,
+        "value": 2688260329.580001,
         "kind": "observed"
       },
       {
         "year": 2022,
         "month": 11,
-        "value": 1492725099.02,
+        "value": 1492725087.02,
         "kind": "observed"
       },
       {
         "year": 2022,
         "month": 12,
-        "value": 1582299370.0099998,
+        "value": 1576104362.01,
         "kind": "observed"
       },
       {
         "year": 2023,
         "month": 1,
-        "value": 2309577406.36,
+        "value": 2284009401.36,
         "kind": "observed"
       },
       {
         "year": 2023,
         "month": 2,
-        "value": 2486387522.0499997,
+        "value": 2470492394.049999,
         "kind": "observed"
       },
       {
         "year": 2023,
         "month": 3,
-        "value": 5493140139.49,
+        "value": 3475731256.4900007,
         "kind": "observed"
       },
       {
         "year": 2023,
         "month": 4,
-        "value": 2322703681.0699997,
+        "value": 2308267707.0699997,
         "kind": "observed"
       },
       {
         "year": 2023,
         "month": 5,
-        "value": 2093676120.3300004,
+        "value": 2069732007.3300004,
         "kind": "observed"
       },
       {
         "year": 2023,
         "month": 6,
-        "value": 2994243115.66,
+        "value": 2938127699.6600003,
         "kind": "observed"
       },
       {
         "year": 2023,
         "month": 7,
-        "value": 2461428594.0999994,
+        "value": 2461428562.0999985,
         "kind": "observed"
       },
       {
         "year": 2023,
         "month": 8,
-        "value": 2723051170.230001,
+        "value": 2469581770.2299995,
         "kind": "observed"
       },
       {
         "year": 2023,
         "month": 9,
-        "value": 1933575701.6499996,
+        "value": 1811966869.6499987,
         "kind": "observed"
       },
       {
         "year": 2023,
         "month": 10,
-        "value": 2695805633.9300003,
+        "value": 2466027188.9300003,
         "kind": "observed"
       },
       {
         "year": 2023,
         "month": 11,
-        "value": 4217440606.2400002,
+        "value": 2991038543.2400002,
         "kind": "observed"
       },
       {
         "year": 2023,
         "month": 12,
-        "value": 2557475059.6900043,
+        "value": 2425210478.6900005,
         "kind": "observed"
       },
       {
         "year": 2024,
         "month": 1,
-        "value": 3526172090.579997,
+        "value": 3272925387.5800004,
         "kind": "observed"
       },
       {
         "year": 2024,
         "month": 2,
-        "value": 2373289735.539998,
+        "value": 2312114327.54,
         "kind": "observed"
       },
       {
         "year": 2024,
         "month": 3,
-        "value": 10415795318.49,
+        "value": 2473178919.4900007,
         "kind": "observed"
       },
       {
         "year": 2024,
         "month": 4,
-        "value": 14857635470.80999,
+        "value": 3002701404.809999,
         "kind": "observed"
       },
       {
         "year": 2024,
         "month": 5,
-        "value": 6041430569.349999,
+        "value": 2947783960.3499994,
         "kind": "observed"
       },
       {
         "year": 2024,
         "month": 6,
-        "value": 3659796985.450001,
+        "value": 3619356354.45,
         "kind": "observed"
       },
       {
         "year": 2024,
         "month": 7,
-        "value": 6700603818.110001,
+        "value": 3375030070.1099977,
         "kind": "observed"
       },
       {
         "year": 2024,
         "month": 8,
-        "value": 9054317934.609999,
+        "value": 2926510207.6099997,
         "kind": "observed"
       },
       {
         "year": 2024,
         "month": 9,
-        "value": 3415324434.3300004,
+        "value": 3348984399.160001,
         "kind": "observed"
       },
       {
         "year": 2024,
         "month": 10,
-        "value": 12382631484.929996,
+        "value": 4473144369.930002,
         "kind": "observed"
       },
       {
         "year": 2024,
         "month": 11,
-        "value": 5462601507.339999,
+        "value": 4847198093.34,
         "kind": "observed"
       },
       {
         "year": 2024,
         "month": 12,
-        "value": 2266218498.5200005,
+        "value": 2195669017.52,
         "kind": "observed"
       },
       {
         "year": 2025,
         "month": 1,
-        "value": 5746318772.690003,
+        "value": 2683374380.69,
         "kind": "observed"
       },
       {
         "year": 2025,
         "month": 2,
-        "value": 6471984274.410011,
+        "value": 3232829435.41,
         "kind": "observed"
       },
       {
         "year": 2025,
         "month": 3,
-        "value": 5551617681.109999,
+        "value": 3480819181.11,
         "kind": "observed"
       },
       {
         "year": 2025,
         "month": 4,
-        "value": 6349093525.726999,
+        "value": 3205776893.726999,
         "kind": "observed"
       },
       {
         "year": 2025,
         "month": 5,
-        "value": 3370657644.7209997,
+        "value": 3279631291.7209997,
         "kind": "observed"
       },
       {
         "year": 2025,
         "month": 6,
-        "value": 3250571324.880001,
+        "value": 3083434836.8800006,
         "kind": "observed"
       },
       {
         "year": 2025,
         "month": 7,
-        "value": 4087188237.973,
+        "value": 3828485295.973,
         "kind": "observed"
       },
       {
         "year": 2025,
         "month": 8,
-        "value": 12313084696.6,
+        "value": 2748461154.6,
         "kind": "observed"
       },
       {
         "year": 2025,
         "month": 9,
-        "value": 4996036863.45,
+        "value": 2635863910.45,
         "kind": "observed"
       },
       {
         "year": 2025,
         "month": 10,
-        "value": 3877504524.6600056,
+        "value": 3586926007.6600056,
         "kind": "observed"
       },
       {
         "year": 2025,
         "month": 11,
-        "value": 3433644820.7900004,
+        "value": 3198797807.79,
         "kind": "observed"
       },
       {
         "year": 2025,
         "month": 12,
-        "value": 2981662486.879999,
+        "value": 2945075747.8799996,
         "kind": "observed"
       },
       {
         "year": 2026,
         "month": 1,
-        "value": 8406276995.884,
+        "value": 2750583043.884,
         "kind": "observed"
       },
       {
         "year": 2026,
         "month": 2,
-        "value": 13778496814.189999,
+        "value": 2802224330.19,
         "kind": "observed"
       },
       {
         "year": 2026,
         "month": 3,
-        "value": 4438136805.749999,
+        "value": 4282892044.3899994,
         "kind": "observed"
       },
       {
         "year": 2026,
         "month": 4,
-        "value": 3748696229.88,
+        "value": 3598301300.88,
         "kind": "observed"
       },
       {
         "year": 2026,
         "month": 5,
-        "value": 23839142715.930004,
+        "value": 2553290698.930001,
         "kind": "observed"
       },
       {
         "year": 2026,
         "month": 6,
-        "value": 4627442642.959993,
+        "value": 2785794529.960001,
         "kind": "observed"
       },
       {
         "year": 2026,
         "month": 7,
-        "value": 4233121995.272,
+        "value": 4202201775.2720003,
         "kind": "observed"
       },
       {
         "year": 2026,
         "month": 8,
-        "value": 3546773944.6399994,
+        "value": 2765291652.6400003,
         "kind": "observed"
       },
       {
         "year": 2026,
         "month": 9,
-        "value": 3149479960.9300003,
+        "value": 2975084756.9300003,
         "kind": "observed"
       },
       {
         "year": 2026,
         "month": 10,
-        "value": 3819240522.42,
+        "value": 3162376358.92,
         "kind": "observed"
       },
       {
         "year": 2026,
         "month": 11,
-        "value": 2178554565.102625,
+        "value": 3216346066.3268147,
         "kind": "projected"
       },
       {
         "year": 2026,
         "month": 12,
-        "value": 1891784025.8425908,
+        "value": 2961232114.658932,
         "kind": "projected"
       }
     ],
@@ -2846,11 +2846,11 @@
       "sparse_current_month": true
     },
     "projection_valuation": {
-      "ytd": 73586808627.85599,
-      "ytg": 4070338590.9452157,
-      "full_year": 77657147218.80121,
+      "ytd": 31878040491.996002,
+      "ytg": 6177578180.985746,
+      "full_year": 38055618672.98175,
       "ytd_through_month": 10,
-      "growth_factor": 0.6344728936178644,
+      "growth_factor": 1.0054858917603606,
       "sparse_current_month": true
     },
     "by_category_year": [
@@ -2858,210 +2858,210 @@
         "category": "irrigation",
         "year": 2021,
         "count": 7980,
-        "valuation": 756917307.387,
-        "material_usd": 90830076.88644,
-        "labor_usd": 666087230.5005599,
-        "som_usd": 37845865.36935,
-        "som_material_usd": 4541503.844322,
-        "som_labor_usd": 33304361.525027998
+        "valuation": 119034881.387,
+        "material_usd": 14284185.766439999,
+        "labor_usd": 104750695.62055999,
+        "som_usd": 5951744.0693500005,
+        "som_material_usd": 714209.288322,
+        "som_labor_usd": 5237534.781028
       },
       {
         "category": "irrigation",
         "year": 2022,
         "count": 5559,
-        "valuation": 372972939.4,
-        "material_usd": 44756752.72799999,
-        "labor_usd": 328216186.672,
-        "som_usd": 18648646.97,
-        "som_material_usd": 2237837.6363999997,
-        "som_labor_usd": 16410809.3336
+        "valuation": 96862527.40000011,
+        "material_usd": 11623503.288000014,
+        "labor_usd": 85239024.1120001,
+        "som_usd": 4843126.370000006,
+        "som_material_usd": 581175.1644000007,
+        "som_labor_usd": 4261951.205600005
       },
       {
         "category": "irrigation",
         "year": 2023,
         "count": 8668,
-        "valuation": 654911226.03,
-        "material_usd": 78589347.12359999,
-        "labor_usd": 576321878.9064,
-        "som_usd": 32745561.3015,
-        "som_material_usd": 3929467.3561799997,
-        "som_labor_usd": 28816093.94532
+        "valuation": 157354176.03,
+        "material_usd": 18882501.1236,
+        "labor_usd": 138471674.9064,
+        "som_usd": 7867708.8015,
+        "som_material_usd": 944125.05618,
+        "som_labor_usd": 6923583.74532
       },
       {
         "category": "irrigation",
         "year": 2024,
         "count": 8147,
-        "valuation": 831516526.2,
-        "material_usd": 99781983.14400001,
-        "labor_usd": 731734543.056,
-        "som_usd": 41575826.31,
-        "som_material_usd": 4989099.1572,
-        "som_labor_usd": 36586727.1528
+        "valuation": 156264607.2,
+        "material_usd": 18751752.863999996,
+        "labor_usd": 137512854.336,
+        "som_usd": 7813230.359999999,
+        "som_material_usd": 937587.6431999998,
+        "som_labor_usd": 6875642.7168000005
       },
       {
         "category": "irrigation",
         "year": 2025,
         "count": 5899,
-        "valuation": 1158470871.62,
-        "material_usd": 139016504.5944,
-        "labor_usd": 1019454367.0256,
-        "som_usd": 57923543.581,
-        "som_material_usd": 6950825.22972,
-        "som_labor_usd": 50972718.351280004
+        "valuation": 150097021.62,
+        "material_usd": 18011642.5944,
+        "labor_usd": 132085379.0256,
+        "som_usd": 7504851.081,
+        "som_material_usd": 900582.1297200001,
+        "som_labor_usd": 6604268.951280001
       },
       {
         "category": "irrigation",
         "year": 2026,
         "count": 4960,
-        "valuation": 1550962129.1300004,
-        "material_usd": 186115455.49560004,
-        "labor_usd": 1364846673.6344004,
-        "som_usd": 77548106.45650002,
-        "som_material_usd": 9305772.774780003,
-        "som_labor_usd": 68242333.68172002
+        "valuation": 233973927.13000003,
+        "material_usd": 28076871.2556,
+        "labor_usd": 205897055.87440002,
+        "som_usd": 11698696.356500002,
+        "som_material_usd": 1403843.5627800003,
+        "som_labor_usd": 10294852.793720001
       },
       {
         "category": "pool_spa",
         "year": 2021,
         "count": 24671,
-        "valuation": 1024132440.1899999,
-        "material_usd": 81930595.21519999,
-        "labor_usd": 942201844.9748,
-        "som_usd": 51206622.0095,
-        "som_material_usd": 4096529.76076,
-        "som_labor_usd": 47110092.24874
+        "valuation": 741977947.1900002,
+        "material_usd": 59358235.77520002,
+        "labor_usd": 682619711.4148002,
+        "som_usd": 37098897.35950001,
+        "som_material_usd": 2967911.788760001,
+        "som_labor_usd": 34130985.57074001
       },
       {
         "category": "pool_spa",
         "year": 2022,
         "count": 18690,
-        "valuation": 1044695822.1700004,
-        "material_usd": 83575665.77360004,
-        "labor_usd": 961120156.3964005,
-        "som_usd": 52234791.108500026,
-        "som_material_usd": 4178783.288680002,
-        "som_labor_usd": 48056007.819820024
+        "valuation": 785006758.8200002,
+        "material_usd": 62800540.705600016,
+        "labor_usd": 722206218.1144001,
+        "som_usd": 39250337.94100001,
+        "som_material_usd": 3140027.035280001,
+        "som_labor_usd": 36110310.90572001
       },
       {
         "category": "pool_spa",
         "year": 2023,
         "count": 21530,
-        "valuation": 1299975850.8100002,
-        "material_usd": 103998068.06480002,
-        "labor_usd": 1195977782.7452002,
-        "som_usd": 64998792.540500015,
-        "som_material_usd": 5199903.403240002,
-        "som_labor_usd": 59798889.13726001
+        "valuation": 895041904.8099997,
+        "material_usd": 71603352.38479997,
+        "labor_usd": 823438552.4251997,
+        "som_usd": 44752095.24049999,
+        "som_material_usd": 3580167.619239999,
+        "som_labor_usd": 41171927.62125999
       },
       {
         "category": "pool_spa",
         "year": 2024,
         "count": 19316,
-        "valuation": 5085402430.57,
-        "material_usd": 406832194.4456,
-        "labor_usd": 4678570236.1244,
-        "som_usd": 254270121.5285,
-        "som_material_usd": 20341609.72228,
-        "som_labor_usd": 233928511.80622002
+        "valuation": 849445242.3999996,
+        "material_usd": 67955619.39199997,
+        "labor_usd": 781489623.0079997,
+        "som_usd": 42472262.11999998,
+        "som_material_usd": 3397780.969599999,
+        "som_labor_usd": 39074481.15039998
       },
       {
         "category": "pool_spa",
         "year": 2025,
         "count": 19957,
-        "valuation": 4329642822.169995,
-        "material_usd": 346371425.7735996,
-        "labor_usd": 3983271396.3963957,
-        "som_usd": 216482141.10849977,
-        "som_material_usd": 17318571.288679983,
-        "som_labor_usd": 199163569.8198198
+        "valuation": 869437254.17,
+        "material_usd": 69554980.3336,
+        "labor_usd": 799882273.8364,
+        "som_usd": 43471862.7085,
+        "som_material_usd": 3477749.0166800003,
+        "som_labor_usd": 39994113.69182
       },
       {
         "category": "pool_spa",
         "year": 2026,
         "count": 17160,
-        "valuation": 9455639468.844,
-        "material_usd": 756451157.50752,
-        "labor_usd": 8699188311.336481,
-        "som_usd": 472781973.4422,
-        "som_material_usd": 37822557.875376,
-        "som_labor_usd": 434959415.5668241
+        "valuation": 793184277.9839998,
+        "material_usd": 63454742.23871999,
+        "labor_usd": 729729535.7452799,
+        "som_usd": 39659213.89919999,
+        "som_material_usd": 3172737.1119359997,
+        "som_labor_usd": 36486476.787264
       },
       {
         "category": "res_new_plumbing",
         "year": 2021,
         "count": 99736,
-        "valuation": 35667788273.53453,
-        "material_usd": 561767665.3081689,
-        "labor_usd": 1043282807.000885,
-        "som_usd": 1783389413.6767266,
-        "som_material_usd": 28088383.265408445,
-        "som_labor_usd": 52164140.35004425
+        "valuation": 23677839996.534546,
+        "material_usd": 372925979.9454191,
+        "labor_usd": 692576819.8986355,
+        "som_usd": 1183891999.8267274,
+        "som_material_usd": 18646298.997270953,
+        "som_labor_usd": 34628840.99493178
       },
       {
         "category": "res_new_plumbing",
         "year": 2022,
         "count": 99626,
-        "valuation": 28811519006.393024,
-        "material_usd": 453781424.3506901,
-        "labor_usd": 842736930.936996,
-        "som_usd": 1440575950.3196514,
-        "som_material_usd": 22689071.21753451,
-        "som_labor_usd": 42136846.5468498
+        "valuation": 22699256426.392975,
+        "material_usd": 357513288.7156893,
+        "labor_usd": 663953250.4719945,
+        "som_usd": 1134962821.3196487,
+        "som_material_usd": 17875664.435784467,
+        "som_labor_usd": 33197662.52359973
       },
       {
         "category": "res_new_plumbing",
         "year": 2023,
         "count": 91093,
-        "valuation": 32291370614.239983,
-        "material_usd": 508589087.17427963,
-        "labor_usd": 944522590.4665194,
-        "som_usd": 1614568530.7119992,
-        "som_material_usd": 25429454.358713984,
-        "som_labor_usd": 47226129.52332597
+        "valuation": 29076970738.23997,
+        "material_usd": 457962289.1272795,
+        "labor_usd": 850501394.0935192,
+        "som_usd": 1453848536.9119987,
+        "som_material_usd": 22898114.456363976,
+        "som_labor_usd": 42525069.704675965
       },
       {
         "category": "res_new_plumbing",
         "year": 2024,
         "count": 91202,
-        "valuation": 74199755324.43988,
-        "material_usd": 1168646146.359928,
-        "labor_usd": 2170342843.2398663,
-        "som_usd": 3709987766.2219944,
-        "som_material_usd": 58432307.3179964,
-        "som_labor_usd": 108517142.16199332
+        "valuation": 37749743095.44,
+        "material_usd": 594558453.75318,
+        "labor_usd": 1104179985.54162,
+        "som_usd": 1887487154.7720003,
+        "som_material_usd": 29727922.687659003,
+        "som_labor_usd": 55208999.277081005
       },
       {
         "category": "res_new_plumbing",
         "year": 2025,
         "count": 82914,
-        "valuation": 56901591144.3109,
-        "material_usd": 896200060.5228966,
-        "labor_usd": 1664371540.971094,
-        "som_usd": 2845079557.215545,
-        "som_material_usd": 44810003.02614483,
-        "som_labor_usd": 83218577.0485547
+        "valuation": 36850281652.31107,
+        "material_usd": 580391936.0238993,
+        "labor_usd": 1077870738.3300989,
+        "som_usd": 1842514082.6155539,
+        "som_material_usd": 29019596.801194966,
+        "som_labor_usd": 53893536.91650495
       },
       {
         "category": "res_new_plumbing",
         "year": 2026,
         "count": 69037,
-        "valuation": 62538333453.98197,
-        "material_usd": 984978751.900216,
-        "labor_usd": 1829246253.5289726,
-        "som_usd": 3126916672.6990986,
-        "som_material_usd": 49248937.5950108,
-        "som_labor_usd": 91462312.67644864
+        "valuation": 30809008710.98201,
+        "material_usd": 485241887.19796664,
+        "labor_usd": 901163504.7962239,
+        "som_usd": 1540450435.5491006,
+        "som_material_usd": 24262094.359898333,
+        "som_labor_usd": 45058175.2398112
       },
       {
         "category": "res_remodel_plumbing",
         "year": 2021,
         "count": 876,
-        "valuation": 7887020378.849999,
-        "material_usd": 331254855.91169995,
-        "labor_usd": 615187589.5503,
-        "som_usd": 394351018.9425,
-        "som_material_usd": 16562742.795584999,
-        "som_labor_usd": 30759379.477515
+        "valuation": 23139338.85,
+        "material_usd": 971852.2316999999,
+        "labor_usd": 1804868.4303000001,
+        "som_usd": 1156966.9425000001,
+        "som_material_usd": 48592.611585,
+        "som_labor_usd": 90243.42151500001
       },
       {
         "category": "res_remodel_plumbing",
@@ -3078,12 +3078,12 @@
         "category": "res_remodel_plumbing",
         "year": 2023,
         "count": 790,
-        "valuation": 26114398.41,
-        "material_usd": 1096804.73322,
-        "labor_usd": 2036923.07598,
+        "valuation": 26114398.409999996,
+        "material_usd": 1096804.7332199998,
+        "labor_usd": 2036923.0759799997,
         "som_usd": 1305719.9205,
-        "som_material_usd": 54840.236661,
-        "som_labor_usd": 101846.153799
+        "som_material_usd": 54840.236660999995,
+        "som_labor_usd": 101846.15379899999
       },
       {
         "category": "res_remodel_plumbing",
@@ -3111,12 +3111,12 @@
         "category": "res_remodel_plumbing",
         "year": 2026,
         "count": 611,
-        "valuation": 25389807.070000004,
-        "material_usd": 1066371.8969400001,
-        "labor_usd": 1980404.9514600004,
+        "valuation": 25389807.07,
+        "material_usd": 1066371.89694,
+        "labor_usd": 1980404.9514600001,
         "som_usd": 1269490.3535000002,
-        "som_material_usd": 53318.59484700001,
-        "som_labor_usd": 99020.24757300003
+        "som_material_usd": 53318.594847,
+        "som_labor_usd": 99020.24757300002
       },
       {
         "category": "res_repipe",
@@ -3177,50 +3177,38 @@
         "category": "res_repipe",
         "year": 2026,
         "count": 1564,
-        "valuation": 16483768.829999998,
+        "valuation": 16483768.829999996,
         "material_usd": 703800.0,
         "labor_usd": 1407600.0,
-        "som_usd": 824188.4415,
+        "som_usd": 824188.4414999998,
         "som_material_usd": 35190.0,
         "som_labor_usd": 70380.0
       }
     ],
     "by_category_ytd": [
       {
-        "category": "res_new_plumbing",
+        "category": "res_repipe",
         "year": 2026,
         "through_month": 10,
-        "count": 69037,
-        "valuation": 62538333453.982346,
-        "material_usd": 984978751.9002218,
-        "labor_usd": 1829246253.5289836,
-        "som_usd": 3126916672.6991177,
-        "count_yoy_pct": -3.9,
-        "valuation_yoy_pct": 22.81
-      },
-      {
-        "category": "irrigation",
-        "year": 2026,
-        "through_month": 10,
-        "count": 4960,
-        "valuation": 1550962129.1299999,
-        "material_usd": 186115455.4956,
-        "labor_usd": 1364846673.6344,
-        "som_usd": 77548106.4565,
-        "count_yoy_pct": -3.8,
-        "valuation_yoy_pct": 66.03
+        "count": 1564,
+        "valuation": 16483768.829999998,
+        "material_usd": 703800.0,
+        "labor_usd": 1407600.0,
+        "som_usd": 824188.4415,
+        "count_yoy_pct": 5.53,
+        "valuation_yoy_pct": 39.91
       },
       {
         "category": "pool_spa",
         "year": 2026,
         "through_month": 10,
         "count": 17160,
-        "valuation": 9455639468.844,
-        "material_usd": 756451157.50752,
-        "labor_usd": 8699188311.336481,
-        "som_usd": 472781973.4422,
+        "valuation": 793184277.9840002,
+        "material_usd": 63454742.238720015,
+        "labor_usd": 729729535.7452803,
+        "som_usd": 39659213.899200015,
         "count_yoy_pct": 1.17,
-        "valuation_yoy_pct": 129.27
+        "valuation_yoy_pct": 7.31
       },
       {
         "category": "res_remodel_plumbing",
@@ -3235,72 +3223,84 @@
         "valuation_yoy_pct": 15.9
       },
       {
-        "category": "res_repipe",
+        "category": "res_new_plumbing",
         "year": 2026,
         "through_month": 10,
-        "count": 1564,
-        "valuation": 16483768.829999998,
-        "material_usd": 703800.0,
-        "labor_usd": 1407600.0,
-        "som_usd": 824188.4415,
-        "count_yoy_pct": 5.53,
-        "valuation_yoy_pct": 39.91
+        "count": 69037,
+        "valuation": 30809008710.981995,
+        "material_usd": 485241887.1979664,
+        "labor_usd": 901163504.7962234,
+        "som_usd": 1540450435.5491,
+        "count_yoy_pct": -3.9,
+        "valuation_yoy_pct": -0.2
+      },
+      {
+        "category": "irrigation",
+        "year": 2026,
+        "through_month": 10,
+        "count": 4960,
+        "valuation": 233973927.13,
+        "material_usd": 28076871.255599998,
+        "labor_usd": 205897055.8744,
+        "som_usd": 11698696.3565,
+        "count_yoy_pct": -3.8,
+        "valuation_yoy_pct": 91.72
       }
     ],
     "material_labor_annual": [
       {
         "year": 2021,
-        "material_usd": 1066959943.3215089,
-        "labor_usd": 3269112972.026545,
-        "valuation": 45345647095.59153,
-        "som_usd": 2267282354.779577,
-        "som_material_usd": 53347997.166075446,
-        "som_labor_usd": 163455648.60132727
+        "material_usd": 448717003.7187591,
+        "labor_usd": 1484105595.3642957,
+        "valuation": 24571780859.591545,
+        "som_usd": 1228589042.9795773,
+        "som_material_usd": 22435850.185937956,
+        "som_labor_usd": 74205279.76821479
       },
       {
         "year": 2022,
-        "material_usd": 584156203.1202902,
-        "labor_usd": 2135990300.2173963,
-        "valuation": 30265975794.703026,
-        "som_usd": 1513298789.7351513,
-        "som_material_usd": 29207810.15601451,
-        "som_labor_usd": 106799515.01086982
+        "material_usd": 433979692.9772893,
+        "labor_usd": 1475315518.9103947,
+        "valuation": 23617913739.352978,
+        "som_usd": 1180895686.967649,
+        "som_material_usd": 21698984.648864467,
+        "som_labor_usd": 73765775.94551973
       },
       {
         "year": 2023,
-        "material_usd": 693357357.0958997,
-        "labor_usd": 2721027275.1940994,
-        "valuation": 34288504750.799984,
-        "som_usd": 1714425237.5399992,
-        "som_material_usd": 34667867.85479499,
-        "som_labor_usd": 136051363.75970498
+        "material_usd": 550628997.3688995,
+        "labor_usd": 1816616644.5010989,
+        "valuation": 30171613878.799973,
+        "som_usd": 1508580693.9399986,
+        "som_material_usd": 27531449.868444975,
+        "som_labor_usd": 90830832.22505495
       },
       {
         "year": 2024,
-        "material_usd": 1677215466.5027878,
-        "labor_usd": 7584387758.590606,
-        "valuation": 80155817848.05989,
-        "som_usd": 4007790892.4029946,
-        "som_material_usd": 83860773.3251394,
-        "som_labor_usd": 379219387.9295303
+        "material_usd": 683220968.5624399,
+        "labor_usd": 2026922599.0559597,
+        "valuation": 38794596511.89,
+        "som_usd": 1939729825.5945,
+        "som_material_usd": 34161048.428122,
+        "som_labor_usd": 101346129.952798
       },
       {
         "year": 2025,
-        "material_usd": 1383456010.2940962,
-        "labor_usd": 6670680076.14189,
-        "valuation": 62429364853.89089,
-        "som_usd": 3121468242.694545,
-        "som_material_usd": 69172800.51470481,
-        "som_labor_usd": 333534003.8070945
+        "material_usd": 669826578.3550993,
+        "labor_usd": 2013421162.940899,
+        "valuation": 37909475943.891075,
+        "som_usd": 1895473797.1945539,
+        "som_material_usd": 33491328.917754967,
+        "som_labor_usd": 100671058.14704496
       },
       {
         "year": 2026,
-        "material_usd": 1929315536.800276,
-        "labor_usd": 11896669243.451315,
-        "valuation": 73586808627.85599,
-        "som_usd": 3679340431.3927994,
-        "som_material_usd": 96465776.8400138,
-        "som_labor_usd": 594833462.1725658
+        "material_usd": 578543672.5892266,
+        "labor_usd": 1840178101.3673637,
+        "valuation": 31878040491.99601,
+        "som_usd": 1593902024.5998006,
+        "som_material_usd": 28927183.629461333,
+        "som_labor_usd": 92008905.0683682
       }
     ],
     "segment_annual": [
@@ -3308,115 +3308,115 @@
         "segment": "irrigation",
         "year": 2021,
         "count": 7980,
-        "valuation": 756917307.3870001
+        "valuation": 119034881.38700017
       },
       {
         "segment": "irrigation",
         "year": 2022,
         "count": 5559,
-        "valuation": 372972939.40000004
+        "valuation": 96862527.39999999
       },
       {
         "segment": "irrigation",
         "year": 2023,
         "count": 8668,
-        "valuation": 654911226.03
+        "valuation": 157354176.03000003
       },
       {
         "segment": "irrigation",
         "year": 2024,
         "count": 8147,
-        "valuation": 831516526.2
+        "valuation": 156264607.2
       },
       {
         "segment": "irrigation",
         "year": 2025,
         "count": 5899,
-        "valuation": 1158470871.62
+        "valuation": 150097021.62
       },
       {
         "segment": "irrigation",
         "year": 2026,
         "count": 4960,
-        "valuation": 1550962129.13
+        "valuation": 233973927.13000003
       },
       {
         "segment": "new_residential_plumbing",
         "year": 2021,
         "count": 99736,
-        "valuation": 35667788273.534546
+        "valuation": 23677839996.53452
       },
       {
         "segment": "new_residential_plumbing",
         "year": 2022,
         "count": 99626,
-        "valuation": 28811519006.393013
+        "valuation": 22699256426.392975
       },
       {
         "segment": "new_residential_plumbing",
         "year": 2023,
         "count": 91093,
-        "valuation": 32291370614.239986
+        "valuation": 29076970738.23999
       },
       {
         "segment": "new_residential_plumbing",
         "year": 2024,
         "count": 91202,
-        "valuation": 74199755324.43994
+        "valuation": 37749743095.439995
       },
       {
         "segment": "new_residential_plumbing",
         "year": 2025,
         "count": 82914,
-        "valuation": 56901591144.31107
+        "valuation": 36850281652.311066
       },
       {
         "segment": "new_residential_plumbing",
         "year": 2026,
         "count": 69037,
-        "valuation": 62538333453.98197
+        "valuation": 30809008710.98201
       },
       {
         "segment": "other",
         "year": 2021,
         "count": 350138,
-        "valuation": 75562120341.83847
+        "valuation": 29049878855.836956
       },
       {
         "segment": "other",
         "year": 2022,
         "count": 348221,
-        "valuation": 70065159610.964
+        "valuation": 34106123954.964397
       },
       {
         "segment": "other",
         "year": 2023,
         "count": 351690,
-        "valuation": 105591827909.18164
+        "valuation": 37113274137.18281
       },
       {
         "segment": "other",
         "year": 2024,
         "count": 345033,
-        "valuation": 67933940873.103195
+        "valuation": 42886070564.104065
       },
       {
         "segment": "other",
         "year": 2025,
         "count": 358776,
-        "valuation": 118028689979.86864
+        "valuation": 46812840018.871155
       },
       {
         "segment": "other",
         "year": 2026,
         "count": 260081,
-        "valuation": 138193961891.04086
+        "valuation": 45277237367.0388
       },
       {
         "segment": "plumbing_repipe_remodel",
         "year": 2021,
         "count": 3491,
-        "valuation": 7896809074.48
+        "valuation": 32928034.479999997
       },
       {
         "segment": "plumbing_repipe_remodel",
@@ -3434,55 +3434,55 @@
         "segment": "plumbing_repipe_remodel",
         "year": 2024,
         "count": 2378,
-        "valuation": 39143566.85
+        "valuation": 39143566.849999994
       },
       {
         "segment": "plumbing_repipe_remodel",
         "year": 2025,
         "count": 2376,
-        "valuation": 39660015.79
+        "valuation": 39660015.79000001
       },
       {
         "segment": "plumbing_repipe_remodel",
         "year": 2026,
         "count": 2175,
-        "valuation": 41873575.900000006
+        "valuation": 41873575.9
       },
       {
         "segment": "pool_spa",
         "year": 2021,
         "count": 24671,
-        "valuation": 1024132440.19
+        "valuation": 741977947.1899999
       },
       {
         "segment": "pool_spa",
         "year": 2022,
         "count": 18690,
-        "valuation": 1044695822.1700001
+        "valuation": 785006758.8200004
       },
       {
         "segment": "pool_spa",
         "year": 2023,
         "count": 21530,
-        "valuation": 1299975850.8100002
+        "valuation": 895041904.8099998
       },
       {
         "segment": "pool_spa",
         "year": 2024,
         "count": 19316,
-        "valuation": 5085402430.57
+        "valuation": 849445242.3999999
       },
       {
         "segment": "pool_spa",
         "year": 2025,
         "count": 19957,
-        "valuation": 4329642822.169996
+        "valuation": 869437254.1699998
       },
       {
         "segment": "pool_spa",
         "year": 2026,
         "count": 17160,
-        "valuation": 9455639468.844002
+        "valuation": 793184277.984
       }
     ],
     "share_by_year": [
@@ -3490,61 +3490,61 @@
         "year": 2021,
         "tom_count": 486016,
         "sam_count": 135878,
-        "tom_valuation": 120907767437.43121,
-        "sam_valuation": 45345647095.591446,
+        "tom_valuation": 53621659715.429016,
+        "sam_valuation": 24571780859.591557,
         "sam_share_count_pct": 27.96,
-        "sam_share_valuation_pct": 37.5,
-        "som_usd": 2267282354.7795725
+        "sam_share_valuation_pct": 45.82,
+        "som_usd": 1228589042.9795778
       },
       {
         "year": 2022,
         "tom_count": 475021,
         "sam_count": 126800,
-        "tom_valuation": 100331135405.66687,
-        "sam_valuation": 30265975794.703026,
+        "tom_valuation": 57724037694.31762,
+        "sam_valuation": 23617913739.352966,
         "sam_share_count_pct": 26.69,
-        "sam_share_valuation_pct": 30.17,
-        "som_usd": 1513298789.7351513
+        "sam_share_valuation_pct": 40.92,
+        "som_usd": 1180895686.9676483
       },
       {
         "year": 2023,
         "tom_count": 476180,
         "sam_count": 124490,
-        "tom_valuation": 139880332659.96716,
-        "sam_valuation": 34288504750.80001,
+        "tom_valuation": 67284888015.983154,
+        "sam_valuation": 30171613878.799942,
         "sam_share_count_pct": 26.14,
-        "sam_share_valuation_pct": 24.51,
-        "som_usd": 1714425237.5400007
+        "sam_share_valuation_pct": 44.84,
+        "som_usd": 1508580693.9399972
       },
       {
         "year": 2024,
         "tom_count": 466076,
         "sam_count": 121043,
-        "tom_valuation": 148089758721.16385,
-        "sam_valuation": 80155817848.05997,
+        "tom_valuation": 81680667075.99393,
+        "sam_valuation": 38794596511.89006,
         "sam_share_count_pct": 25.97,
-        "sam_share_valuation_pct": 54.13,
-        "som_usd": 4007790892.4029984
+        "sam_share_valuation_pct": 47.5,
+        "som_usd": 1939729825.5945032
       },
       {
         "year": 2025,
         "tom_count": 469922,
         "sam_count": 111146,
-        "tom_valuation": 180458054833.76147,
-        "sam_valuation": 62429364853.89089,
+        "tom_valuation": 84722315962.76219,
+        "sam_valuation": 37909475943.89098,
         "sam_share_count_pct": 23.65,
-        "sam_share_valuation_pct": 34.59,
-        "som_usd": 3121468242.694545
+        "sam_share_valuation_pct": 44.75,
+        "som_usd": 1895473797.1945493
       },
       {
         "year": 2026,
         "tom_count": 353413,
         "sam_count": 93332,
-        "tom_valuation": 211780770518.89587,
-        "sam_valuation": 73586808627.85635,
+        "tom_valuation": 77155277859.03598,
+        "sam_valuation": 31878040491.995956,
         "sam_share_count_pct": 26.41,
-        "sam_share_valuation_pct": 34.75,
-        "som_usd": 3679340431.392818
+        "sam_share_valuation_pct": 41.32,
+        "som_usd": 1593902024.599798
       }
     ]
   },
@@ -3554,30 +3554,30 @@
       "start": "2026-10-02",
       "end": "2026-11-01",
       "sam_count": 6841,
-      "sam_valuation": 3361149870.81,
-      "material_usd": 125739672.95967272,
-      "som_usd": 168057493.54050002,
-      "som_material_usd": 6286983.647983637,
+      "sam_valuation": 2704285707.31,
+      "material_usd": 49595441.439672455,
+      "som_usd": 135214285.3655,
+      "som_material_usd": 2479772.071983623,
       "by_county": [
         {
           "county": "Miami-Dade",
           "fips": "12086",
           "sam_count": 1723,
-          "sam_valuation": 2987349471.92,
-          "material_usd": 114775491.95299022,
-          "labor_usd": 672184730.3984108,
-          "som_usd": 149367473.59600002,
-          "som_material_usd": 5738774.597649511
+          "sam_valuation": 2335428775.92,
+          "material_usd": 39026737.83298995,
+          "labor_usd": 96012788.51840988,
+          "som_usd": 116771438.796,
+          "som_material_usd": 1951336.8916494977
         },
         {
           "county": "Duval",
           "fips": "12031",
           "sam_count": 2533,
           "sam_valuation": 153060383.57,
-          "material_usd": 3181995.7883300004,
-          "labor_usd": 14281018.771470008,
+          "material_usd": 3181995.7883300013,
+          "labor_usd": 14281018.77147001,
           "som_usd": 7653019.1785,
-          "som_material_usd": 159099.78941650002
+          "som_material_usd": 159099.78941650008
         },
         {
           "county": "Manatee",
@@ -3593,31 +3593,31 @@
           "county": "Osceola",
           "fips": "12097",
           "sam_count": 333,
-          "sam_valuation": 56815513.1,
-          "material_usd": 2940331.2318674996,
-          "labor_usd": 21135497.5331825,
-          "som_usd": 2840775.6550000003,
-          "som_material_usd": 147016.561593375
+          "sam_valuation": 51872053.6,
+          "material_usd": 2544854.4718675,
+          "labor_usd": 16587514.793182502,
+          "som_usd": 2593602.68,
+          "som_material_usd": 127242.723593375
         },
         {
           "county": "Lee",
           "fips": "12071",
           "sam_count": 588,
-          "sam_valuation": 18451063.0,
-          "material_usd": 1280101.7464999994,
-          "labor_usd": 11707739.2435,
-          "som_usd": 922553.15,
-          "som_material_usd": 64005.08732499997
+          "sam_valuation": 18451055.0,
+          "material_usd": 1280101.106499999,
+          "labor_usd": 11707731.883499997,
+          "som_usd": 922552.75,
+          "som_material_usd": 64005.05532499996
         },
         {
           "county": "Orange",
           "fips": "12095",
           "sam_count": 336,
           "sam_valuation": 23643286.930000003,
-          "material_usd": 457784.07139750017,
-          "labor_usd": 1817005.4754525002,
+          "material_usd": 457784.07139750005,
+          "labor_usd": 1817005.4754525006,
           "som_usd": 1182164.3465000002,
-          "som_material_usd": 22889.20356987501
+          "som_material_usd": 22889.203569875004
         },
         {
           "county": "Volusia",
@@ -3652,61 +3652,52 @@
       ],
       "by_category": [
         {
-          "category": "irrigation",
-          "sam_count": 438,
-          "sam_valuation": 614554420.3000001,
-          "material_usd": 73746530.43599999,
-          "labor_usd": 540807889.8640001,
-          "som_usd": 30727721.015000004,
-          "som_material_usd": 3687326.5217999998
-        },
-        {
           "category": "res_new_plumbing",
           "sam_count": 4711,
-          "sam_valuation": 2608301102.430001,
-          "material_usd": 41080742.363272466,
-          "labor_usd": 76292807.24607745,
-          "som_usd": 130415055.12150005,
-          "som_material_usd": 2054037.1181636234
+          "sam_valuation": 2608301102.43,
+          "material_usd": 41080742.36327246,
+          "labor_usd": 76292807.24607742,
+          "som_usd": 130415055.1215,
+          "som_material_usd": 2054037.118163623
         },
         {
           "category": "pool_spa",
           "sam_count": 1481,
-          "sam_valuation": 134182684.79,
-          "material_usd": 10734614.783200001,
-          "labor_usd": 123448070.00680004,
-          "som_usd": 6709134.239500001,
-          "som_material_usd": 536730.7391600001
+          "sam_valuation": 67195982.29000002,
+          "material_usd": 5375678.5832,
+          "labor_usd": 61820303.70679998,
+          "som_usd": 3359799.114500001,
+          "som_material_usd": 268783.92916
+        },
+        {
+          "category": "irrigation",
+          "sam_count": 438,
+          "sam_valuation": 24676959.3,
+          "material_usd": 2961235.116,
+          "labor_usd": 21715724.184,
+          "som_usd": 1233847.965,
+          "som_material_usd": 148061.7558
         },
         {
           "category": "res_remodel_plumbing",
           "sam_count": 55,
           "sam_valuation": 2561556.6,
           "material_usd": 107585.37720000002,
-          "labor_usd": 199801.4148,
+          "labor_usd": 199801.41480000003,
           "som_usd": 128077.83000000002,
           "som_material_usd": 5379.268860000001
         },
         {
           "category": "res_repipe",
           "sam_count": 156,
-          "sam_valuation": 1550106.6900000002,
+          "sam_valuation": 1550106.69,
           "material_usd": 70200.0,
           "labor_usd": 140400.0,
-          "som_usd": 77505.33450000001,
+          "som_usd": 77505.3345,
           "som_material_usd": 3510.0
         }
       ],
       "by_contractor": [
-        {
-          "contractor_name": "RICHWOOD LANDSCAPING MAINTENANCE & IRR",
-          "permits": 1,
-          "valuation": 580000000.0,
-          "material_usd": 69600000.0,
-          "som_material_usd": 3480000.0,
-          "counties": "Miami-Dade",
-          "categories": "irrigation"
-        },
         {
           "contractor_name": "COASTAL CONSTRUCTION OF MIAMI DADE COU",
           "permits": 2,
@@ -3724,15 +3715,6 @@
           "som_material_usd": 254624.676075,
           "counties": "Duval, Miami-Dade",
           "categories": "res_new_plumbing"
-        },
-        {
-          "contractor_name": "ROCK STAR POOLS & WATERFALLS INC",
-          "permits": 2,
-          "valuation": 62118235.0,
-          "material_usd": 4969458.8,
-          "som_material_usd": 248472.94,
-          "counties": "Miami-Dade",
-          "categories": "pool_spa"
         },
         {
           "contractor_name": "AURORA PLUMBING CORPORATION",
@@ -3760,15 +3742,6 @@
           "som_material_usd": 81975.305475,
           "counties": "Miami-Dade",
           "categories": "res_new_plumbing"
-        },
-        {
-          "contractor_name": "ESQUIVEL PLUMBING SERVICES CORP",
-          "permits": 1,
-          "valuation": 10027261.0,
-          "material_usd": 1203271.32,
-          "som_material_usd": 60163.566000000006,
-          "counties": "Miami-Dade",
-          "categories": "irrigation"
         },
         {
           "contractor_name": "OSCAR AIR CONDITIONING INC",
@@ -4057,6 +4030,33 @@
           "som_material_usd": 3673.4158125000004,
           "counties": "Miami-Dade",
           "categories": "res_new_plumbing"
+        },
+        {
+          "contractor_name": "EAST SUNRISE PLUMBING INC",
+          "permits": 1,
+          "valuation": 4500000.0,
+          "material_usd": 70875.0,
+          "som_material_usd": 3543.75,
+          "counties": "Miami-Dade",
+          "categories": "res_new_plumbing"
+        },
+        {
+          "contractor_name": "ARCHITECTURAL DESIGN COLLABORATIVE",
+          "permits": 1,
+          "valuation": 4500000.0,
+          "material_usd": 70875.0,
+          "som_material_usd": 3543.75,
+          "counties": "Duval",
+          "categories": "res_new_plumbing"
+        },
+        {
+          "contractor_name": "SOLUTION CONSTRUCTION INC",
+          "permits": 2,
+          "valuation": 4476045.0,
+          "material_usd": 70497.70874999999,
+          "som_material_usd": 3524.8854374999996,
+          "counties": "Miami-Dade",
+          "categories": "res_new_plumbing"
         }
       ]
     },
@@ -4065,70 +4065,70 @@
       "start": "2026-09-02",
       "end": "2026-11-01",
       "sam_count": 15231,
-      "sam_valuation": 6542552644.5199995,
-      "material_usd": 201698511.26862767,
-      "som_usd": 327127632.226,
-      "som_material_usd": 10084925.563431384,
+      "sam_valuation": 5711293277.0199995,
+      "material_usd": 105036655.42862754,
+      "som_usd": 285564663.851,
+      "som_material_usd": 5251832.771431377,
       "by_county": [
         {
           "county": "Miami-Dade",
           "fips": "12086",
           "sam_count": 3864,
-          "sam_valuation": 5545645943.75,
-          "material_usd": 175038969.59106266,
-          "labor_usd": 922705926.2976885,
-          "som_usd": 277282297.1875,
-          "som_material_usd": 8751948.479553133
+          "sam_valuation": 4729575047.75,
+          "material_usd": 79592191.47106254,
+          "labor_usd": 202081808.4176871,
+          "som_usd": 236478752.38750002,
+          "som_material_usd": 3979609.5735531272
         },
         {
           "county": "Duval",
           "fips": "12031",
           "sam_count": 5634,
-          "sam_valuation": 409867201.18999994,
-          "material_usd": 8459927.454055,
-          "labor_usd": 37816510.937244944,
-          "som_usd": 20493360.059499998,
-          "som_material_usd": 422996.37270275
+          "sam_valuation": 399622201.1899998,
+          "material_usd": 7640327.454055002,
+          "labor_usd": 28391110.937244985,
+          "som_usd": 19981110.05949999,
+          "som_material_usd": 382016.37270275014
         },
         {
           "county": "Manatee",
           "fips": "12081",
           "sam_count": 2315,
-          "sam_valuation": 293956670.93999994,
-          "material_usd": 7098272.80337,
+          "sam_valuation": 293956670.9399999,
+          "material_usd": 7098272.803369999,
           "labor_usd": 42344149.36083001,
-          "som_usd": 14697833.546999998,
-          "som_material_usd": 354913.6401685
+          "som_usd": 14697833.546999995,
+          "som_material_usd": 354913.64016849996
         },
         {
           "county": "Osceola",
           "fips": "12097",
           "sam_count": 662,
-          "sam_valuation": 179708482.32,
-          "material_usd": 6867825.146474999,
-          "labor_usd": 41494314.948025,
-          "som_usd": 8985424.116,
-          "som_material_usd": 343391.25732375
+          "sam_valuation": 174765022.82,
+          "material_usd": 6472348.386475,
+          "labor_usd": 36946332.208025,
+          "som_usd": 8738251.141,
+          "som_material_usd": 323617.41932375
         },
         {
           "county": "Lee",
           "fips": "12071",
           "sam_count": 1196,
-          "sam_valuation": 39782341.0,
-          "material_usd": 2308539.612750001,
-          "labor_usd": 21595845.65225,
-          "som_usd": 1989117.05,
-          "som_material_usd": 115426.98063750005
+          "sam_valuation": 39782329.0,
+          "material_usd": 2308538.6527499994,
+          "labor_usd": 21595834.612250004,
+          "som_usd": 1989116.4500000002,
+          "som_material_usd": 115426.93263749998
         },
         {
           "county": "Orange",
           "fips": "12095",
           "sam_count": 697,
-          "sam_valuation": 55265411.32000001,
-          "material_usd": 1031875.6286649997,
-          "labor_usd": 3739245.953235,
-          "som_usd": 2763270.5660000006,
-          "som_material_usd": 51593.78143324999
+          "sam_valuation": 55265411.31999999,
+          "material_usd": 1031875.6286650002,
+          "labor_usd": 3739245.9532350013,
+          "som_usd": 2763270.5659999996,
+          "som_material_usd": 51593.78143325001
         },
         {
           "county": "Pinellas",
@@ -4163,40 +4163,40 @@
       ],
       "by_category": [
         {
-          "category": "irrigation",
-          "sam_count": 943,
-          "sam_valuation": 803749664.41,
-          "material_usd": 96449959.7292,
-          "labor_usd": 707299704.6808,
-          "som_usd": 40187483.2205,
-          "som_material_usd": 4822497.98646
-        },
-        {
           "category": "res_new_plumbing",
           "sam_count": 10697,
-          "sam_valuation": 5503352019.01,
-          "material_usd": 86677794.29940769,
-          "labor_usd": 160973046.55604234,
-          "som_usd": 275167600.9505,
-          "som_material_usd": 4333889.714970385
+          "sam_valuation": 5503352019.009996,
+          "material_usd": 86677794.29940763,
+          "labor_usd": 160973046.55604222,
+          "som_usd": 275167600.95049983,
+          "som_material_usd": 4333889.714970382
         },
         {
           "category": "pool_spa",
           "sam_count": 3153,
-          "sam_valuation": 227639244.09,
-          "material_usd": 18211139.527200002,
-          "labor_usd": 209428104.56280002,
-          "som_usd": 11381962.2045,
-          "som_material_usd": 910556.9763600002
+          "sam_valuation": 150407537.59000003,
+          "material_usd": 12032603.007199999,
+          "labor_usd": 138374934.58280003,
+          "som_usd": 7520376.879500002,
+          "som_material_usd": 601630.15036
+        },
+        {
+          "category": "irrigation",
+          "sam_count": 943,
+          "sam_valuation": 49722003.410000004,
+          "material_usd": 5966640.409200001,
+          "labor_usd": 43755363.000800006,
+          "som_usd": 2486100.1705000005,
+          "som_material_usd": 298332.02046
         },
         {
           "category": "res_remodel_plumbing",
           "sam_count": 115,
-          "sam_valuation": 5101612.209999999,
-          "material_usd": 214267.71281999993,
+          "sam_valuation": 5101612.21,
+          "material_usd": 214267.71282,
           "labor_usd": 397925.75238,
-          "som_usd": 255080.61049999995,
-          "som_material_usd": 10713.385640999997
+          "som_usd": 255080.6105,
+          "som_material_usd": 10713.385641
         },
         {
           "category": "res_repipe",
@@ -4209,24 +4209,6 @@
         }
       ],
       "by_contractor": [
-        {
-          "contractor_name": "RICHWOOD LANDSCAPING MAINTENANCE & IRR",
-          "permits": 1,
-          "valuation": 580000000.0,
-          "material_usd": 69600000.0,
-          "som_material_usd": 3480000.0,
-          "counties": "Miami-Dade",
-          "categories": "irrigation"
-        },
-        {
-          "contractor_name": "ARAZOZA BROTHERS CORPORATION",
-          "permits": 2,
-          "valuation": 154395425.0,
-          "material_usd": 18527451.0,
-          "som_material_usd": 926372.55,
-          "counties": "Miami-Dade",
-          "categories": "irrigation"
-        },
         {
           "contractor_name": "COASTAL CONSTRUCTION OF MIAMI DADE COU",
           "permits": 2,
@@ -4244,15 +4226,6 @@
           "som_material_usd": 254939.676075,
           "counties": "Duval, Miami-Dade",
           "categories": "res_new_plumbing"
-        },
-        {
-          "contractor_name": "ROCK STAR POOLS & WATERFALLS INC",
-          "permits": 7,
-          "valuation": 62491485.0,
-          "material_usd": 4999318.8,
-          "som_material_usd": 249965.94,
-          "counties": "Miami-Dade",
-          "categories": "pool_spa"
         },
         {
           "contractor_name": "AURORA PLUMBING CORPORATION",
@@ -4345,24 +4318,6 @@
           "categories": "res_new_plumbing"
         },
         {
-          "contractor_name": "ESQUIVEL PLUMBING SERVICES CORP",
-          "permits": 1,
-          "valuation": 10027261.0,
-          "material_usd": 1203271.32,
-          "som_material_usd": 60163.566000000006,
-          "counties": "Miami-Dade",
-          "categories": "irrigation"
-        },
-        {
-          "contractor_name": "AMARO LANDSCAPE ASSOCIATES INC",
-          "permits": 1,
-          "valuation": 10000000.0,
-          "material_usd": 1200000.0,
-          "som_material_usd": 60000.0,
-          "counties": "Miami-Dade",
-          "categories": "irrigation"
-        },
-        {
           "contractor_name": "OSCAR AIR CONDITIONING INC",
           "permits": 14,
           "valuation": 75432375.0,
@@ -4397,15 +4352,6 @@
           "som_material_usd": 48199.8286665,
           "counties": "Duval",
           "categories": "res_new_plumbing"
-        },
-        {
-          "contractor_name": "NV5, INC",
-          "permits": 8,
-          "valuation": 10787671.0,
-          "material_usd": 836693.94325,
-          "som_material_usd": 41834.6971625,
-          "counties": "Duval",
-          "categories": "irrigation, pool_spa, res_new_plumbing, res_remodel_plumbing"
         },
         {
           "contractor_name": "BECAI ELECTRIC\\, INC.",
@@ -4498,7 +4444,7 @@
           "categories": "irrigation"
         },
         {
-          "contractor_name": "REDLAND COMPANY\\, LLC DBA:REDLAND ENTER",
+          "contractor_name": "ROYAL PLUMBING CORP",
           "permits": 2,
           "valuation": 22506539.0,
           "material_usd": 354477.98925,
@@ -4507,7 +4453,7 @@
           "categories": "res_new_plumbing"
         },
         {
-          "contractor_name": "ROYAL PLUMBING CORP",
+          "contractor_name": "REDLAND COMPANY\\, LLC DBA:REDLAND ENTER",
           "permits": 2,
           "valuation": 22506539.0,
           "material_usd": 354477.98925,
@@ -4568,6 +4514,60 @@
           "som_material_usd": 12143.25,
           "counties": "Miami-Dade",
           "categories": "res_new_plumbing"
+        },
+        {
+          "contractor_name": "DIXIE LANDSCAPE\\, LLC",
+          "permits": 13,
+          "valuation": 2020603.0,
+          "material_usd": 242472.36,
+          "som_material_usd": 12123.618,
+          "counties": "Miami-Dade",
+          "categories": "irrigation"
+        },
+        {
+          "contractor_name": "A & M HURRICANE PROTECTION L.L.C.",
+          "permits": 2,
+          "valuation": 15200000.0,
+          "material_usd": 239399.99999999997,
+          "som_material_usd": 11970.0,
+          "counties": "Miami-Dade",
+          "categories": "res_new_plumbing"
+        },
+        {
+          "contractor_name": "MIROMAR POOLS LLC",
+          "permits": 43,
+          "valuation": 2898273.0,
+          "material_usd": 231861.84,
+          "som_material_usd": 11593.092,
+          "counties": "Lee",
+          "categories": "pool_spa"
+        },
+        {
+          "contractor_name": "PLUMBING BY POWERS INC",
+          "permits": 1,
+          "valuation": 14597703.0,
+          "material_usd": 229913.82225,
+          "som_material_usd": 11495.6911125,
+          "counties": "Miami-Dade",
+          "categories": "res_new_plumbing"
+        },
+        {
+          "contractor_name": "LENNAR HOMES LLC",
+          "permits": 41,
+          "valuation": 14550309.0,
+          "material_usd": 229167.36675,
+          "som_material_usd": 11458.3683375,
+          "counties": "Miami-Dade",
+          "categories": "res_new_plumbing"
+        },
+        {
+          "contractor_name": "MCANENY BUILDERS LLC",
+          "permits": 2,
+          "valuation": 3700000.0,
+          "material_usd": 218900.0,
+          "som_material_usd": 10945.0,
+          "counties": "Duval",
+          "categories": "pool_spa, res_new_plumbing"
         }
       ]
     },
@@ -4580,40 +4580,40 @@
         "fips": "12086",
         "tom_count": 590088,
         "sam_count": 153137,
-        "tom_valuation": 734825336770.0702,
-        "sam_valuation": 246528380924.74994,
-        "som_usd": 12326419046.237497,
-        "material_usd": 5784133673.986778,
-        "som_material_usd": 289206683.6993389
+        "tom_valuation": 267654560610.0702,
+        "sam_valuation": 114043033708.74994,
+        "som_usd": 5702151685.437497,
+        "material_usd": 1970198023.3570273,
+        "som_material_usd": 98509901.16785137
       },
       {
         "county": "Duval",
         "fips": "12031",
         "tom_count": 712300,
         "sam_count": 273456,
-        "tom_valuation": 52279594526.11676,
-        "sam_valuation": 34867949687.97076,
-        "som_usd": 1743397484.3985379,
-        "material_usd": 640631888.68612,
-        "som_material_usd": 32031594.434306003
+        "tom_valuation": 47877633572.406944,
+        "sam_valuation": 30465988734.260895,
+        "som_usd": 1523299436.713045,
+        "material_usd": 534041968.8893223,
+        "som_material_usd": 26702098.444466114
       },
       {
         "county": "Hillsborough",
         "fips": "12057",
         "tom_count": 41042,
         "sam_count": 28152,
-        "tom_valuation": 30072428754.309994,
-        "sam_valuation": 17716223151.009983,
-        "som_usd": 885811157.5504992,
-        "material_usd": 279735008.3904072,
-        "som_material_usd": 13986750.419520361
+        "tom_valuation": 26237573470.31,
+        "sam_valuation": 15681201627.009993,
+        "som_usd": 784060081.3504996,
+        "material_usd": 247683419.3874072,
+        "som_material_usd": 12384170.969370361
       },
       {
         "county": "Pinellas",
         "fips": "12103",
         "tom_count": 566591,
         "sam_count": 51355,
-        "tom_valuation": 27100951272.0,
+        "tom_valuation": 23455938268.0,
         "sam_valuation": 895010145.0,
         "som_usd": 44750507.25,
         "material_usd": 51573961.698,
@@ -4624,11 +4624,11 @@
         "fips": "12081",
         "tom_count": 247964,
         "sam_count": 82074,
-        "tom_valuation": 19603337082.886818,
-        "sam_valuation": 11544520848.06055,
-        "som_usd": 577226042.4030275,
-        "material_usd": 261240622.84446374,
-        "som_material_usd": 13062031.142223187
+        "tom_valuation": 19449040819.716625,
+        "sam_valuation": 11390224584.89051,
+        "som_usd": 569511229.2445256,
+        "material_usd": 248896921.7908636,
+        "som_material_usd": 12444846.08954318
       },
       {
         "county": "Orange",
@@ -4638,19 +4638,19 @@
         "tom_valuation": 15843789459.374033,
         "sam_valuation": 8112390330.3099985,
         "som_usd": 405619516.51549995,
-        "material_usd": 139185125.83894497,
-        "som_material_usd": 6959256.291947249
+        "material_usd": 139185125.8389448,
+        "som_material_usd": 6959256.29194724
       },
       {
         "county": "Lee",
         "fips": "12071",
         "tom_count": 286061,
         "sam_count": 70960,
-        "tom_valuation": 12442565254.716375,
-        "sam_valuation": 2287582224.6099987,
-        "som_usd": 114379111.23049994,
-        "material_usd": 97515797.50001504,
-        "som_material_usd": 4875789.875000752
+        "tom_valuation": 12395437125.712667,
+        "sam_valuation": 2240454095.610002,
+        "som_usd": 112022704.78050011,
+        "material_usd": 93288531.18001503,
+        "som_material_usd": 4664426.559000752
       },
       {
         "county": "Pasco",
@@ -4664,17 +4664,6 @@
         "som_material_usd": 2233501.7769606253
       },
       {
-        "county": "Osceola",
-        "fips": "12097",
-        "tom_count": 5980,
-        "sam_count": 2469,
-        "tom_valuation": 1929423175.3690012,
-        "sam_valuation": 700231761.7100009,
-        "som_usd": 35011588.08550005,
-        "material_usd": 22842977.216417514,
-        "som_material_usd": 1142148.8608208757
-      },
-      {
         "county": "Polk",
         "fips": "12105",
         "tom_count": 26090,
@@ -4684,6 +4673,17 @@
         "som_usd": 27789841.75,
         "material_usd": 10330864.891749999,
         "som_material_usd": 516543.24458749994
+      },
+      {
+        "county": "Osceola",
+        "fips": "12097",
+        "tom_count": 5980,
+        "sam_count": 2469,
+        "tom_valuation": 1924479715.8690012,
+        "sam_valuation": 695288302.2100009,
+        "som_usd": 34764415.110500045,
+        "material_usd": 22447500.456417516,
+        "som_material_usd": 1122375.0228208757
       },
       {
         "county": "Brevard",
@@ -5328,7 +5328,7 @@
         "year": 2021,
         "month": 7,
         "count": 4309,
-        "valuation": 308770463.96999985
+        "valuation": 263810895.96999985
       },
       {
         "county": "Duval",
@@ -5342,14 +5342,14 @@
         "year": 2021,
         "month": 9,
         "count": 4838,
-        "valuation": 269171834.58
+        "valuation": 251227487.58
       },
       {
         "county": "Duval",
         "year": 2021,
         "month": 10,
         "count": 4486,
-        "valuation": 468712045.9099999
+        "valuation": 458807045.90999997
       },
       {
         "county": "Duval",
@@ -5363,7 +5363,7 @@
         "year": 2021,
         "month": 12,
         "count": 4222,
-        "valuation": 199184315.97999993
+        "valuation": 199184315.98000002
       },
       {
         "county": "Duval",
@@ -5384,7 +5384,7 @@
         "year": 2022,
         "month": 3,
         "count": 5240,
-        "valuation": 369172630.31999993
+        "valuation": 338873470.96999997
       },
       {
         "county": "Duval",
@@ -5419,7 +5419,7 @@
         "year": 2022,
         "month": 8,
         "count": 4563,
-        "valuation": 518867234.0600002
+        "valuation": 518867234.06000036
       },
       {
         "county": "Duval",
@@ -5440,21 +5440,21 @@
         "year": 2022,
         "month": 11,
         "count": 3466,
-        "valuation": 241089097.74999997
+        "valuation": 241089097.74999994
       },
       {
         "county": "Duval",
         "year": 2022,
         "month": 12,
         "count": 3586,
-        "valuation": 208223135.3999999
+        "valuation": 202028135.3999999
       },
       {
         "county": "Duval",
         "year": 2023,
         "month": 1,
         "count": 4001,
-        "valuation": 550592738.25
+        "valuation": 545097738.2499999
       },
       {
         "county": "Duval",
@@ -5503,7 +5503,7 @@
         "year": 2023,
         "month": 8,
         "count": 4386,
-        "valuation": 688342583.95
+        "valuation": 455770795.9499999
       },
       {
         "county": "Duval",
@@ -5517,21 +5517,21 @@
         "year": 2023,
         "month": 10,
         "count": 4512,
-        "valuation": 667146583.5300001
+        "valuation": 657551583.5300001
       },
       {
         "county": "Duval",
         "year": 2023,
         "month": 11,
         "count": 3776,
-        "valuation": 275181535.45000005
+        "valuation": 275181535.45
       },
       {
         "county": "Duval",
         "year": 2023,
         "month": 12,
         "count": 3950,
-        "valuation": 479317148.88000023
+        "valuation": 462727148.8800001
       },
       {
         "county": "Duval",
@@ -5552,14 +5552,14 @@
         "year": 2024,
         "month": 3,
         "count": 4694,
-        "valuation": 582392767.1700004
+        "valuation": 570397767.1700004
       },
       {
         "county": "Duval",
         "year": 2024,
         "month": 4,
         "count": 4588,
-        "valuation": 2382914547.439989
+        "valuation": 382919547.43999916
       },
       {
         "county": "Duval",
@@ -5587,7 +5587,7 @@
         "year": 2024,
         "month": 8,
         "count": 4188,
-        "valuation": 332408638.30000013
+        "valuation": 332408638.3000004
       },
       {
         "county": "Duval",
@@ -5601,7 +5601,7 @@
         "year": 2024,
         "month": 10,
         "count": 3535,
-        "valuation": 420909354.5499999
+        "valuation": 403414354.5499999
       },
       {
         "county": "Duval",
@@ -5636,21 +5636,21 @@
         "year": 2025,
         "month": 3,
         "count": 3317,
-        "valuation": 860920148.7600002
+        "valuation": 843425148.7600002
       },
       {
         "county": "Duval",
         "year": 2025,
         "month": 4,
         "count": 3143,
-        "valuation": 568534825.33
+        "valuation": 558136125.33
       },
       {
         "county": "Duval",
         "year": 2025,
         "month": 5,
         "count": 3019,
-        "valuation": 469524649.7299998
+        "valuation": 414348516.72999984
       },
       {
         "county": "Duval",
@@ -5664,7 +5664,7 @@
         "year": 2025,
         "month": 7,
         "count": 3008,
-        "valuation": 304830040.67
+        "valuation": 298635040.66999996
       },
       {
         "county": "Duval",
@@ -5692,14 +5692,14 @@
         "year": 2025,
         "month": 11,
         "count": 2401,
-        "valuation": 423592075.4599998
+        "valuation": 391357075.4599998
       },
       {
         "county": "Duval",
         "year": 2025,
         "month": 12,
         "count": 2487,
-        "valuation": 182560566.38000008
+        "valuation": 182560566.38000003
       },
       {
         "county": "Duval",
@@ -5720,14 +5720,14 @@
         "year": 2026,
         "month": 3,
         "count": 3839,
-        "valuation": 638684851.6799996
+        "valuation": 612151793.3199997
       },
       {
         "county": "Duval",
         "year": 2026,
         "month": 4,
         "count": 3450,
-        "valuation": 380672536.54000014
+        "valuation": 374164336.54000014
       },
       {
         "county": "Duval",
@@ -5741,7 +5741,7 @@
         "year": 2026,
         "month": 6,
         "count": 4517,
-        "valuation": 2257485152.699992
+        "valuation": 423350152.70000094
       },
       {
         "county": "Duval",
@@ -5762,7 +5762,7 @@
         "year": 2026,
         "month": 9,
         "count": 3124,
-        "valuation": 280385766.53
+        "valuation": 270140766.53
       },
       {
         "county": "Duval",
@@ -6126,7 +6126,7 @@
         "year": 2025,
         "month": 3,
         "count": 276,
-        "valuation": 2230610804.56
+        "valuation": 195589280.56
       },
       {
         "county": "Hillsborough",
@@ -6266,112 +6266,112 @@
         "year": 2021,
         "month": 1,
         "count": 4955,
-        "valuation": 108449899.73
+        "valuation": 108449879.73
       },
       {
         "county": "Lee",
         "year": 2021,
         "month": 2,
         "count": 1188,
-        "valuation": 79881900.78
+        "valuation": 79881892.78
       },
       {
         "county": "Lee",
         "year": 2021,
         "month": 3,
         "count": 1561,
-        "valuation": 90838181.88
+        "valuation": 79412761.88
       },
       {
         "county": "Lee",
         "year": 2021,
         "month": 4,
         "count": 1395,
-        "valuation": 94743378.32
+        "valuation": 94743358.32
       },
       {
         "county": "Lee",
         "year": 2021,
         "month": 5,
         "count": 1177,
-        "valuation": 93846486.05
+        "valuation": 93846458.05
       },
       {
         "county": "Lee",
         "year": 2021,
         "month": 6,
         "count": 1512,
-        "valuation": 118829867.53
+        "valuation": 108647853.53
       },
       {
         "county": "Lee",
         "year": 2021,
         "month": 7,
         "count": 1387,
-        "valuation": 107808408.72999996
+        "valuation": 107808388.72999996
       },
       {
         "county": "Lee",
         "year": 2021,
         "month": 8,
         "count": 1408,
-        "valuation": 99656767.42000005
+        "valuation": 99656739.42000005
       },
       {
         "county": "Lee",
         "year": 2021,
         "month": 9,
         "count": 1168,
-        "valuation": 94774416.29
+        "valuation": 94774404.29
       },
       {
         "county": "Lee",
         "year": 2021,
         "month": 10,
         "count": 1227,
-        "valuation": 97922753.48
+        "valuation": 97922745.48
       },
       {
         "county": "Lee",
         "year": 2021,
         "month": 11,
         "count": 1438,
-        "valuation": 101229447.88
+        "valuation": 101229419.87999998
       },
       {
         "county": "Lee",
         "year": 2021,
         "month": 12,
         "count": 1398,
-        "valuation": 82436117.05000001
+        "valuation": 82436113.05000001
       },
       {
         "county": "Lee",
         "year": 2022,
         "month": 1,
         "count": 3587,
-        "valuation": 23831436.0
+        "valuation": 23831432.0
       },
       {
         "county": "Lee",
         "year": 2022,
         "month": 2,
         "count": 396,
-        "valuation": 6004585.38
+        "valuation": 6004577.38
       },
       {
         "county": "Lee",
         "year": 2022,
         "month": 3,
         "count": 304,
-        "valuation": 6475130.430000001
+        "valuation": 6475114.430000001
       },
       {
         "county": "Lee",
         "year": 2022,
         "month": 4,
         "count": 712,
-        "valuation": 20786826.63
+        "valuation": 12394820.63
       },
       {
         "county": "Lee",
@@ -6385,126 +6385,126 @@
         "year": 2022,
         "month": 6,
         "count": 620,
-        "valuation": 9114601.370000001
+        "valuation": 9114581.370000001
       },
       {
         "county": "Lee",
         "year": 2022,
         "month": 7,
         "count": 676,
-        "valuation": 9607395.0
+        "valuation": 9607387.0
       },
       {
         "county": "Lee",
         "year": 2022,
         "month": 8,
         "count": 530,
-        "valuation": 17860493.9
+        "valuation": 17860465.9
       },
       {
         "county": "Lee",
         "year": 2022,
         "month": 9,
         "count": 620,
-        "valuation": 5486698.13
+        "valuation": 5486690.13
       },
       {
         "county": "Lee",
         "year": 2022,
         "month": 10,
         "count": 276,
-        "valuation": 9026556.85
+        "valuation": 9026524.85
       },
       {
         "county": "Lee",
         "year": 2022,
         "month": 11,
         "count": 412,
-        "valuation": 14804946.640000002
+        "valuation": 14804934.640000002
       },
       {
         "county": "Lee",
         "year": 2022,
         "month": 12,
         "count": 720,
-        "valuation": 6818425.29
+        "valuation": 6818417.29
       },
       {
         "county": "Lee",
         "year": 2023,
         "month": 1,
         "count": 1283,
-        "valuation": 78691007.0
+        "valuation": 78690943.0
       },
       {
         "county": "Lee",
         "year": 2023,
         "month": 2,
         "count": 1264,
-        "valuation": 50417816.59
+        "valuation": 50417788.59000001
       },
       {
         "county": "Lee",
         "year": 2023,
         "month": 3,
         "count": 980,
-        "valuation": 43858793.84999999
+        "valuation": 38717935.84999999
       },
       {
         "county": "Lee",
         "year": 2023,
         "month": 4,
         "count": 1249,
-        "valuation": 37280631.58
+        "valuation": 37280611.58
       },
       {
         "county": "Lee",
         "year": 2023,
         "month": 5,
         "count": 1200,
-        "valuation": 33335730.48
+        "valuation": 33335710.48
       },
       {
         "county": "Lee",
         "year": 2023,
         "month": 6,
         "count": 1487,
-        "valuation": 36236909.38
+        "valuation": 36236885.38
       },
       {
         "county": "Lee",
         "year": 2023,
         "month": 7,
         "count": 1380,
-        "valuation": 34592898.769999996
+        "valuation": 34592866.769999996
       },
       {
         "county": "Lee",
         "year": 2023,
         "month": 8,
         "count": 1400,
-        "valuation": 33963593.06999999
+        "valuation": 33963577.06999999
       },
       {
         "county": "Lee",
         "year": 2023,
         "month": 9,
         "count": 857,
-        "valuation": 25103185.590000004
+        "valuation": 25103177.590000004
       },
       {
         "county": "Lee",
         "year": 2023,
         "month": 10,
         "count": 1026,
-        "valuation": 21384525.36
+        "valuation": 21384513.36
       },
       {
         "county": "Lee",
         "year": 2023,
         "month": 11,
         "count": 1343,
-        "valuation": 24158749.950000003
+        "valuation": 24158737.950000003
       },
       {
         "county": "Lee",
@@ -6518,77 +6518,77 @@
         "year": 2024,
         "month": 1,
         "count": 934,
-        "valuation": 13427079.17
+        "valuation": 13427067.17
       },
       {
         "county": "Lee",
         "year": 2024,
         "month": 2,
         "count": 956,
-        "valuation": 19920542.409999993
+        "valuation": 19920534.409999993
       },
       {
         "county": "Lee",
         "year": 2024,
         "month": 3,
         "count": 945,
-        "valuation": 13499011.110000001
+        "valuation": 13498995.110000001
       },
       {
         "county": "Lee",
         "year": 2024,
         "month": 4,
         "count": 1215,
-        "valuation": 17431915.69
+        "valuation": 17431903.69
       },
       {
         "county": "Lee",
         "year": 2024,
         "month": 5,
         "count": 1045,
-        "valuation": 16481593.690000001
+        "valuation": 16481573.690000001
       },
       {
         "county": "Lee",
         "year": 2024,
         "month": 6,
         "count": 817,
-        "valuation": 16614479.629999999
+        "valuation": 16614475.629999999
       },
       {
         "county": "Lee",
         "year": 2024,
         "month": 7,
         "count": 905,
-        "valuation": 12296432.86
+        "valuation": 12296424.86
       },
       {
         "county": "Lee",
         "year": 2024,
         "month": 8,
         "count": 1071,
-        "valuation": 16368753.52
+        "valuation": 16368737.52
       },
       {
         "county": "Lee",
         "year": 2024,
         "month": 9,
         "count": 767,
-        "valuation": 17701808.769999996
+        "valuation": 17701804.769999996
       },
       {
         "county": "Lee",
         "year": 2024,
         "month": 10,
         "count": 888,
-        "valuation": 15493789.5
+        "valuation": 15493785.5
       },
       {
         "county": "Lee",
         "year": 2024,
         "month": 11,
         "count": 841,
-        "valuation": 10086097.190000001
+        "valuation": 10086093.190000001
       },
       {
         "county": "Lee",
@@ -6602,112 +6602,112 @@
         "year": 2025,
         "month": 1,
         "count": 580,
-        "valuation": 11599123.0
+        "valuation": 11599115.0
       },
       {
         "county": "Lee",
         "year": 2025,
         "month": 2,
         "count": 658,
-        "valuation": 12041071.0
+        "valuation": 12041047.0
       },
       {
         "county": "Lee",
         "year": 2025,
         "month": 3,
         "count": 932,
-        "valuation": 8550313.24
+        "valuation": 8550289.24
       },
       {
         "county": "Lee",
         "year": 2025,
         "month": 4,
         "count": 875,
-        "valuation": 14673804.0
+        "valuation": 14673784.0
       },
       {
         "county": "Lee",
         "year": 2025,
         "month": 5,
         "count": 1014,
-        "valuation": 15167828.0
+        "valuation": 15167808.0
       },
       {
         "county": "Lee",
         "year": 2025,
         "month": 6,
         "count": 676,
-        "valuation": 14482088.0
+        "valuation": 14482076.0
       },
       {
         "county": "Lee",
         "year": 2025,
         "month": 7,
         "count": 729,
-        "valuation": 15861531.0
+        "valuation": 15861515.0
       },
       {
         "county": "Lee",
         "year": 2025,
         "month": 8,
         "count": 686,
-        "valuation": 12941379.6
+        "valuation": 12941367.6
       },
       {
         "county": "Lee",
         "year": 2025,
         "month": 9,
         "count": 831,
-        "valuation": 13626684.0
+        "valuation": 13626656.0
       },
       {
         "county": "Lee",
         "year": 2025,
         "month": 10,
         "count": 818,
-        "valuation": 11455213.18
+        "valuation": 11455181.18
       },
       {
         "county": "Lee",
         "year": 2025,
         "month": 11,
         "count": 626,
-        "valuation": 18408759.0
+        "valuation": 11413926.0
       },
       {
         "county": "Lee",
         "year": 2025,
         "month": 12,
         "count": 705,
-        "valuation": 11359548.0
+        "valuation": 11359544.0
       },
       {
         "county": "Lee",
         "year": 2026,
         "month": 1,
         "count": 673,
-        "valuation": 9073037.0
+        "valuation": 9073017.0
       },
       {
         "county": "Lee",
         "year": 2026,
         "month": 2,
         "count": 674,
-        "valuation": 15740473.0
+        "valuation": 10748459.0
       },
       {
         "county": "Lee",
         "year": 2026,
         "month": 3,
         "count": 723,
-        "valuation": 16745473.0
+        "valuation": 16745461.0
       },
       {
         "county": "Lee",
         "year": 2026,
         "month": 4,
         "count": 821,
-        "valuation": 12665920.0
+        "valuation": 12665904.0
       },
       {
         "county": "Lee",
@@ -6721,42 +6721,42 @@
         "year": 2026,
         "month": 6,
         "count": 737,
-        "valuation": 27870721.0
+        "valuation": 27870693.0
       },
       {
         "county": "Lee",
         "year": 2026,
         "month": 7,
         "count": 733,
-        "valuation": 22581143.0
+        "valuation": 22581123.0
       },
       {
         "county": "Lee",
         "year": 2026,
         "month": 8,
         "count": 857,
-        "valuation": 32485671.0
+        "valuation": 32485659.0
       },
       {
         "county": "Lee",
         "year": 2026,
         "month": 9,
         "count": 616,
-        "valuation": 23790156.0
+        "valuation": 23790152.0
       },
       {
         "county": "Lee",
         "year": 2026,
         "month": 10,
         "count": 647,
-        "valuation": 20562829.0
+        "valuation": 20562821.0
       },
       {
         "county": "Manatee",
         "year": 2021,
         "month": 1,
         "count": 1044,
-        "valuation": 136647666.02999997
+        "valuation": 123667954.02999999
       },
       {
         "county": "Manatee",
@@ -7001,7 +7001,7 @@
         "year": 2023,
         "month": 12,
         "count": 957,
-        "valuation": 275600843.65
+        "valuation": 174321362.65
       },
       {
         "county": "Manatee",
@@ -7036,14 +7036,14 @@
         "year": 2024,
         "month": 5,
         "count": 1374,
-        "valuation": 205598113.89999998
+        "valuation": 200620113.89999998
       },
       {
         "county": "Manatee",
         "year": 2024,
         "month": 6,
         "count": 1105,
-        "valuation": 143943795.23
+        "valuation": 143943795.22999996
       },
       {
         "county": "Manatee",
@@ -7064,7 +7064,7 @@
         "year": 2024,
         "month": 9,
         "count": 955,
-        "valuation": 166366192.88
+        "valuation": 159760713.70999998
       },
       {
         "county": "Manatee",
@@ -7099,7 +7099,7 @@
         "year": 2025,
         "month": 2,
         "count": 1560,
-        "valuation": 212328817.98999998
+        "valuation": 203850817.99
       },
       {
         "county": "Manatee",
@@ -7190,7 +7190,7 @@
         "year": 2026,
         "month": 3,
         "count": 1453,
-        "valuation": 244883950.73999995
+        "valuation": 224908359.73999995
       },
       {
         "county": "Manatee",
@@ -7246,154 +7246,154 @@
         "year": 2021,
         "month": 1,
         "count": 2006,
-        "valuation": 862752112.8199999
+        "valuation": 714813600.82
       },
       {
         "county": "Miami-Dade",
         "year": 2021,
         "month": 2,
         "count": 1959,
-        "valuation": 626713269.6
+        "valuation": 597952680.6
       },
       {
         "county": "Miami-Dade",
         "year": 2021,
         "month": 3,
         "count": 2390,
-        "valuation": 825441049.67
+        "valuation": 777994236.67
       },
       {
         "county": "Miami-Dade",
         "year": 2021,
         "month": 4,
         "count": 2356,
-        "valuation": 1572210001.6
+        "valuation": 1561284901.6
       },
       {
         "county": "Miami-Dade",
         "year": 2021,
         "month": 5,
         "count": 2301,
-        "valuation": 999563882.18
+        "valuation": 981638782.18
       },
       {
         "county": "Miami-Dade",
         "year": 2021,
         "month": 6,
         "count": 2362,
-        "valuation": 830589797.0
+        "valuation": 642468997.0
       },
       {
         "county": "Miami-Dade",
         "year": 2021,
         "month": 7,
         "count": 2246,
-        "valuation": 1539536588.05
+        "valuation": 1532323288.05
       },
       {
         "county": "Miami-Dade",
         "year": 2021,
         "month": 8,
         "count": 2248,
-        "valuation": 8857459789.0
+        "valuation": 987042513.0
       },
       {
         "county": "Miami-Dade",
         "year": 2021,
         "month": 9,
         "count": 2386,
-        "valuation": 2729075816.0
+        "valuation": 1104007791.0
       },
       {
         "county": "Miami-Dade",
         "year": 2021,
         "month": 10,
         "count": 2402,
-        "valuation": 3836538086.0
+        "valuation": 1027623610.0
       },
       {
         "county": "Miami-Dade",
         "year": 2021,
         "month": 11,
         "count": 2146,
-        "valuation": 8873976908.13
+        "valuation": 1010095868.13
       },
       {
         "county": "Miami-Dade",
         "year": 2021,
         "month": 12,
         "count": 2080,
-        "valuation": 1715710453.03
+        "valuation": 1665851485.03
       },
       {
         "county": "Miami-Dade",
         "year": 2022,
         "month": 1,
         "count": 2139,
-        "valuation": 4441776448.3
+        "valuation": 1186329060.3
       },
       {
         "county": "Miami-Dade",
         "year": 2022,
         "month": 2,
         "count": 2282,
-        "valuation": 833352003.22
+        "valuation": 809174227.22
       },
       {
         "county": "Miami-Dade",
         "year": 2022,
         "month": 3,
         "count": 2685,
-        "valuation": 1210926091.35
+        "valuation": 1204000991.35
       },
       {
         "county": "Miami-Dade",
         "year": 2022,
         "month": 4,
         "count": 2384,
-        "valuation": 3841268384.8
+        "valuation": 782117265.8
       },
       {
         "county": "Miami-Dade",
         "year": 2022,
         "month": 5,
         "count": 2566,
-        "valuation": 1343877838.22
+        "valuation": 1334287587.22
       },
       {
         "county": "Miami-Dade",
         "year": 2022,
         "month": 6,
         "count": 2518,
-        "valuation": 932270030.0
+        "valuation": 882329830.0
       },
       {
         "county": "Miami-Dade",
         "year": 2022,
         "month": 7,
         "count": 2399,
-        "valuation": 1170845191.0
+        "valuation": 1042749691.0
       },
       {
         "county": "Miami-Dade",
         "year": 2022,
         "month": 8,
         "count": 2733,
-        "valuation": 1280568458.35
+        "valuation": 1270717591.35
       },
       {
         "county": "Miami-Dade",
         "year": 2022,
         "month": 9,
         "count": 2286,
-        "valuation": 886976300.75
+        "valuation": 878795985.75
       },
       {
         "county": "Miami-Dade",
         "year": 2022,
         "month": 10,
         "count": 2354,
-        "valuation": 1929151452.95
+        "valuation": 1877334222.95
       },
       {
         "county": "Miami-Dade",
@@ -7414,42 +7414,42 @@
         "year": 2023,
         "month": 1,
         "count": 2190,
-        "valuation": 1372579854.2
+        "valuation": 1352506913.2
       },
       {
         "county": "Miami-Dade",
         "year": 2023,
         "month": 2,
         "count": 1835,
-        "valuation": 1703867271.0
+        "valuation": 1687972171.0
       },
       {
         "county": "Miami-Dade",
         "year": 2023,
         "month": 3,
         "count": 2467,
-        "valuation": 4580231243.0
+        "valuation": 2567963218.0
       },
       {
         "county": "Miami-Dade",
         "year": 2023,
         "month": 4,
         "count": 1986,
-        "valuation": 945336283.36
+        "valuation": 930900329.36
       },
       {
         "county": "Miami-Dade",
         "year": 2023,
         "month": 5,
         "count": 2288,
-        "valuation": 1149902402.4
+        "valuation": 1125958309.4
       },
       {
         "county": "Miami-Dade",
         "year": 2023,
         "month": 6,
         "count": 2260,
-        "valuation": 1717024481.0
+        "valuation": 1660909089.0
       },
       {
         "county": "Miami-Dade",
@@ -7463,273 +7463,273 @@
         "year": 2023,
         "month": 8,
         "count": 2436,
-        "valuation": 1328780874.0
+        "valuation": 1307883278.0
       },
       {
         "county": "Miami-Dade",
         "year": 2023,
         "month": 9,
         "count": 2147,
-        "valuation": 1055629091.99
+        "valuation": 934020267.99
       },
       {
         "county": "Miami-Dade",
         "year": 2023,
         "month": 10,
         "count": 2235,
-        "valuation": 1653969773.9
+        "valuation": 1433786340.9
       },
       {
         "county": "Miami-Dade",
         "year": 2023,
         "month": 11,
         "count": 2028,
-        "valuation": 2765832645.48
+        "valuation": 1539430594.48
       },
       {
         "county": "Miami-Dade",
         "year": 2023,
         "month": 12,
         "count": 1694,
-        "valuation": 1467416618.4
+        "valuation": 1453021518.4
       },
       {
         "county": "Miami-Dade",
         "year": 2024,
         "month": 1,
         "count": 2007,
-        "valuation": 2599619539.78
+        "valuation": 2346372848.7799997
       },
       {
         "county": "Miami-Dade",
         "year": 2024,
         "month": 2,
         "count": 2160,
-        "valuation": 1676370130.0
+        "valuation": 1615194730.0
       },
       {
         "county": "Miami-Dade",
         "year": 2024,
         "month": 3,
         "count": 2193,
-        "valuation": 9179546728.66
+        "valuation": 1248925345.66
       },
       {
         "county": "Miami-Dade",
         "year": 2024,
         "month": 4,
         "count": 2257,
-        "valuation": 11655913812.960001
+        "valuation": 1800974758.9600003
       },
       {
         "county": "Miami-Dade",
         "year": 2024,
         "month": 5,
         "count": 2278,
-        "valuation": 4685730322.45
+        "valuation": 1597061733.4500003
       },
       {
         "county": "Miami-Dade",
         "year": 2024,
         "month": 6,
         "count": 2010,
-        "valuation": 2744679872.2
+        "valuation": 2704239245.2
       },
       {
         "county": "Miami-Dade",
         "year": 2024,
         "month": 7,
         "count": 2265,
-        "valuation": 5306368494.05
+        "valuation": 1980794754.0500002
       },
       {
         "county": "Miami-Dade",
         "year": 2024,
         "month": 8,
         "count": 2141,
-        "valuation": 7954554747.19
+        "valuation": 1826747036.19
       },
       {
         "county": "Miami-Dade",
         "year": 2024,
         "month": 9,
         "count": 1880,
-        "valuation": 2359875524.43
+        "valuation": 2300140972.43
       },
       {
         "county": "Miami-Dade",
         "year": 2024,
         "month": 10,
         "count": 1967,
-        "valuation": 11420804876.0
+        "valuation": 3528812765.0
       },
       {
         "county": "Miami-Dade",
         "year": 2024,
         "month": 11,
         "count": 1744,
-        "valuation": 4082417369.12
+        "valuation": 3467013959.12
       },
       {
         "county": "Miami-Dade",
         "year": 2024,
         "month": 12,
         "count": 1631,
-        "valuation": 1201644147.52
+        "valuation": 1131094666.52
       },
       {
         "county": "Miami-Dade",
         "year": 2025,
         "month": 1,
         "count": 1889,
-        "valuation": 4732768977.43
+        "valuation": 1669824593.43
       },
       {
         "county": "Miami-Dade",
         "year": 2025,
         "month": 2,
         "count": 1907,
-        "valuation": 4996158397.43
+        "valuation": 1765481582.43
       },
       {
         "county": "Miami-Dade",
         "year": 2025,
         "month": 3,
         "count": 2197,
-        "valuation": 1932537396.32
+        "valuation": 1914255444.32
       },
       {
         "county": "Miami-Dade",
         "year": 2025,
         "month": 4,
         "count": 2269,
-        "valuation": 5018270877.86
+        "valuation": 1885352965.8600001
       },
       {
         "county": "Miami-Dade",
         "year": 2025,
         "month": 5,
         "count": 2216,
-        "valuation": 2013043365.9799998
+        "valuation": 1977193165.98
       },
       {
         "county": "Miami-Dade",
         "year": 2025,
         "month": 6,
         "count": 2266,
-        "valuation": 1913724650.09
+        "valuation": 1746588174.09
       },
       {
         "county": "Miami-Dade",
         "year": 2025,
         "month": 7,
         "count": 2546,
-        "valuation": 3331471236.6
+        "valuation": 3078963310.6
       },
       {
         "county": "Miami-Dade",
         "year": 2025,
         "month": 8,
         "count": 2343,
-        "valuation": 11113634472.740002
+        "valuation": 1549010942.74
       },
       {
         "county": "Miami-Dade",
         "year": 2025,
         "month": 9,
         "count": 2181,
-        "valuation": 3528770085.66
+        "valuation": 1168597160.66
       },
       {
         "county": "Miami-Dade",
         "year": 2025,
         "month": 10,
         "count": 2287,
-        "valuation": 1611121800.57
+        "valuation": 1320543315.57
       },
       {
         "county": "Miami-Dade",
         "year": 2025,
         "month": 11,
         "count": 1605,
-        "valuation": 2371594027.2
+        "valuation": 2175976847.2
       },
       {
         "county": "Miami-Dade",
         "year": 2025,
         "month": 12,
         "count": 1789,
-        "valuation": 2241610456.8
+        "valuation": 2205023721.8
       },
       {
         "county": "Miami-Dade",
         "year": 2026,
         "month": 1,
         "count": 2054,
-        "valuation": 7424840765.4
+        "valuation": 1769146833.4
       },
       {
         "county": "Miami-Dade",
         "year": 2026,
         "month": 2,
         "count": 2000,
-        "valuation": 12774050873.38
+        "valuation": 1802770403.38
       },
       {
         "county": "Miami-Dade",
         "year": 2026,
         "month": 3,
         "count": 2532,
-        "valuation": 3227438670.8
+        "valuation": 3118702570.8
       },
       {
         "county": "Miami-Dade",
         "year": 2026,
         "month": 4,
         "count": 2471,
-        "valuation": 2914344620.57
+        "valuation": 2770457907.57
       },
       {
         "county": "Miami-Dade",
         "year": 2026,
         "month": 5,
         "count": 2157,
-        "valuation": 22993106418.73
+        "valuation": 1707254401.73
       },
       {
         "county": "Miami-Dade",
         "year": 2026,
         "month": 6,
         "count": 2314,
-        "valuation": 1560050245.29
+        "valuation": 1552537160.29
       },
       {
         "county": "Miami-Dade",
         "year": 2026,
         "month": 7,
         "count": 2258,
-        "valuation": 3304863420.02
+        "valuation": 3273943220.02
       },
       {
         "county": "Miami-Dade",
         "year": 2026,
         "month": 8,
         "count": 2296,
-        "valuation": 2741865236.92
+        "valuation": 1960382956.92
       },
       {
         "county": "Miami-Dade",
         "year": 2026,
         "month": 9,
         "count": 2146,
-        "valuation": 2393680564.8300004
+        "valuation": 2229530364.83
       },
       {
         "county": "Miami-Dade",
         "year": 2026,
         "month": 10,
         "count": 1890,
-        "valuation": 3412041213.92
+        "valuation": 2760120517.92
       },
       {
         "county": "Orange",
@@ -8562,7 +8562,7 @@
         "year": 2026,
         "month": 10,
         "count": 347,
-        "valuation": 58836526.099999994
+        "valuation": 53893066.59999999
       },
       {
         "county": "Palm Beach",
@@ -9929,23 +9929,23 @@
           "jurisdiction_id": "fl_miami_dade_county",
           "tom_count": 420160,
           "sam_count": 111147,
-          "tom_valuation": 706956049843.0,
-          "sam_valuation": 227804881019.0,
-          "som_usd": 11390244050.95,
-          "material_usd": 3587926876.0492496,
-          "labor_usd": 6663292769.80575,
-          "som_material_usd": 179396343.8024625
+          "tom_valuation": 241604305912.0,
+          "sam_valuation": 97138566032.0,
+          "som_usd": 4856928301.6,
+          "material_usd": 1529932415.0039997,
+          "labor_usd": 2841303056.436,
+          "som_material_usd": 76496620.75019999
         },
         {
           "jurisdiction_id": "fl_miami_city",
           "tom_count": 169928,
           "sam_count": 41990,
-          "tom_valuation": 27869286927.07007,
-          "sam_valuation": 18723499905.749996,
-          "som_usd": 936174995.2874999,
-          "material_usd": 294895123.5155624,
-          "labor_usd": 547662372.2431874,
-          "som_material_usd": 14744756.17577812
+          "tom_valuation": 26050254698.070065,
+          "sam_valuation": 16904467676.749996,
+          "som_usd": 845223383.8374999,
+          "material_usd": 266245365.9088124,
+          "labor_usd": 494455679.5449374,
+          "som_material_usd": 13312268.295440622
         }
       ],
       "mesoregions": [
@@ -9953,49 +9953,49 @@
           "area": "Unincorporated / other Miami-Dade",
           "tom_count": 410102,
           "sam_count": 109053,
-          "tom_valuation": 679206948932.0,
-          "sam_valuation": 204199911412.0,
-          "som_usd": 10209995570.6,
+          "tom_valuation": 235783022052.0,
+          "sam_valuation": 95461413476.0,
+          "som_usd": 4773070673.8,
           "note": "Most Miami-Dade Hub rows lack city/ZIP; 'Unincorporated / other' dominates unless address matches a municipality.",
-          "material_usd": 3216148604.7389994,
-          "labor_usd": 5972847408.801,
-          "som_material_usd": 160807430.23694998
-        },
-        {
-          "area": "Homestead",
-          "tom_count": 7143,
-          "sam_count": 1802,
-          "tom_valuation": 25281345457.0,
-          "sam_valuation": 23187268075.0,
-          "som_usd": 1159363403.75,
-          "note": "Most Miami-Dade Hub rows lack city/ZIP; 'Unincorporated / other' dominates unless address matches a municipality.",
-          "material_usd": 365199472.18125,
-          "labor_usd": 678227591.19375,
-          "som_material_usd": 18259973.6090625
+          "material_usd": 1503517262.247,
+          "labor_usd": 2792246344.1730003,
+          "som_material_usd": 75175863.11235
         },
         {
           "area": "City of Miami",
           "tom_count": 169928,
           "sam_count": 41990,
-          "tom_valuation": 27869286927.069996,
-          "sam_valuation": 18723499905.75,
-          "som_usd": 936174995.2875,
+          "tom_valuation": 26050254698.070026,
+          "sam_valuation": 16904467676.750013,
+          "som_usd": 845223383.8375007,
           "note": "Most Miami-Dade Hub rows lack city/ZIP; 'Unincorporated / other' dominates unless address matches a municipality.",
-          "material_usd": 294895123.5155625,
-          "labor_usd": 547662372.2431875,
-          "som_material_usd": 14744756.175778124
+          "material_usd": 266245365.9088127,
+          "labor_usd": 494455679.5449379,
+          "som_material_usd": 13312268.295440637
+        },
+        {
+          "area": "Homestead",
+          "tom_count": 7143,
+          "sam_count": 1802,
+          "tom_valuation": 3379498406.0,
+          "sam_valuation": 1285421024.0,
+          "som_usd": 64271051.2,
+          "note": "Most Miami-Dade Hub rows lack city/ZIP; 'Unincorporated / other' dominates unless address matches a municipality.",
+          "material_usd": 20245381.128,
+          "labor_usd": 37598564.952,
+          "som_material_usd": 1012269.0564
         },
         {
           "area": "Kendall",
           "tom_count": 1781,
           "sam_count": 167,
-          "tom_valuation": 1954767258.0,
-          "sam_valuation": 232092452.0,
-          "som_usd": 11604622.600000001,
+          "tom_valuation": 1928797258.0,
+          "sam_valuation": 206122452.0,
+          "som_usd": 10306122.600000001,
           "note": "Most Miami-Dade Hub rows lack city/ZIP; 'Unincorporated / other' dominates unless address matches a municipality.",
-          "material_usd": 3655456.119,
-          "labor_usd": 6788704.221,
-          "som_material_usd": 182772.80595
+          "material_usd": 3246428.619,
+          "labor_usd": 6029081.721,
+          "som_material_usd": 162321.43095
         },
         {
           "area": "Miami Lakes",
@@ -10106,6 +10106,18 @@
           "som_material_usd": 0.0
         },
         {
+          "area": "Pinecrest",
+          "tom_count": 7,
+          "sam_count": 0,
+          "tom_valuation": 3155030.0,
+          "sam_valuation": 0.0,
+          "som_usd": 0.0,
+          "note": "Most Miami-Dade Hub rows lack city/ZIP; 'Unincorporated / other' dominates unless address matches a municipality.",
+          "material_usd": 0.0,
+          "labor_usd": 0.0,
+          "som_material_usd": 0.0
+        },
+        {
           "area": "North Miami",
           "tom_count": 12,
           "sam_count": 0,
@@ -10128,22 +10140,39 @@
           "material_usd": 0.0,
           "labor_usd": 0.0,
           "som_material_usd": 0.0
-        },
-        {
-          "area": "Pinecrest",
-          "tom_count": 7,
-          "sam_count": 0,
-          "tom_valuation": 3155030.0,
-          "sam_valuation": 0.0,
-          "som_usd": 0.0,
-          "note": "Most Miami-Dade Hub rows lack city/ZIP; 'Unincorporated / other' dominates unless address matches a municipality.",
-          "material_usd": 0.0,
-          "labor_usd": 0.0,
-          "som_material_usd": 0.0
         }
       ],
       "coverage_note": "ZIP/lat mostly missing on Miami feeds. Drill = City of Miami layer vs county Hub + municipality tokens parsed from address when available. SOM material on meso uses directional plumbing material share on SAM $."
     }
+  },
+  "valuation_quality": {
+    "policy": "Declared valuation \u2265 $1B treated as missing (imputed peer median). pool_spa / irrigation \u2265 $5M also imputed. Peer medians exclude those rows.",
+    "hard_ceiling_usd": 1000000000.0,
+    "pool_irrigation_soft_cap_usd": 5000000.0,
+    "rows_ge_1b": 89,
+    "declared_sum_ge_1b": 471516870952.0,
+    "rows_pool_irr_soft_capped": 288,
+    "declared_sum_pool_irr_soft_capped": 7761390284.88,
+    "examples": [
+      {
+        "contractor": "BEAUTIFUL OUTDOORS LLC",
+        "permit_id": "2026027237",
+        "declared": 7864232000,
+        "descr": "SWIMMING POOL \u2014 Miami-Dade data-entry glitch"
+      },
+      {
+        "contractor": "ALL JER CONSTRUCTION CORP",
+        "permit_id": "2026044723",
+        "declared": 7863489000,
+        "descr": "blank description \u2014 Miami-Dade \u2265$1B glitch"
+      },
+      {
+        "contractor": "NATIONAL BUILDERS GROUP CORP",
+        "permit_id": "2026044420",
+        "declared": 6026165000,
+        "descr": "MURAL PERMIT \u2014 Miami-Dade \u2265$1B glitch"
+      }
+    ]
   },
   "contractors": {
     "coverage": {
@@ -10167,14 +10196,14 @@
         "permits": 844,
         "valuation": 6083781.0,
         "counties": "Duval",
-        "categories": "res_new_plumbing, pool_spa"
+        "categories": "pool_spa, res_new_plumbing"
       },
       {
         "contractor_name": "SUNSHINE STATE PLUMBING",
         "permits": 717,
         "valuation": 4373740.010000001,
         "counties": "Duval",
-        "categories": "res_new_plumbing, res_repipe"
+        "categories": "res_repipe, res_new_plumbing"
       },
       {
         "contractor_name": "NORTHWEST PLUMBING JACKSONVILLE, INC",
@@ -10195,7 +10224,7 @@
         "permits": 557,
         "valuation": 4654278.01,
         "counties": "Duval",
-        "categories": "res_repipe, res_new_plumbing"
+        "categories": "res_new_plumbing, res_repipe"
       },
       {
         "contractor_name": "LENNAR HOMES, LLC",
@@ -10230,7 +10259,7 @@
         "permits": 460,
         "valuation": 115549689.0,
         "counties": "Orange, Miami-Dade",
-        "categories": "pool_spa, res_new_plumbing"
+        "categories": "res_new_plumbing, pool_spa"
       },
       {
         "contractor_name": "POWER PLUS ELECTRIC LLC",
@@ -10279,7 +10308,7 @@
         "permits": 390,
         "valuation": 658100.0,
         "counties": "Duval",
-        "categories": "pool_spa, res_remodel_plumbing, res_new_plumbing"
+        "categories": "res_new_plumbing, res_remodel_plumbing, pool_spa"
       },
       {
         "contractor_name": "A/C DESIGNS OF ST AUGUSTINE LLC",
@@ -10300,7 +10329,7 @@
         "permits": 359,
         "valuation": 54898251.0,
         "counties": "Miami-Dade",
-        "categories": "pool_spa, res_new_plumbing"
+        "categories": "res_new_plumbing, pool_spa"
       },
       {
         "contractor_name": "MECHANICAL ONE, LLC",
@@ -10363,7 +10392,7 @@
         "permits": 293,
         "valuation": 2863300.0,
         "counties": "Duval",
-        "categories": "irrigation, res_new_plumbing"
+        "categories": "res_new_plumbing, irrigation"
       },
       {
         "contractor_name": "PULTE HOME COMPANY LLC",
@@ -10384,7 +10413,7 @@
         "permits": 255,
         "valuation": 3926192.35,
         "counties": "Duval",
-        "categories": "pool_spa, res_repipe, res_new_plumbing, irrigation"
+        "categories": "irrigation, res_new_plumbing, pool_spa, res_repipe"
       },
       {
         "contractor_name": "GIBSON'S HEATING AND AIR CONDITIONING  LLC",
@@ -10396,9 +10425,9 @@
       {
         "contractor_name": "INFINITY AT YOUR SERVICE LLC",
         "permits": 250,
-        "valuation": 19433297.0,
+        "valuation": 12008197.0,
         "counties": "Miami-Dade, Duval, Lee",
-        "categories": "pool_spa, res_new_plumbing, res_remodel_plumbing, irrigation, res_repipe"
+        "categories": "res_new_plumbing, irrigation, res_remodel_plumbing, res_repipe, pool_spa"
       },
       {
         "contractor_name": "AP WELDING AND STEEL MANUFACTURER CORP",
@@ -10417,7 +10446,7 @@
       {
         "contractor_name": "MIROMAR POOLS LLC",
         "permits": 239,
-        "valuation": 16032303.0,
+        "valuation": 16032279.0,
         "counties": "Lee",
         "categories": "pool_spa"
       },
@@ -10438,55 +10467,6 @@
     ],
     "ytd_by_valuation": [
       {
-        "contractor_name": "BEAUTIFUL OUTDOORS LLC",
-        "permits": 7,
-        "valuation": 7864534573.0,
-        "counties": "Miami-Dade",
-        "categories": "pool_spa"
-      },
-      {
-        "contractor_name": "ALL JER CONSTRUCTION CORP",
-        "permits": 12,
-        "valuation": 7864400015.0,
-        "counties": "Miami-Dade",
-        "categories": "res_new_plumbing, pool_spa"
-      },
-      {
-        "contractor_name": "NATIONAL BUILDERS GROUP CORP",
-        "permits": 1,
-        "valuation": 6026165031.0,
-        "counties": "Miami-Dade",
-        "categories": "res_new_plumbing"
-      },
-      {
-        "contractor_name": "NANDEZ D&D L.L.C.",
-        "permits": 5,
-        "valuation": 4279694811.0,
-        "counties": "Miami-Dade",
-        "categories": "res_new_plumbing"
-      },
-      {
-        "contractor_name": "PLUMBER MIKE'S INC",
-        "permits": 15,
-        "valuation": 3056560157.0,
-        "counties": "Miami-Dade",
-        "categories": "res_new_plumbing"
-      },
-      {
-        "contractor_name": "AMPHENOL CUSTOM CABLE, INC.",
-        "permits": 2,
-        "valuation": 1834197388.0,
-        "counties": "Duval",
-        "categories": "res_new_plumbing"
-      },
-      {
-        "contractor_name": "MOSS & ASSOCIATES LLC",
-        "permits": 21,
-        "valuation": 708855214.0,
-        "counties": "Miami-Dade",
-        "categories": "res_new_plumbing, pool_spa"
-      },
-      {
         "contractor_name": "AURORA PLUMBING CORPORATION",
         "permits": 11,
         "valuation": 698867000.0,
@@ -10497,7 +10477,7 @@
         "contractor_name": "SOUTH CENTRAL ELECTRIC LLC",
         "permits": 24,
         "valuation": 619842922.0,
-        "counties": "Orange, Miami-Dade, Duval",
+        "counties": "Miami-Dade, Duval, Orange",
         "categories": "pool_spa, res_new_plumbing"
       },
       {
@@ -10508,18 +10488,11 @@
         "categories": "res_new_plumbing"
       },
       {
-        "contractor_name": "RICHWOOD LANDSCAPING MAINTENANCE & IRR",
-        "permits": 1,
-        "valuation": 580000000.0,
-        "counties": "Miami-Dade",
-        "categories": "irrigation"
-      },
-      {
         "contractor_name": "COASTAL CONSTRUCTION OF MIAMI DADE COU",
         "permits": 8,
         "valuation": 550060104.0,
         "counties": "Miami-Dade",
-        "categories": "res_new_plumbing, pool_spa"
+        "categories": "pool_spa, res_new_plumbing"
       },
       {
         "contractor_name": "LEMARTEC CORPORATION",
@@ -10527,6 +10500,13 @@
         "valuation": 450420000.0,
         "counties": "Miami-Dade",
         "categories": "res_new_plumbing"
+      },
+      {
+        "contractor_name": "MOSS & ASSOCIATES LLC",
+        "permits": 21,
+        "valuation": 446339888.0,
+        "counties": "Miami-Dade",
+        "categories": "pool_spa, res_new_plumbing"
       },
       {
         "contractor_name": "CAIRO ELECTRIC CORP",
@@ -10553,15 +10533,8 @@
         "contractor_name": "POWER DESIGN INC",
         "permits": 111,
         "valuation": 371267942.4,
-        "counties": "Orange, Miami-Dade",
+        "counties": "Miami-Dade, Orange",
         "categories": "pool_spa, res_new_plumbing"
-      },
-      {
-        "contractor_name": "COASTAL CONSTRUCTION OF MIAMI DADE INC DBA COASTAL CONDOMINIUMS II",
-        "permits": 30,
-        "valuation": 321938216.0,
-        "counties": "Miami-Dade",
-        "categories": "res_new_plumbing, pool_spa"
       },
       {
         "contractor_name": "PROFESSIONAL PLUMBING CORP",
@@ -10618,6 +10591,13 @@
         "valuation": 247293775.0,
         "counties": "Miami-Dade",
         "categories": "res_new_plumbing"
+      },
+      {
+        "contractor_name": "COASTAL CONSTRUCTION OF MIAMI DADE INC DBA COASTAL CONDOMINIUMS II",
+        "permits": 30,
+        "valuation": 236413040.0,
+        "counties": "Miami-Dade",
+        "categories": "res_new_plumbing, pool_spa"
       },
       {
         "contractor_name": "OC ELECTRICAL LLC",
@@ -10680,7 +10660,7 @@
         "permits": 41,
         "valuation": 195362432.0,
         "counties": "Miami-Dade",
-        "categories": "res_new_plumbing, pool_spa"
+        "categories": "pool_spa, res_new_plumbing"
       },
       {
         "contractor_name": "M C G ELECTRONICS INC",
@@ -10715,6 +10695,55 @@
         "permits": 6,
         "valuation": 164042800.0,
         "counties": "Duval, Miami-Dade",
+        "categories": "res_new_plumbing"
+      },
+      {
+        "contractor_name": "W PROJECTS CONSULTING LLC",
+        "permits": 1,
+        "valuation": 164000000.0,
+        "counties": "Miami-Dade",
+        "categories": "res_new_plumbing"
+      },
+      {
+        "contractor_name": "J.N.L. PLUMBING CORP",
+        "permits": 29,
+        "valuation": 163968360.0,
+        "counties": "Miami-Dade",
+        "categories": "pool_spa, res_new_plumbing"
+      },
+      {
+        "contractor_name": "SMART BUILDING SOLUTIONS CORP",
+        "permits": 3,
+        "valuation": 156573235.0,
+        "counties": "Miami-Dade",
+        "categories": "res_new_plumbing"
+      },
+      {
+        "contractor_name": "ALBERTS ELECTRICAL SERVICE INC",
+        "permits": 8,
+        "valuation": 147054000.0,
+        "counties": "Miami-Dade",
+        "categories": "res_new_plumbing, pool_spa"
+      },
+      {
+        "contractor_name": "BURNS AND MCDONNELL ENGINEERING COMPANY INC.",
+        "permits": 2,
+        "valuation": 141685000.0,
+        "counties": "Orange",
+        "categories": "res_new_plumbing"
+      },
+      {
+        "contractor_name": "NP COMPUTER NETWORK & SOLUTIONS INC",
+        "permits": 6,
+        "valuation": 138299980.0,
+        "counties": "Miami-Dade",
+        "categories": "res_new_plumbing"
+      },
+      {
+        "contractor_name": "SOUTHERN INTEGRATED SYSTEMS, LLC",
+        "permits": 503,
+        "valuation": 137262425.52999973,
+        "counties": "Duval",
         "categories": "res_new_plumbing"
       }
     ],
@@ -10776,13 +10805,6 @@
         "categories": "res_new_plumbing"
       },
       {
-        "contractor_name": "AMERICAN CLASSIC HOMES LLC",
-        "permits": 39,
-        "valuation": 1603500.0,
-        "counties": "Duval",
-        "categories": "res_new_plumbing"
-      },
-      {
         "contractor_name": "DERSCONS LLC DBA ARKOS BUILDERS",
         "permits": 39,
         "valuation": 163295.0,
@@ -10790,11 +10812,25 @@
         "categories": "irrigation, pool_spa"
       },
       {
+        "contractor_name": "AMERICAN CLASSIC HOMES LLC",
+        "permits": 39,
+        "valuation": 1603500.0,
+        "counties": "Duval",
+        "categories": "res_new_plumbing"
+      },
+      {
         "contractor_name": "PRESTO PLUMBING LLC",
         "permits": 35,
         "valuation": 216464.0,
         "counties": "Duval",
         "categories": "res_new_plumbing, res_repipe"
+      },
+      {
+        "contractor_name": "MARCO ELECTRICAL CONTRACTORS",
+        "permits": 32,
+        "valuation": 34600.0,
+        "counties": "Duval",
+        "categories": "res_new_plumbing"
       },
       {
         "contractor_name": "LENNAR HOMES, LLC",
@@ -10811,9 +10847,9 @@
         "categories": "res_new_plumbing"
       },
       {
-        "contractor_name": "MARCO ELECTRICAL CONTRACTORS",
-        "permits": 32,
-        "valuation": 34600.0,
+        "contractor_name": "WHITTINGTON ELECTRIC INC.",
+        "permits": 30,
+        "valuation": 39800.0,
         "counties": "Duval",
         "categories": "res_new_plumbing"
       },
@@ -10832,9 +10868,9 @@
         "categories": "res_new_plumbing"
       },
       {
-        "contractor_name": "WHITTINGTON ELECTRIC INC.",
-        "permits": 30,
-        "valuation": 39800.0,
+        "contractor_name": "COVENANT ROOFING & CONSTRUCTION, INC",
+        "permits": 29,
+        "valuation": 678696.0,
         "counties": "Duval",
         "categories": "res_new_plumbing"
       },
@@ -10843,13 +10879,6 @@
         "permits": 29,
         "valuation": 3484304.1,
         "counties": "Orange",
-        "categories": "res_new_plumbing"
-      },
-      {
-        "contractor_name": "COVENANT ROOFING & CONSTRUCTION, INC",
-        "permits": 29,
-        "valuation": 678696.0,
-        "counties": "Duval",
         "categories": "res_new_plumbing"
       },
       {
@@ -10870,8 +10899,15 @@
         "contractor_name": "JENKINS PLUMBING COMPANY LLC",
         "permits": 27,
         "valuation": 144543.0,
-        "counties": "Duval, Orange",
+        "counties": "Orange, Duval",
         "categories": "res_new_plumbing"
+      },
+      {
+        "contractor_name": "ALL FENCE CONTRACTORS INC.",
+        "permits": 26,
+        "valuation": 137110.0,
+        "counties": "Lee",
+        "categories": "pool_spa, res_new_plumbing"
       },
       {
         "contractor_name": "KB HOME JACKSONVILLE LLC",
@@ -10881,16 +10917,9 @@
         "categories": "res_new_plumbing"
       },
       {
-        "contractor_name": "ALL FENCE CONTRACTORS INC.",
-        "permits": 26,
-        "valuation": 137114.0,
-        "counties": "Lee",
-        "categories": "pool_spa, res_new_plumbing"
-      },
-      {
-        "contractor_name": "D.R. HORTON INC-JACKSONVILLE",
+        "contractor_name": "MECHANICAL ONE, LLC",
         "permits": 25,
-        "valuation": 4024600.0,
+        "valuation": 198000.0,
         "counties": "Duval",
         "categories": "res_new_plumbing"
       },
@@ -10902,17 +10931,17 @@
         "categories": "res_new_plumbing"
       },
       {
+        "contractor_name": "D.R. HORTON INC-JACKSONVILLE",
+        "permits": 25,
+        "valuation": 4024600.0,
+        "counties": "Duval",
+        "categories": "res_new_plumbing"
+      },
+      {
         "contractor_name": "KARIBE MECHANICAL SERVICE LLC",
         "permits": 25,
         "valuation": 4939055.0,
         "counties": "Miami-Dade",
-        "categories": "res_new_plumbing"
-      },
-      {
-        "contractor_name": "MECHANICAL ONE, LLC",
-        "permits": 25,
-        "valuation": 198000.0,
-        "counties": "Duval",
         "categories": "res_new_plumbing"
       },
       {
@@ -10951,9 +10980,9 @@
         "categories": "res_new_plumbing"
       },
       {
-        "contractor_name": "MARCO HEATING & AIR, INC",
+        "contractor_name": "COWART AIR CONDITIONING",
         "permits": 20,
-        "valuation": 71200.0,
+        "valuation": 62000.0,
         "counties": "Duval",
         "categories": "res_new_plumbing"
       },
@@ -10965,9 +10994,9 @@
         "categories": "res_new_plumbing, res_repipe"
       },
       {
-        "contractor_name": "COWART AIR CONDITIONING",
+        "contractor_name": "MARCO HEATING & AIR, INC",
         "permits": 20,
-        "valuation": 62000.0,
+        "valuation": 71200.0,
         "counties": "Duval",
         "categories": "res_new_plumbing"
       },
@@ -10979,13 +11008,6 @@
         "categories": "res_new_plumbing"
       },
       {
-        "contractor_name": "POWER DESIGN INC",
-        "permits": 19,
-        "valuation": 231810.0,
-        "counties": "Miami-Dade",
-        "categories": "res_new_plumbing, pool_spa"
-      },
-      {
         "contractor_name": "RBS SERVICES CORP",
         "permits": 19,
         "valuation": 43600.0,
@@ -10993,21 +11015,21 @@
         "categories": "res_repipe, irrigation"
       },
       {
-        "contractor_name": "LENHART ELECTRIC COMPANY, LLC",
+        "contractor_name": "POWER DESIGN INC",
+        "permits": 19,
+        "valuation": 231810.0,
+        "counties": "Miami-Dade",
+        "categories": "res_new_plumbing, pool_spa"
+      },
+      {
+        "contractor_name": "DREAM FINDERS HOMES LLC",
         "permits": 18,
-        "valuation": 47500.0,
-        "counties": "Duval",
+        "valuation": 4425089.4,
+        "counties": "Orange, Duval",
         "categories": "res_new_plumbing"
       }
     ],
     "near_term_by_valuation": [
-      {
-        "contractor_name": "RICHWOOD LANDSCAPING MAINTENANCE & IRR",
-        "permits": 1,
-        "valuation": 580000000.0,
-        "counties": "Miami-Dade",
-        "categories": "irrigation"
-      },
       {
         "contractor_name": "COASTAL CONSTRUCTION OF MIAMI DADE COU",
         "permits": 2,
@@ -11019,7 +11041,7 @@
         "contractor_name": "SOUTH CENTRAL ELECTRIC LLC",
         "permits": 12,
         "valuation": 323332922.0,
-        "counties": "Miami-Dade, Duval",
+        "counties": "Duval, Miami-Dade",
         "categories": "res_new_plumbing"
       },
       {
@@ -11077,13 +11099,6 @@
         "valuation": 73250000.0,
         "counties": "Miami-Dade",
         "categories": "res_new_plumbing"
-      },
-      {
-        "contractor_name": "ROCK STAR POOLS & WATERFALLS INC",
-        "permits": 2,
-        "valuation": 62118235.0,
-        "counties": "Miami-Dade",
-        "categories": "pool_spa"
       },
       {
         "contractor_name": "BECAI ELECTRIC\\, INC.",
@@ -11161,13 +11176,6 @@
         "valuation": 10540000.0,
         "counties": "Miami-Dade",
         "categories": "res_new_plumbing"
-      },
-      {
-        "contractor_name": "ESQUIVEL PLUMBING SERVICES CORP",
-        "permits": 1,
-        "valuation": 10027261.0,
-        "counties": "Miami-Dade",
-        "categories": "irrigation"
       },
       {
         "contractor_name": "CMK DESIGN STUDIO INC",
@@ -11261,17 +11269,17 @@
         "categories": "res_new_plumbing"
       },
       {
-        "contractor_name": "EAST SUNRISE PLUMBING INC",
-        "permits": 1,
-        "valuation": 4500000.0,
-        "counties": "Miami-Dade",
-        "categories": "res_new_plumbing"
-      },
-      {
         "contractor_name": "ARCHITECTURAL DESIGN COLLABORATIVE",
         "permits": 1,
         "valuation": 4500000.0,
         "counties": "Duval",
+        "categories": "res_new_plumbing"
+      },
+      {
+        "contractor_name": "EAST SUNRISE PLUMBING INC",
+        "permits": 1,
+        "valuation": 4500000.0,
+        "counties": "Miami-Dade",
         "categories": "res_new_plumbing"
       },
       {
@@ -11280,19 +11288,40 @@
         "valuation": 4476045.0,
         "counties": "Miami-Dade",
         "categories": "res_new_plumbing"
+      },
+      {
+        "contractor_name": "DREAM FINDERS HOMES LLC",
+        "permits": 18,
+        "valuation": 4425089.4,
+        "counties": "Duval, Orange",
+        "categories": "res_new_plumbing"
+      },
+      {
+        "contractor_name": "WAYNE AUTOMATIC FIRE SPRINKLER INC",
+        "permits": 1,
+        "valuation": 4376045.0,
+        "counties": "Miami-Dade",
+        "categories": "res_new_plumbing"
+      },
+      {
+        "contractor_name": "THE DANTZLER GROUP, INC.",
+        "permits": 1,
+        "valuation": 4206191.54,
+        "counties": "Duval",
+        "categories": "res_new_plumbing"
       }
     ],
     "near_term_label": "2026-10 (last complete month)",
-    "notes": "Near-term = last complete month of permit issuance \u2014 best proxy for purchase window now. Owner-builder / blank excluded."
+    "notes": "Near-term = last complete month of permit issuance \u2014 best proxy for purchase window now. Owner-builder / blank excluded. Valores \u2265$1B (e pool/irrigation \u2265$5M) s\u00e3o glitches Miami-Dade e foram substitu\u00eddos pela mediana peer \u2014 evita rankings tipo $7.9B em 7 piscina."
   },
   "formatted_headlines": {
     "tom_count": "2,726,628",
     "sam_count": "712,689",
     "sam_share": "26.14%",
-    "sam_share_val": "36.17%",
-    "tom_valuation": "$901.45B",
-    "sam_valuation": "$326.07B",
-    "som": "$16.30B",
+    "sam_share_val": "44.28%",
+    "tom_valuation": "$422.19B",
+    "sam_valuation": "$186.94B",
+    "som": "$9.35B",
     "fittings_som": "$165.1M"
   }
 }
