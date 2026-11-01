@@ -253,16 +253,27 @@ def main() -> None:
     cats = sorted(SAM_CATEGORIES)
     ph = ",".join("?" * len(cats))
 
-    val_expr = (
-        "CASE WHEN declared_valuation IS NOT NULL AND declared_valuation > 0 "
-        "THEN declared_valuation ELSE NULL END"
-    )
+    # Declared job values in Miami-Dade (and rare others) include data-entry
+    # glitches: swimming pool / mural / blank permits at $1B–$8B. Treat those
+    # as missing and impute peer medians. Soft-cap pool/irrigation above $5M.
+    VAL_HARD_CEILING = 1_000_000_000.0  # ≥ $1B almost never real for these feeds
+    VAL_SOFT_CAP_POOL_IRR = 5_000_000.0
+    val_expr = f"""
+        CASE
+          WHEN declared_valuation IS NULL OR declared_valuation <= 0 THEN NULL
+          WHEN declared_valuation >= {VAL_HARD_CEILING} THEN NULL
+          WHEN category IN ('pool_spa', 'irrigation')
+               AND declared_valuation >= {VAL_SOFT_CAP_POOL_IRR} THEN NULL
+          ELSE declared_valuation
+        END
+    """
     con.execute(
         f"""
         CREATE OR REPLACE TEMP TABLE peer_medians AS
         SELECT category, county, median({val_expr}) AS median_val
         FROM silver.permits
         WHERE issued_date >= DATE '2021-01-01'
+          AND {val_expr} IS NOT NULL
         GROUP BY 1, 2
         """
     )
@@ -284,6 +295,30 @@ def main() -> None:
         GROUP BY 1
         """
     )
+    outlier_stats = con.execute(
+        f"""
+        SELECT
+          COUNT(*) FILTER (
+            WHERE declared_valuation >= {VAL_HARD_CEILING}
+          ) AS n_ge_1b,
+          COALESCE(SUM(declared_valuation) FILTER (
+            WHERE declared_valuation >= {VAL_HARD_CEILING}
+          ), 0) AS sum_ge_1b,
+          COUNT(*) FILTER (
+            WHERE category IN ('pool_spa','irrigation')
+              AND declared_valuation >= {VAL_SOFT_CAP_POOL_IRR}
+              AND declared_valuation < {VAL_HARD_CEILING}
+          ) AS n_pool_irr_soft,
+          COALESCE(SUM(declared_valuation) FILTER (
+            WHERE category IN ('pool_spa','irrigation')
+              AND declared_valuation >= {VAL_SOFT_CAP_POOL_IRR}
+              AND declared_valuation < {VAL_HARD_CEILING}
+          ), 0) AS sum_pool_irr_soft
+        FROM silver.permits
+        WHERE issued_date >= DATE '2021-01-01'
+          AND issued_date <= DATE '{as_of.isoformat()}'
+        """
+    ).fetchone()
     con.execute(
         f"""
         CREATE OR REPLACE TEMP TABLE permits_v AS
@@ -296,13 +331,18 @@ def main() -> None:
             WHEN cat.median_val IS NOT NULL THEN cat.median_val
             ELSE 0
           END AS valuation_filled,
+          CASE
+            WHEN declared_valuation IS NOT NULL AND declared_valuation > 0
+                 AND {val_expr} IS NULL THEN TRUE
+            ELSE FALSE
+          END AS valuation_outlier,
           CASE WHEN category IN ({ph}) THEN TRUE ELSE FALSE END AS is_sam,
           EXTRACT(year FROM issued_date)::INT AS yr,
           EXTRACT(month FROM issued_date)::INT AS mo
         FROM silver.permits p
         LEFT JOIN peer_medians pm USING (category, county)
-        LEFT JOIN county_medians cm USING (county)
         LEFT JOIN cat_medians cat USING (category)
+        LEFT JOIN county_medians cm USING (county)
         WHERE p.issued_date >= DATE '2021-01-01'
           AND p.issued_date <= DATE '{as_of.isoformat()}'
         """,
@@ -1046,6 +1086,38 @@ def main() -> None:
                 ),
             },
         },
+        "valuation_quality": {
+            "policy": (
+                "Declared valuation ≥ $1B treated as missing (imputed peer median). "
+                "pool_spa / irrigation ≥ $5M also imputed. Peer medians exclude those rows."
+            ),
+            "hard_ceiling_usd": VAL_HARD_CEILING,
+            "pool_irrigation_soft_cap_usd": VAL_SOFT_CAP_POOL_IRR,
+            "rows_ge_1b": int(outlier_stats[0] or 0),
+            "declared_sum_ge_1b": float(outlier_stats[1] or 0),
+            "rows_pool_irr_soft_capped": int(outlier_stats[2] or 0),
+            "declared_sum_pool_irr_soft_capped": float(outlier_stats[3] or 0),
+            "examples": [
+                {
+                    "contractor": "BEAUTIFUL OUTDOORS LLC",
+                    "permit_id": "2026027237",
+                    "declared": 7_864_232_000,
+                    "descr": "SWIMMING POOL — Miami-Dade data-entry glitch",
+                },
+                {
+                    "contractor": "ALL JER CONSTRUCTION CORP",
+                    "permit_id": "2026044723",
+                    "declared": 7_863_489_000,
+                    "descr": "blank description — Miami-Dade ≥$1B glitch",
+                },
+                {
+                    "contractor": "NATIONAL BUILDERS GROUP CORP",
+                    "permit_id": "2026044420",
+                    "declared": 6_026_165_000,
+                    "descr": "MURAL PERMIT — Miami-Dade ≥$1B glitch",
+                },
+            ],
+        },
         "contractors": {
             "coverage": {
                 "tom": int(cov[0]),
@@ -1071,7 +1143,9 @@ def main() -> None:
             "near_term_label": f"{near_year}-{near_month:02d} (last complete month)",
             "notes": (
                 "Near-term = last complete month of permit issuance — best proxy for "
-                "purchase window now. Owner-builder / blank excluded."
+                "purchase window now. Owner-builder / blank excluded. "
+                "Valores ≥$1B (e pool/irrigation ≥$5M) são glitches Miami-Dade e foram "
+                "substituídos pela mediana peer — evita rankings tipo $7.9B em 7 piscina."
             ),
         },
         "formatted_headlines": {

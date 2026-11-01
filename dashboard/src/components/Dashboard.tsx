@@ -1043,6 +1043,9 @@ export default function Dashboard({ data }: { data: Metrics }) {
               </div>
               <p className="text-xs text-[var(--muted)]">
                 Cobertura SAM com nome: {pctPlain(data.contractors.coverage.sam_coverage_pct)}
+                {data.valuation_quality
+                  ? ` · ${data.valuation_quality.rows_ge_1b} permits ≥$1B imputados`
+                  : ""}
               </p>
             </div>
 
