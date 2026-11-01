@@ -364,32 +364,50 @@
     Tier A Socrata extract remains separate — dedupe before gold.
 
 - id: fl_duval_jacksonville
-  name: "Duval / Jacksonville (Shovels)"
+  name: "Duval / Jacksonville BID All Permits (open ArcGIS proxy)"
   state: FL
   county: "Duval"
   county_fips: "12031"
   level: city
   covers: full_county
-  tier: B
-  connector: shovels
+  tier: A
+  connector: arcgis
+  endpoint: "https://maps.coj.net/bid/duval.ashx?HTTPS://CMVXDWVZDA.QQQ/Z4"
+  endpoint_is_layer: true
   bronze_glob: "data/bronze/fl_duval_jacksonville/*.{csv,xlsx,xls}"
-  shovels_county_q: "Duval"
-  export_date_field: issue_date
+  export_date_field: DateEntered
+  arcgis_date_format: date_only
+  export_monthly: true
+  page_size: 2000
+  order_by_fields: OBJECTID
+  return_geometry: false
+  arcgis_headers:
+    Referer: "https://maps.coj.net/bid/default.aspx"
   field_map:
-    permit_id: number
-    issued_date: issue_date
-    address_raw: address_name
-    city: address_city
-    zip: address_zip_code
-    description_raw: description
-    work_class_raw: type
-    permit_type_raw: subtype
-    declared_valuation: job_value_usd
-  date_format: iso_text
+    permit_id: FullPermitNumber
+    issued_date: DateEntered
+    applied_date: DateEntered
+    final_date: PaidDay
+    address_raw: ADDR
+    city: CITY
+    zip: ZIPCODE
+    description_raw: Comments
+    work_class_raw: TypeOfWork
+    permit_type_raw: ProposedUseDesc
+    status_raw: Status
+    declared_valuation: TotalCost
+    contractor_name: CompanyName
+    owner_name: OwnerFirstName
+    parcel_id: RE
+  date_format: epoch_ms
   issued_date_min: "2021-01-01"
   notes: >
-    Shovels Duval County geo (Jacksonville consolidated city/county). JAXEPICS
-    portal had no open record API.
+    Open path via BID GIS Esri proxy (duval.ashx → obfuscated CMVXDWVZDA.QQQ/Z4
+    "All Permits" layer). Direct maps.coj.net/coj/rest/.../BID/Permits is token
+    499. ~3.64M total; DateEntered >= 2021 ≈712k. PaidDay only populated from
+    ~2023-12 onward (~278k) — use DateEntered as issued proxy / window; PaidDay
+    mapped as final_date when present. Valuation = TotalCost (USD). Status is
+    numeric code. Replaces deferred Shovels stub; JAXEPICS still portal-only.
 
 - id: fl_pinellas_county
   name: "Pinellas County Property Appraiser RP_PERMITS"
@@ -1031,3 +1049,337 @@
     Boca Raton SunGard MapServer. Post-2021 ≈1.0k and appears stale (newest
     ISSUED_ON ~2022-05). Thin Palm Beach city fill only — county ePZB / PAO
     Permit_Portal still unreachable from this VM (internal host).
+
+# --- City Hub discovery (Tampa / St Pete / Jax) — 2026-11-01 ---
+
+- id: fl_tampa_city_active
+  name: "City of Tampa Active Permits (Planning/PermitsAll)"
+  state: FL
+  county: "Hillsborough"
+  county_fips: "12057"
+  level: city
+  covers: city
+  tier: B
+  connector: arcgis
+  endpoint: "https://arcgis.tampagov.net/arcgis/rest/services/Planning/PermitsAll/FeatureServer"
+  layer: 0
+  bronze_glob: "data/bronze/fl_tampa_city_active/*.{csv,xlsx,xls}"
+  export_date_field: CREATEDDATE
+  arcgis_date_format: sql_date
+  export_monthly: false
+  return_geometry: true
+  field_map:
+    permit_id: RECORD_ID
+    issued_date: CREATEDDATE
+    address_raw: ADDRESS
+    zip: ZIP
+    description_raw: PROJECTDESCRIPTION
+    work_class_raw: RECORDTYPE
+    permit_type_raw: OCCUPANCYTYPE
+    status_raw: PROJECTSTATUS
+    units: NBROFUNITS
+    square_feet: NEWCONSTRUCTIONSF
+  date_format: epoch_ms
+  issued_date_min: "2021-01-01"
+  notes: >
+    Active Accela-synced PermitsAll viewer (~2.6k total / ~2.5k CREATEDDATE>=2021).
+    No valuation field; CREATEDDATE is opened/created proxy not true issued date.
+    Prefer fl_hillsborough_county Tier A (~30k full_county incl. Tampa) for TOM/SAM.
+    CivicData BLDS CSVs listed but datastore resources 404/empty from this VM.
+
+- id: fl_st_petersburg_sf_new
+  name: "St. Petersburg SF New Construction PermitsExternal"
+  state: FL
+  county: "Pinellas"
+  county_fips: "12103"
+  level: city
+  covers: city
+  tier: B
+  connector: arcgis
+  endpoint: "https://egis.stpete.org/arcgis/rest/services/ServicesDSD/PermitsExternal/FeatureServer"
+  layer: 0
+  bronze_glob: "data/bronze/fl_st_petersburg_sf_new/*.{csv,xlsx,xls}"
+  export_date_field: PERMITISSUEDATE
+  export_where: "PERMITISSUEDATE >= '210101'"
+  page_size: 2000
+  return_geometry: true
+  field_map:
+    permit_id: APPLICATIONPARAM
+    issued_date: PERMITISSUEDATE
+    address_raw: ADDRESS
+    description_raw: APPLICATIONDESC
+    work_class_raw: PERMITTYPE
+    permit_type_raw: APPLICATIONTYPE
+    status_raw: APPLICATIONSTATUS
+    declared_valuation: CONSTRUCTIONVALUE
+    contractor_name: CONTRACTOR
+    owner_name: OWNER
+    parcel_id: STRAP
+  date_format: mixed
+  issued_date_min: "2021-01-01"
+  notes: >
+    Layer labeled 2019-2021 apps; PERMITISSUEDATE is YYMMDD text. Issued>=210101
+    ≈232. Thin vs fl_pinellas_county PCPAO RP_PERMITS (~584k). Companion layers
+    fl_st_petersburg_{mf_new,other_new,demo,renovation}.
+
+- id: fl_st_petersburg_mf_new
+  name: "St. Petersburg MF New Construction PermitsExternal"
+  state: FL
+  county: "Pinellas"
+  county_fips: "12103"
+  level: city
+  covers: city
+  tier: B
+  connector: arcgis
+  endpoint: "https://egis.stpete.org/arcgis/rest/services/ServicesDSD/PermitsExternal/FeatureServer"
+  layer: 1
+  bronze_glob: "data/bronze/fl_st_petersburg_mf_new/*.{csv,xlsx,xls}"
+  export_date_field: PERMITISSUEDATE
+  export_where: "PERMITISSUEDATE >= '210101'"
+  page_size: 2000
+  return_geometry: true
+  field_map:
+    permit_id: APPLICATIONPARAM
+    issued_date: PERMITISSUEDATE
+    address_raw: ADDRESS
+    description_raw: APPLICATIONDESC
+    work_class_raw: PERMITTYPE
+    permit_type_raw: APPLICATIONTYPE
+    status_raw: APPLICATIONSTATUS
+    declared_valuation: CONSTRUCTIONVALUE
+    contractor_name: CONTRACTOR
+    owner_name: OWNER
+    parcel_id: STRAP
+  date_format: mixed
+  issued_date_min: "2021-01-01"
+  notes: >
+    PermitsExternal layer 1; issued>=210101 ≈36. Thin city supplement only.
+
+- id: fl_st_petersburg_other_new
+  name: "St. Petersburg Other New Construction PermitsExternal"
+  state: FL
+  county: "Pinellas"
+  county_fips: "12103"
+  level: city
+  covers: city
+  tier: B
+  connector: arcgis
+  endpoint: "https://egis.stpete.org/arcgis/rest/services/ServicesDSD/PermitsExternal/FeatureServer"
+  layer: 2
+  bronze_glob: "data/bronze/fl_st_petersburg_other_new/*.{csv,xlsx,xls}"
+  export_date_field: PERMITISSUEDATE
+  export_where: "PERMITISSUEDATE >= '210101'"
+  page_size: 2000
+  return_geometry: true
+  field_map:
+    permit_id: APPLICATIONPARAM
+    issued_date: PERMITISSUEDATE
+    address_raw: ADDRESS
+    description_raw: APPLICATIONDESC
+    work_class_raw: PERMITTYPE
+    permit_type_raw: APPLICATIONTYPE
+    status_raw: APPLICATIONSTATUS
+    declared_valuation: CONSTRUCTIONVALUE
+    contractor_name: CONTRACTOR
+    owner_name: OWNER
+    parcel_id: STRAP
+  date_format: mixed
+  issued_date_min: "2021-01-01"
+  notes: >
+    PermitsExternal layer 2; issued>=210101 ≈214.
+
+- id: fl_st_petersburg_demo
+  name: "St. Petersburg Demolition PermitsExternal"
+  state: FL
+  county: "Pinellas"
+  county_fips: "12103"
+  level: city
+  covers: city
+  tier: B
+  connector: arcgis
+  endpoint: "https://egis.stpete.org/arcgis/rest/services/ServicesDSD/PermitsExternal/FeatureServer"
+  layer: 3
+  bronze_glob: "data/bronze/fl_st_petersburg_demo/*.{csv,xlsx,xls}"
+  export_date_field: PERMITISSUEDATE
+  export_where: "PERMITISSUEDATE >= '210101'"
+  page_size: 2000
+  return_geometry: true
+  field_map:
+    permit_id: APPLICATIONPARAM
+    issued_date: PERMITISSUEDATE
+    address_raw: ADDRESS
+    description_raw: APPLICATIONDESC
+    work_class_raw: PERMITTYPE
+    permit_type_raw: APPLICATIONTYPE
+    status_raw: APPLICATIONSTATUS
+    declared_valuation: CONSTRUCTIONVALUE
+    contractor_name: CONTRACTOR
+    owner_name: OWNER
+    parcel_id: STRAP
+  date_format: mixed
+  issued_date_min: "2021-01-01"
+  notes: >
+    PermitsExternal layer 3; issued>=210101 ≈34.
+
+- id: fl_st_petersburg_renovation
+  name: "St. Petersburg Renovation PermitsExternal"
+  state: FL
+  county: "Pinellas"
+  county_fips: "12103"
+  level: city
+  covers: city
+  tier: B
+  connector: arcgis
+  endpoint: "https://egis.stpete.org/arcgis/rest/services/ServicesDSD/PermitsExternal/FeatureServer"
+  layer: 4
+  bronze_glob: "data/bronze/fl_st_petersburg_renovation/*.{csv,xlsx,xls}"
+  export_date_field: PERMITISSUEDATE
+  export_where: "PERMITISSUEDATE >= '210101'"
+  page_size: 2000
+  return_geometry: true
+  field_map:
+    permit_id: APPLICATIONPARAM
+    issued_date: PERMITISSUEDATE
+    address_raw: ADDRESS
+    description_raw: APPLICATIONDESC
+    work_class_raw: PERMITTYPE
+    permit_type_raw: APPLICATIONTYPE
+    status_raw: APPLICATIONSTATUS
+    declared_valuation: CONSTRUCTIONVALUE
+    contractor_name: CONTRACTOR
+    owner_name: OWNER
+    parcel_id: STRAP
+  date_format: mixed
+  issued_date_min: "2021-01-01"
+  notes: >
+    PermitsExternal layer 4; issued>=210101 ≈1.5k. Largest St Pete open city
+    layer found; still dwarfed by Pinellas PCPAO county bronze.
+
+# --- Accela CapHome anonymous search samples (2026-11-01 probe) ---
+# UI search works without login for Lee/Polk/Pasco/Osceola/Brevard but result
+# lists are capped (~100+). Download-results postback returns HTML, not a file.
+# NOT a bulk history connector — samples only for path-B documentation.
+
+- id: fl_lee_accela
+  name: "Lee County Accela CapHome anonymous sample (LEECO)"
+  state: FL
+  county: "Lee"
+  county_fips: "12071"
+  level: county
+  covers: unknown
+  tier: B
+  connector: file
+  endpoint: "https://aca-prod.accela.com/LEECO/Cap/CapHome.aspx?module=Permitting&TabName=Permitting"
+  bronze_glob: "data/bronze/fl_lee_accela/*.{csv,xlsx,xls}"
+  export_date_field: date_nearby
+  field_map:
+    permit_id: permit_id
+    issued_date: date_nearby
+    address_raw: address
+    description_raw: description
+    status_raw: status
+  date_format: mixed
+  issued_date_min: "2021-01-01"
+  notes: >
+    Anonymous CapHome search works (module=Permitting). Sample only (~10 rows
+    from 2021-01-01..01-15 window; portal shows 1-10 of 100+). Construct API
+    needs App ID. No open county FeatureServer for full issued history.
+
+- id: fl_polk_accela
+  name: "Polk County Accela CapHome anonymous sample (POLKCO)"
+  state: FL
+  county: "Polk"
+  county_fips: "12105"
+  level: county
+  covers: unknown
+  tier: B
+  connector: file
+  endpoint: "https://aca-prod.accela.com/polkco/Cap/CapHome.aspx?module=Building&TabName=Building"
+  bronze_glob: "data/bronze/fl_polk_accela/*.{csv,xlsx,xls}"
+  export_date_field: date_nearby
+  field_map:
+    permit_id: permit_id
+    issued_date: date_nearby
+    address_raw: address
+    description_raw: description
+    status_raw: status
+  date_format: mixed
+  issued_date_min: "2021-01-01"
+  notes: >
+    Anonymous CapHome Building search works. Sample only (capped ~100+).
+    Download-results postback returned HTML page, not CSV/Excel. Prefer
+    fl_lakeland_city for open ArcGIS fill.
+
+- id: fl_pasco_accela
+  name: "Pasco County Accela CapHome anonymous sample (PASCO)"
+  state: FL
+  county: "Pasco"
+  county_fips: "12101"
+  level: county
+  covers: unknown
+  tier: B
+  connector: file
+  endpoint: "https://aca-prod.accela.com/PASCO/Cap/CapHome.aspx?module=Building&TabName=Building"
+  bronze_glob: "data/bronze/fl_pasco_accela/*.{csv,xlsx,xls}"
+  export_date_field: date_nearby
+  field_map:
+    permit_id: permit_id
+    issued_date: date_nearby
+    address_raw: address
+    description_raw: description
+    status_raw: status
+  date_format: mixed
+  issued_date_min: "2021-01-01"
+  notes: >
+    Anonymous CapHome Building search works. Sample only (capped ~100+). Full
+    Accela history still portal-bound; fl_pasco_permit_job_values remains the
+    best open partial (May24–May25).
+
+- id: fl_osceola_accela
+  name: "Osceola County Accela CapHome anonymous sample (OSCEOLA)"
+  state: FL
+  county: "Osceola"
+  county_fips: "12097"
+  level: county
+  covers: unknown
+  tier: B
+  connector: file
+  endpoint: "https://aca-prod.accela.com/OSCEOLA/Cap/CapHome.aspx?module=Building&TabName=Building"
+  bronze_glob: "data/bronze/fl_osceola_accela/*.{csv,xlsx,xls}"
+  export_date_field: date_nearby
+  field_map:
+    permit_id: permit_id
+    issued_date: date_nearby
+    address_raw: address
+    description_raw: description
+    status_raw: status
+  date_format: mixed
+  issued_date_min: "2021-01-01"
+  notes: >
+    Anonymous CapHome Building search works. Sample only (capped ~100+). Prefer
+    fl_osceola_new_construction(+_a) AGOL layers for open partial fill.
+
+- id: fl_brevard_accela
+  name: "Brevard County Accela CapHome anonymous sample (BREVARD)"
+  state: FL
+  county: "Brevard"
+  county_fips: "12009"
+  level: county
+  covers: unknown
+  tier: B
+  connector: file
+  endpoint: "https://aca-prod.accela.com/BREVARD/Cap/CapHome.aspx?module=Building&TabName=Building"
+  bronze_glob: "data/bronze/fl_brevard_accela/*.{csv,xlsx,xls}"
+  export_date_field: date_nearby
+  field_map:
+    permit_id: permit_id
+    issued_date: date_nearby
+    address_raw: address
+    description_raw: description
+    status_raw: status
+  date_format: mixed
+  issued_date_min: "2021-01-01"
+  notes: >
+    acaweb.brevardcounty.us redirects to aca-prod BREVARD Default; CapHome on
+    aca-prod works anonymously. Sample only (capped ~100+). Palm Bay city
+    FeatureServer remains the open ArcGIS fill.
