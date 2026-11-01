@@ -1,0 +1,288 @@
+{
+  "generated_at": "2026-11-01T02:18:52.525240+00:00",
+  "results": [
+    {
+      "county": "Lee",
+      "jurisdiction_id": "fl_lee_county",
+      "probes": [
+        {
+          "url": "https://aca-prod.accela.com/LEECO/",
+          "status": 200,
+          "final_url": "https://aca-prod.accela.com/LEECO/Default.aspx",
+          "bytes": 86765,
+          "login": true,
+          "captcha": false,
+          "caphome": true,
+          "aspnet": true
+        },
+        {
+          "url": "https://aca-prod.accela.com/LEECO/Cap/CapHome.aspx?module=Permitting&TabName=Permitting",
+          "status": 200,
+          "final_url": "https://aca-prod.accela.com/LEECO/Cap/CapHome.aspx?module=Permitting&TabName=Permitting",
+          "bytes": 271659,
+          "login": true,
+          "captcha": false,
+          "caphome": true,
+          "aspnet": true
+        },
+        {
+          "url": "https://apis.accela.com/v4/records?agency=LEE&limit=1",
+          "status": 400,
+          "body_snip": "{\"status\":400,\"code\":\"bad_request\",\"message\":\"App ID or access token is required.\",\"more\":\"Please set App ID to request HTTP header 'x-accela-appid' for anonymo"
+        }
+      ],
+      "blocker": "ASP.NET CapHome postbacks; no public bulk JSON; Construct API needs App ID",
+      "rows_extracted": 0
+    },
+    {
+      "county": "Polk",
+      "jurisdiction_id": "fl_polk_county",
+      "probes": [
+        {
+          "url": "https://aca-prod.accela.com/polkco/default.aspx",
+          "status": 200,
+          "final_url": "https://aca-prod.accela.com/polkco/default.aspx",
+          "bytes": 19989,
+          "login": true,
+          "captcha": false,
+          "caphome": true,
+          "aspnet": false
+        },
+        {
+          "url": "https://aca-prod.accela.com/polkco/Cap/CapHome.aspx?module=Building",
+          "status": 200,
+          "final_url": "https://aca-prod.accela.com/polkco/Cap/CapHome.aspx?module=Building",
+          "bytes": 251722,
+          "login": true,
+          "captcha": false,
+          "caphome": true,
+          "aspnet": true
+        },
+        {
+          "url": "https://apis.accela.com/v4/records?agency=POLK&limit=1",
+          "status": 400,
+          "body_snip": "{\"status\":400,\"code\":\"bad_request\",\"message\":\"App ID or access token is required.\",\"more\":\"Please set App ID to request HTTP header 'x-accela-appid' for anonymo"
+        }
+      ],
+      "blocker": "HTML portal only; no open bulk export found",
+      "rows_extracted": 0
+    },
+    {
+      "county": "Brevard",
+      "jurisdiction_id": "fl_brevard_county",
+      "probes": [
+        {
+          "url": "https://acaweb.brevardcounty.us/",
+          "status": 200,
+          "final_url": "https://aca-prod.accela.com/brevard/Default.aspx",
+          "bytes": 66329,
+          "login": true,
+          "captcha": false,
+          "caphome": true,
+          "aspnet": true
+        },
+        {
+          "url": "https://aca-prod.accela.com/BREVARD/",
+          "status": 200,
+          "final_url": "https://aca-prod.accela.com/BREVARD/Default.aspx",
+          "bytes": 66329,
+          "login": true,
+          "captcha": false,
+          "caphome": true,
+          "aspnet": true
+        },
+        {
+          "url": "https://acaweb.brevardcounty.us/Cap/CapHome.aspx?module=Building",
+          "status": 200,
+          "final_url": "https://aca-prod.accela.com/brevard/Default.aspx",
+          "bytes": 66329,
+          "login": true,
+          "captcha": false,
+          "caphome": true,
+          "aspnet": true
+        },
+        {
+          "url": "https://apis.accela.com/v4/records?agency=BREVARD&limit=1",
+          "status": 400,
+          "body_snip": "{\"status\":400,\"code\":\"bad_request\",\"message\":\"App ID or access token is required.\",\"more\":\"Please set App ID to request HTTP header 'x-accela-appid' for anonymo"
+        }
+      ],
+      "blocker": "ASP.NET CapHome postbacks; no public bulk JSON; Construct API needs App ID",
+      "rows_extracted": 0
+    },
+    {
+      "county": "Volusia",
+      "jurisdiction_id": "fl_volusia_county",
+      "probes": [
+        {
+          "url": "https://aca-prod.accela.com/VOLUSIA/",
+          "status": 404,
+          "final_url": "https://aca-prod.accela.com/VOLUSIA/",
+          "bytes": 1245,
+          "login": false,
+          "captcha": false,
+          "caphome": false,
+          "aspnet": false
+        },
+        {
+          "url": "https://aca-prod.accela.com/vcgov/",
+          "status": 404,
+          "final_url": "https://aca-prod.accela.com/vcgov/",
+          "bytes": 1245,
+          "login": false,
+          "captcha": false,
+          "caphome": false,
+          "aspnet": false
+        },
+        {
+          "url": "https://aca-prod.accela.com/VolusiaCounty/",
+          "status": 404,
+          "final_url": "https://aca-prod.accela.com/VolusiaCounty/",
+          "bytes": 1245,
+          "login": false,
+          "captcha": false,
+          "caphome": false,
+          "aspnet": false
+        },
+        {
+          "url": "https://permits.volusia.org/",
+          "error": "ConnectError: [Errno -2] Name or service not known"
+        },
+        {
+          "url": "https://aca.volusia.org/",
+          "error": "ConnectError: [Errno -2] Name or service not known"
+        },
+        {
+          "url": "https://apis.accela.com/v4/records?agency=VOLUSIA&limit=1",
+          "status": 400,
+          "body_snip": "{\"status\":400,\"code\":\"bad_request\",\"message\":\"App ID or access token is required.\",\"more\":\"Please set App ID to request HTTP header 'x-accela-appid' for anonymo"
+        }
+      ],
+      "blocker": "portal unreachable / 404 from this VM",
+      "rows_extracted": 0
+    },
+    {
+      "county": "Pasco",
+      "jurisdiction_id": "fl_pasco_county",
+      "probes": [
+        {
+          "url": "https://aca-prod.accela.com/PASCO/",
+          "status": 200,
+          "final_url": "https://aca-prod.accela.com/PASCO/Default.aspx",
+          "bytes": 20165,
+          "login": true,
+          "captcha": false,
+          "caphome": true,
+          "aspnet": false
+        },
+        {
+          "url": "https://aca-prod.accela.com/PASCO/Cap/CapHome.aspx?module=Building",
+          "status": 200,
+          "final_url": "https://aca-prod.accela.com/PASCO/Cap/CapHome.aspx?module=Building",
+          "bytes": 256448,
+          "login": true,
+          "captcha": false,
+          "caphome": true,
+          "aspnet": true
+        },
+        {
+          "url": "https://apis.accela.com/v4/records?agency=PASCO&limit=1",
+          "status": 400,
+          "body_snip": "{\"status\":400,\"code\":\"bad_request\",\"message\":\"App ID or access token is required.\",\"more\":\"Please set App ID to request HTTP header 'x-accela-appid' for anonymo"
+        }
+      ],
+      "blocker": "HTML portal only; no open bulk export found",
+      "rows_extracted": 0
+    },
+    {
+      "county": "Osceola",
+      "jurisdiction_id": "fl_osceola_county",
+      "probes": [
+        {
+          "url": "https://aca-prod.accela.com/OSCEOLA/",
+          "status": 200,
+          "final_url": "https://aca-prod.accela.com/OSCEOLA/Default.aspx",
+          "bytes": 79101,
+          "login": true,
+          "captcha": false,
+          "caphome": true,
+          "aspnet": true
+        },
+        {
+          "url": "https://aca-prod.accela.com/OSCEOLA/Cap/CapHome.aspx?module=Building",
+          "status": 200,
+          "final_url": "https://aca-prod.accela.com/OSCEOLA/Cap/CapHome.aspx?module=Building",
+          "bytes": 235874,
+          "login": true,
+          "captcha": false,
+          "caphome": true,
+          "aspnet": true
+        },
+        {
+          "url": "https://apis.accela.com/v4/records?agency=OSCEOLA&limit=1",
+          "status": 400,
+          "body_snip": "{\"status\":400,\"code\":\"bad_request\",\"message\":\"App ID or access token is required.\",\"more\":\"Please set App ID to request HTTP header 'x-accela-appid' for anonymo"
+        }
+      ],
+      "blocker": "ASP.NET CapHome postbacks; no public bulk JSON; Construct API needs App ID",
+      "rows_extracted": 0
+    },
+    {
+      "county": "Sarasota",
+      "jurisdiction_id": "fl_sarasota_county",
+      "probes": [
+        {
+          "url": "https://aca-prod.accela.com/SARASOTA/",
+          "status": 404,
+          "final_url": "https://aca-prod.accela.com/SARASOTA/",
+          "bytes": 1245,
+          "login": false,
+          "captcha": false,
+          "caphome": false,
+          "aspnet": false
+        },
+        {
+          "url": "https://aca-prod.accela.com/scgov/",
+          "status": 404,
+          "final_url": "https://aca-prod.accela.com/scgov/",
+          "bytes": 1245,
+          "login": false,
+          "captcha": false,
+          "caphome": false,
+          "aspnet": false
+        },
+        {
+          "url": "https://aca-prod.accela.com/SarasotaCounty/",
+          "status": 404,
+          "final_url": "https://aca-prod.accela.com/SarasotaCounty/",
+          "bytes": 1245,
+          "login": false,
+          "captcha": false,
+          "caphome": false,
+          "aspnet": false
+        },
+        {
+          "url": "https://permit.scgov.net/",
+          "error": "ConnectError: [Errno -2] Name or service not known"
+        },
+        {
+          "url": "https://www.scgov.net/government/planning-and-development/building",
+          "status": 403,
+          "final_url": "https://www.scgov.net/government/planning-and-development/building",
+          "bytes": 427,
+          "login": false,
+          "captcha": false,
+          "caphome": false,
+          "aspnet": false
+        },
+        {
+          "url": "https://apis.accela.com/v4/records?agency=SARASOTA&limit=1",
+          "status": 400,
+          "body_snip": "{\"status\":400,\"code\":\"bad_request\",\"message\":\"App ID or access token is required.\",\"more\":\"Please set App ID to request HTTP header 'x-accela-appid' for anonymo"
+        }
+      ],
+      "blocker": "portal unreachable / 404 from this VM",
+      "rows_extracted": 0
+    }
+  ]
+}

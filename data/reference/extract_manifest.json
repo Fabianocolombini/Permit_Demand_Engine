@@ -1,0 +1,23 @@
+[
+  {
+    "jurisdiction_id": "fl_duval_jacksonville",
+    "name": "Duval / Jacksonville BID All Permits (open ArcGIS proxy)",
+    "covers": "full_county",
+    "tier": "A",
+    "connector": "arcgis",
+    "endpoint": "https://maps.coj.net/bid/duval.ashx?HTTPS://CMVXDWVZDA.QQQ/Z4",
+    "layer": 0,
+    "rows": 712345,
+    "expected_count": 712345,
+    "date_field": "DateEntered",
+    "date_min": "2021-01-01",
+    "date_max": "2026-10-31",
+    "since": "2021-01-01",
+    "until": "2026-11-02",
+    "csv_path": "/workspace/data/bronze/fl_duval_jacksonville/fl_duval_jacksonville_permits_2021-01-01_20261101.csv",
+    "preview_path": "/workspace/data/bronze/fl_duval_jacksonville/sample_preview.csv",
+    "bytes": 289594297,
+    "columns": 55,
+    "notes": "Open path via BID GIS Esri proxy (duval.ashx \u2192 obfuscated CMVXDWVZDA.QQQ/Z4 \"All Permits\" layer). Direct maps.coj.net/coj/rest/.../BID/Permits is token 499. ~3.64M total; DateEntered >= 2021 \u2248712k. PaidDay only populated from ~2023-12 onward (~278k) \u2014 use DateEntered as issued proxy / window; PaidDay mapped as final_date when present. Valuation = TotalCost (USD). Status is numeric code. Replaces deferred Shovels stub; JAXEPICS still portal-only."
+  }
+]

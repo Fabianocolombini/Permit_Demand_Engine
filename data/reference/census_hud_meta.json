@@ -1,0 +1,26 @@
+{
+  "generated_at": "2026-11-01T02:48:42.490289+00:00",
+  "bps_years": [
+    2021,
+    2022,
+    2023,
+    2024,
+    2025
+  ],
+  "bps_rows": 335,
+  "bps_counties": 67,
+  "hud_years": [
+    2021,
+    2022
+  ],
+  "hud_rows": 134,
+  "hud_counties": 67,
+  "bronze_jurisdictions": 27,
+  "bronze_total_rows": 3079736,
+  "paths": {
+    "census_bps_fl": "/workspace/data/reference/census_bps_fl.csv",
+    "hud_permits_fl": "/workspace/data/reference/hud_permits_fl.csv",
+    "coverage_csv": "/workspace/data/reference/bps_bronze_coverage_fl.csv",
+    "coverage_md": "/workspace/data/reference/bps_bronze_coverage_fl.md"
+  }
+}

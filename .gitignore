@@ -1,0 +1,27 @@
+data/bronze/**/*.csv
+data/bronze/**/*.xlsx
+data/bronze/**/*.xls
+data/bronze/**/*.parquet
+data/bronze/**/*.json
+data/bronze/**/*.zip
+data/bronze/**/_staging/
+# Allow small committed previews under bronze
+!data/bronze/**/sample_preview.csv
+data/raw/**/*.csv
+data/raw/**/*.xlsx
+data/raw/**/*.xls
+data/raw/**/*.json
+data/silver/**
+data/gold/**
+!data/**/.gitkeep
+# Large extract outputs stay local; manifests/previews live under data/reference/
+data/reference/*_extract_meta.json
+permits.duckdb
+permits.duckdb.wal
+.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+.DS_Store
+*.egg-info/
+logs/
