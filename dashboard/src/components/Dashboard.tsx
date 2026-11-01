@@ -34,15 +34,13 @@ const CORAL = "#c45c3e";
 const SUN = "#e2b14a";
 const SAND = "#e8dcc8";
 
-/** Product naming (executive English) */
+/** Product naming (executive English) — aligned with Tigre × Dura */
 const L = {
   tcm: "Total Construction Market",
   market: "Plumbing · Irrigation · Pool",
   marketShort: "Total Market",
-  potential: "Potential Market Share · Tigre",
-  potentialShort: "Potential · Tigre 5%",
-  materials: "Materials Potential · Tigre",
-  materialsShort: "Materials Potential",
+  addressable: "Addressable Market",
+  tigreDura: "Tigre × Dura Potential",
 } as const;
 
 const TABS: { id: TabId; label: string }[] = [
@@ -293,30 +291,22 @@ export default function Dashboard({ data }: { data: Metrics }) {
     return selectedYears.join(" + ");
   }, [selectedYears, yearOptions.length]);
 
+  /** YoY always uses same-period YTD (Jan–ytdM), never full-year vs partial. */
   const headerYoY = useMemo(() => {
     if (selectedYears.length !== 1) return null;
     const y = selectedYears[0];
-    const cur = data.sam_som.share_by_year.find((r) => r.year === y);
-    const prev = data.sam_som.share_by_year.find((r) => r.year === y - 1);
-    if (!cur || !prev) return null;
-    const countPct =
-      prev.sam_count > 0
-        ? (100 * (cur.sam_count - prev.sam_count)) / prev.sam_count
-        : null;
-    const valPct =
-      prev.sam_valuation > 0
-        ? (100 * (cur.sam_valuation - prev.sam_valuation)) / prev.sam_valuation
-        : null;
-    const tcmCountPct =
-      prev.tom_count > 0
-        ? (100 * (cur.tom_count - prev.tom_count)) / prev.tom_count
-        : null;
-    const tcmValPct =
-      prev.tom_valuation > 0
-        ? (100 * (cur.tom_valuation - prev.tom_valuation)) / prev.tom_valuation
-        : null;
-    return { y, countPct, valPct, tcmCountPct, tcmValPct };
-  }, [data.sam_som.share_by_year, selectedYears]);
+    const tom = tomYtd.find((r) => r.year === y);
+    const sam = samYtd.find((r) => r.year === y);
+    if (!tom && !sam) return null;
+    return {
+      y,
+      throughMonth: ytdM,
+      marketValPct: sam?.valuation_yoy_pct ?? null,
+      marketCountPct: sam?.count_yoy_pct ?? null,
+      tcmValPct: tom?.valuation_yoy_pct ?? null,
+      tcmCountPct: tom?.count_yoy_pct ?? null,
+    };
+  }, [selectedYears, tomYtd, samYtd, ytdM]);
 
   const pipe = pipelineDays === 30 ? data.pipeline.d30 : data.pipeline.d60;
 
@@ -408,10 +398,8 @@ export default function Dashboard({ data }: { data: Metrics }) {
                 Tigre <span className="text-[var(--gulf)]">×</span> Dura
               </p>
               <p className="mt-1 text-sm text-[var(--muted)]">
-                Florida Permit Demand · {L.market} · as of {data.as_of}
-                {selectedYears.length === 1 && selectedYears[0] === 2026
-                  ? ` · YTD Jan–${MONTHS[ytdM - 1]}`
-                  : ` · calendar scope ${headerScopeLabel}`}
+                Florida Permit Demand · {L.market} · as of {data.as_of} · YoY always
+                YTD Jan–{MONTHS[ytdM - 1]}
               </p>
             </div>
             <div className="flex flex-col items-end gap-2">
@@ -433,44 +421,43 @@ export default function Dashboard({ data }: { data: Metrics }) {
             <Kpi
               label={`${L.marketShort} · ${headerScopeLabel}`}
               value={usd(filteredShare.sam_valuation)}
-              sub={`${num(filteredShare.sam_count)} permits · ${pctPlain(filteredShare.sam_share_valuation_pct)} of TCM $ · ${pctPlain(filteredShare.sam_share_count_pct)} of permits`}
+              sub={`${L.market} · ${num(filteredShare.sam_count)} permits · ${pctPlain(filteredShare.sam_share_valuation_pct)} of TCM $`}
             />
             <Kpi
-              label={`${L.potentialShort} · ${headerScopeLabel}`}
+              label={`${L.addressable} · ${headerScopeLabel}`}
               value={usd(filteredShare.som_usd)}
-              sub="5% of Plumbing · Irrigation · Pool construction $"
+              sub="5% of Total Market construction $"
             />
             <Kpi
-              label={`${L.materialsShort} · ${headerScopeLabel}`}
+              label={`${L.tigreDura} · ${headerScopeLabel}`}
               value={usd(materialsPotentialSelected)}
-              sub="5% of estimated materials (Tigre-relevant)"
+              sub="5% market share · materials only"
             />
             <Kpi
               label={
                 headerYoY
-                  ? `YoY vs ${headerYoY.y - 1}`
-                  : `TCM YTD ${latestTomYtd?.year} vs LY`
+                  ? `YTD YoY vs ${headerYoY.y - 1}`
+                  : `YTD YoY ${latestSamYtd?.year} vs LY`
               }
               value={
                 headerYoY
-                  ? pct(headerYoY.valPct)
-                  : pct(latestTomYtd?.valuation_yoy_pct)
+                  ? pct(headerYoY.marketValPct)
+                  : pct(latestSamYtd?.valuation_yoy_pct)
               }
               sub={
                 headerYoY
-                  ? `Market $ YoY · permits ${pct(headerYoY.countPct)} · TCM $ ${pct(headerYoY.tcmValPct)}`
-                  : `Permits ${pct(latestTomYtd?.count_yoy_pct)}`
+                  ? `Jan–${MONTHS[ytdM - 1]} same period · Total Market $ · permits ${pct(headerYoY.marketCountPct)} · TCM $ ${pct(headerYoY.tcmValPct)}`
+                  : `Jan–${MONTHS[ytdM - 1]} · Total Market $ · permits ${pct(latestSamYtd?.count_yoy_pct)}`
               }
             />
           </div>
           <p className="mt-4 max-w-4xl text-xs text-[var(--muted)]">
-            <span className="text-[var(--sand)]">Scope {headerScopeLabel}:</span>{" "}
-            click a year above to refresh these KPIs. Plumbing · Irrigation · Pool
-            usually sits around ~40–47% of construction $ (stable share). Potential
-            5% is construction addressable; Materials Potential is the commercial
-            Tigre number
+            <span className="text-[var(--sand)]">Naming:</span> {L.tcm} → {L.marketShort}{" "}
+            ({L.market}) → {L.addressable} (5% construction) → {L.tigreDura} (5%
+            materials). Click a year to refresh KPIs. YoY always compares YTD Jan–
+            {MONTHS[ytdM - 1]} vs the same months last year
             {selectedYears.length === 1 && selectedYears[0] === 2026 && mat2026
-              ? ` (~${usd(mat2026.som_material_usd)} in 2026).`
+              ? ` · 2026 ${L.tigreDura} ≈ ${usd(mat2026.som_material_usd)}.`
               : "."}
           </p>
         </div>
@@ -717,7 +704,7 @@ export default function Dashboard({ data }: { data: Metrics }) {
                 <div className="mt-6 grid gap-4 border-t border-[var(--line)] pt-4 sm:grid-cols-2">
                   <div>
                     <p className="text-xs uppercase tracking-[0.14em] text-[var(--muted)]">
-                      {L.potentialShort}
+                      {L.addressable}
                     </p>
                     <p className="stat-value mt-1 text-3xl text-[var(--foam)]">
                       {usd(filteredShare.som_usd)}
@@ -728,13 +715,13 @@ export default function Dashboard({ data }: { data: Metrics }) {
                   </div>
                   <div>
                     <p className="text-xs uppercase tracking-[0.14em] text-[var(--muted)]">
-                      {L.materialsShort}
+                      {L.tigreDura}
                     </p>
                     <p className="stat-value mt-1 text-3xl text-[var(--sun)]">
                       {usd(materialsPotentialSelected)}
                     </p>
                     <p className="mt-1 text-xs text-[var(--muted)]">
-                      5% of estimated materials — commercial target
+                      5% market share · materials only
                     </p>
                   </div>
                 </div>
@@ -822,7 +809,7 @@ export default function Dashboard({ data }: { data: Metrics }) {
               </Panel>
 
               <Panel
-                title={`Categories · ${selectedYears.join(" + ")} — materials potential first`}
+                title={`Categories · ${selectedYears.join(" + ")} — ${L.tigreDura} first`}
               >
                 <div className="overflow-x-auto">
                   <table className="w-full min-w-[760px] text-left text-sm">
@@ -831,9 +818,9 @@ export default function Dashboard({ data }: { data: Metrics }) {
                         <th className="pb-2 font-medium">Category</th>
                         <th className="pb-2 font-medium">Permits</th>
                         <th className="pb-2 font-medium">Total Market $</th>
-                        <th className="pb-2 font-medium">Potential 5%</th>
+                        <th className="pb-2 font-medium">Addressable Market</th>
                         <th className="pb-2 font-medium">Materials $</th>
-                        <th className="pb-2 font-medium">Materials Potential</th>
+                        <th className="pb-2 font-medium">Tigre × Dura Potential</th>
                       </tr>
                     </thead>
                     <tbody>
@@ -911,15 +898,15 @@ export default function Dashboard({ data }: { data: Metrics }) {
             <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
               <Kpi label="Total Market permits" value={num(pipe.sam_count)} />
               <Kpi label="Total Market $" value={usd(pipe.sam_valuation)} />
-              <Kpi label={L.potentialShort} value={usd(pipe.som_usd)} />
+              <Kpi label={L.addressable} value={usd(pipe.som_usd)} />
               <Kpi
-                label={L.materialsShort}
+                label={L.tigreDura}
                 value={usd(pipe.som_material_usd)}
                 sub={`${pipelineDays}d materials @ 5%`}
               />
             </div>
             <div className="grid gap-4 lg:grid-cols-2">
-              <Panel title={`Click a county · materials potential (${pipelineDays}d)`}>
+              <Panel title={`Click a county · Tigre × Dura Potential (${pipelineDays}d)`}>
                 <div className="overflow-x-auto">
                   <table className="w-full text-left text-sm">
                     <thead>
@@ -928,7 +915,7 @@ export default function Dashboard({ data }: { data: Metrics }) {
                         <th className="pb-2">County</th>
                         <th className="pb-2">Permits</th>
                         <th className="pb-2">Total Market $</th>
-                        <th className="pb-2">Materials Potential</th>
+                        <th className="pb-2">Tigre × Dura Potential</th>
                       </tr>
                     </thead>
                     <tbody>
@@ -961,7 +948,7 @@ export default function Dashboard({ data }: { data: Metrics }) {
               <Panel
                 title={
                   pipelineCounty
-                    ? `${pipelineCounty} · categories by materials potential`
+                    ? `${pipelineCounty} · categories by Tigre × Dura Potential`
                     : "Select a county to see categories"
                 }
               >
@@ -973,7 +960,7 @@ export default function Dashboard({ data }: { data: Metrics }) {
                           <th className="pb-2">Category</th>
                           <th className="pb-2">Permits</th>
                           <th className="pb-2">Total Market $</th>
-                          <th className="pb-2">Materials Potential</th>
+                          <th className="pb-2">Tigre × Dura Potential</th>
                         </tr>
                       </thead>
                       <tbody>
@@ -1001,7 +988,7 @@ export default function Dashboard({ data }: { data: Metrics }) {
                         <tr className="text-[10px] uppercase text-[var(--muted)]">
                           <th className="pb-2">Category</th>
                           <th className="pb-2">Permits</th>
-                          <th className="pb-2">Materials Potential</th>
+                          <th className="pb-2">Tigre × Dura Potential</th>
                         </tr>
                       </thead>
                       <tbody>
@@ -1022,7 +1009,7 @@ export default function Dashboard({ data }: { data: Metrics }) {
                 )}
               </Panel>
 
-              <Panel title="Who to call · contractors (materials potential)">
+              <Panel title="Who to call · contractors (Tigre × Dura Potential)">
                 <div className="overflow-x-auto">
                   <table className="w-full min-w-[640px] text-left text-sm">
                     <thead>
@@ -1030,7 +1017,7 @@ export default function Dashboard({ data }: { data: Metrics }) {
                         <th className="pb-2">#</th>
                         <th className="pb-2">Contractor</th>
                         <th className="pb-2">Permits</th>
-                        <th className="pb-2">Materials Potential</th>
+                        <th className="pb-2">Tigre × Dura Potential</th>
                         <th className="pb-2">Counties</th>
                       </tr>
                     </thead>
@@ -1067,7 +1054,7 @@ export default function Dashboard({ data }: { data: Metrics }) {
         {tab === "regions" && (
           <div className="grid gap-4 lg:grid-cols-5">
             <div className="lg:col-span-3">
-              <Panel title={`Map · ${L.materialsShort} (5% of estimated materials)`}>
+              <Panel title={`Map · ${L.tigreDura} (5% materials only)`}>
                 <CountyMap
                   counties={data.regions.counties}
                   selected={selectedCounty}
@@ -1078,7 +1065,7 @@ export default function Dashboard({ data }: { data: Metrics }) {
                   mode="som_material_usd"
                 />
                 <p className="mt-2 text-xs text-[var(--muted)]">
-                  Color = materials potential. Click a county (try Miami-Dade) for category
+                  Color = Tigre × Dura Potential. Click a county (try Miami-Dade) for category
                   drill. Coverage: {data.regions.counties.length} counties.
                 </p>
               </Panel>
@@ -1101,13 +1088,13 @@ export default function Dashboard({ data }: { data: Metrics }) {
                         </p>
                       </div>
                       <div>
-                        <p className="text-[var(--muted)]">{L.potentialShort}</p>
+                        <p className="text-[var(--muted)]">{L.addressable}</p>
                         <p className="stat-value text-2xl text-[var(--foam)]">
                           {usd(selectedCountyRow.som_usd)}
                         </p>
                       </div>
                       <div>
-                        <p className="text-[var(--muted)]">{L.materialsShort}</p>
+                        <p className="text-[var(--muted)]">{L.tigreDura}</p>
                         <p className="stat-value text-2xl text-[var(--sun)]">
                           {usd(selectedCountyRow.som_material_usd || 0)}
                         </p>
@@ -1116,7 +1103,7 @@ export default function Dashboard({ data }: { data: Metrics }) {
                     {regionCountyCats.length > 0 && (
                       <div className="border-t border-[var(--line)] pt-3">
                         <p className="mb-2 text-xs uppercase tracking-[0.12em] text-[var(--muted)]">
-                          Categories · materials potential
+                          Categories · Tigre × Dura Potential
                         </p>
                         <table className="w-full text-left text-sm">
                           <thead>
@@ -1154,12 +1141,12 @@ export default function Dashboard({ data }: { data: Metrics }) {
                   </div>
                 ) : (
                   <p className="text-sm text-[var(--muted)]">
-                    Click the map to see Total Market and materials potential by county.
+                    Click the map to see Total Market and Tigre × Dura Potential by county.
                   </p>
                 )}
               </Panel>
 
-              <Panel title={`Top counties · ${L.materialsShort}`}>
+              <Panel title={`Top counties · ${L.tigreDura}`}>
                 <div className="max-h-64 space-y-1 overflow-y-auto text-sm">
                   {[...data.regions.counties]
                     .sort(
@@ -1358,8 +1345,9 @@ export default function Dashboard({ data }: { data: Metrics }) {
       </div>
 
       <footer className="border-t border-[var(--line)] px-5 py-6 text-xs text-[var(--muted)] md:px-8">
-        Tigre × Dura · Permit Demand Engine · {L.tcm} / {L.market} / {L.potential} ·{" "}
-        {data.definitions.YTD} · Materials model is calibratable
+        Tigre × Dura · Permit Demand Engine · {L.tcm} / {L.marketShort} /{" "}
+        {L.addressable} / {L.tigreDura} · YoY = YTD Jan–{MONTHS[ytdM - 1]} · Materials
+        model is calibratable
       </footer>
     </main>
   );
