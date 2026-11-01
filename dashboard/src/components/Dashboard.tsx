@@ -215,7 +215,7 @@ export default function Dashboard({ data }: { data: Metrics }) {
   ]);
   const [selectedCounty, setSelectedCounty] = useState<string | null>(null);
   const [miamiOpen, setMiamiOpen] = useState(false);
-  const [pipelineDays, setPipelineDays] = useState<30 | 60>(30);
+  const [pipelineScope, setPipelineScope] = useState<"ytd" | 30 | 60>(60);
   const [pipelineCounty, setPipelineCounty] = useState<string | null>(null);
   const [contractorRank, setContractorRank] = useState<"permits" | "valuation">(
     "permits"
@@ -381,7 +381,17 @@ export default function Dashboard({ data }: { data: Metrics }) {
     };
   }, [selectedYears, tomYtd, samYtd, ytdM]);
 
-  const pipe = pipelineDays === 30 ? data.pipeline.d30 : data.pipeline.d60;
+  const pipe =
+    pipelineScope === "ytd"
+      ? data.pipeline.ytd ?? data.pipeline.d60
+      : pipelineScope === 30
+        ? data.pipeline.d30
+        : data.pipeline.d60;
+  const pipeLabel =
+    pipe.label ??
+    (pipelineScope === "ytd"
+      ? `YTD Jan–${MONTHS[ytdM - 1]}`
+      : `Last ${pipelineScope} days`);
 
   const pipelineCountyCats = useMemo(() => {
     const rows = pipe.by_county_category ?? [];
@@ -870,8 +880,34 @@ export default function Dashboard({ data }: { data: Metrics }) {
                     </BarChart>
                   </ResponsiveContainer>
                 </div>
+                <div className="mt-2 grid grid-cols-4 gap-2">
+                  {samYtd
+                    .filter((r) => r.year >= 2023)
+                    .map((r) => (
+                      <button
+                        key={r.year}
+                        type="button"
+                        onClick={() => onlyYear(r.year)}
+                        className={`rounded border border-[var(--line)] px-2 py-1.5 text-left text-xs hover:bg-white/5 ${
+                          selectedYears.includes(r.year) ? "bg-white/10" : ""
+                        }`}
+                      >
+                        <p className="text-[var(--sand)]">{r.year}</p>
+                        <p className="text-[var(--muted)]">
+                          {mode === "count" ? num(r.count) : usd(r.valuation)}
+                        </p>
+                        <p className="text-[var(--muted)]">
+                          YTD YoY{" "}
+                          {mode === "count"
+                            ? pct(r.count_yoy_pct)
+                            : pct(r.valuation_yoy_pct)}
+                        </p>
+                      </button>
+                    ))}
+                </div>
                 <p className="mt-2 text-xs text-[var(--muted)]">
-                  Bars are YTD Jan–{MONTHS[ytdM - 1]} (same period every year).
+                  Bars are YTD Jan–{MONTHS[ytdM - 1]} — click a bar or year card to
+                  filter.
                 </p>
               </Panel>
 
@@ -1002,41 +1038,82 @@ export default function Dashboard({ data }: { data: Metrics }) {
           <div className="space-y-4">
             <div className="flex flex-wrap items-center gap-3">
               <div className="inline-flex rounded-full border border-[var(--line)] p-0.5 text-xs">
-                {([30, 60] as const).map((d) => (
+                {(
+                  [
+                    ["ytd", `YTD Jan–${MONTHS[ytdM - 1]}`],
+                    [30, "Last 30 days"],
+                    [60, "Last 60 days"],
+                  ] as const
+                ).map(([id, label]) => (
                   <button
-                    key={d}
+                    key={String(id)}
                     type="button"
                     onClick={() => {
-                      setPipelineDays(d);
+                      setPipelineScope(id);
                       setPipelineCounty(null);
                     }}
                     className={`rounded-full px-3 py-1.5 ${
-                      pipelineDays === d
+                      pipelineScope === id
                         ? "bg-[var(--gulf)] text-white"
                         : "text-[var(--muted)]"
                     }`}
                   >
-                    Last {d} days
+                    {label}
                   </button>
                 ))}
               </div>
               <p className="text-xs text-[var(--muted)]">
-                {pipe.start} → {pipe.end} · chase window for sales · focus on materials
-                potential
+                {pipe.start} → {pipe.end} · {pipeLabel} · S&OP chase window
               </p>
             </div>
-            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-              <Kpi label="Total Market permits" value={num(pipe.sam_count)} />
-              <Kpi label="Total Market $" value={usd(pipe.sam_valuation)} />
+            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
+              <Kpi
+                label="Total Market permits"
+                value={num(pipe.sam_count)}
+                sub={
+                  pipe.growth
+                    ? `vs prior window ${pct(pipe.growth.sam_count_pct)}`
+                    : undefined
+                }
+              />
+              <Kpi
+                label="Total Market $"
+                value={usd(pipe.sam_valuation)}
+                sub={
+                  pipe.growth
+                    ? `vs prior window ${pct(pipe.growth.sam_valuation_pct)}`
+                    : undefined
+                }
+              />
               <Kpi label={L.addressable} value={usd(pipe.som_usd)} />
               <Kpi
                 label={L.tigreDura}
                 value={usd(pipe.som_material_usd)}
-                sub={`${pipelineDays}d materials @ 5%`}
+                sub="5% materials only"
+              />
+              <Kpi
+                label={`${L.tigreDura} growth`}
+                value={pct(pipe.growth?.som_material_pct)}
+                sub={
+                  pipe.prior
+                    ? `Prior window ${usd(pipe.prior.som_material_usd)} · ${pipe.growth?.compare_note ?? ""}`
+                    : "No prior window"
+                }
               />
             </div>
+            {pipe.reconciliation && (
+              <p className="text-xs text-[var(--muted)]">
+                Check: headline {usd(pipe.som_material_usd)} = categories{" "}
+                {usd(pipe.reconciliation.sum_by_category)} = counties{" "}
+                {usd(pipe.reconciliation.sum_by_county)}
+                {pipe.reconciliation.ok ? " · OK" : " · mismatch — review"}
+                {pipe.prior
+                  ? ` · prior ${pipe.prior.start}→${pipe.prior.end}: ${usd(pipe.prior.som_material_usd)}`
+                  : ""}
+              </p>
+            )}
             <div className="grid gap-4 lg:grid-cols-2">
-              <Panel title={`Click a county · Tigre × Dura Potential (${pipelineDays}d)`}>
+              <Panel title={`Click a county · ${L.tigreDura} (${pipeLabel})`}>
                 <div className="overflow-x-auto">
                   <table className="w-full text-left text-sm">
                     <thead>
@@ -1112,7 +1189,7 @@ export default function Dashboard({ data }: { data: Metrics }) {
                 ) : (
                   <div className="space-y-2 text-sm text-[var(--muted)]">
                     <p>Click Miami-Dade (or any county) on the left to drill categories.</p>
-                    <p className="text-[var(--sand)]">Statewide categories ({pipelineDays}d):</p>
+                    <p className="text-[var(--sand)]">Statewide categories ({pipeLabel}):</p>
                     <table className="w-full text-left text-sm">
                       <thead>
                         <tr className="text-[10px] uppercase text-[var(--muted)]">

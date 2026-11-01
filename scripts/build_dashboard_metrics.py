@@ -855,12 +855,58 @@ def main() -> None:
         )
     county_by_category.sort(key=lambda x: -float(x["som_material_usd"]))
 
-    # --- Pipeline short-term: last 30 / 60 days ---
-    def pipeline_window(days: int) -> dict:
-        from datetime import timedelta
+    # --- Pipeline: YTD / last 30 / last 60 (+ prior-period growth for S&OP) ---
+    from datetime import timedelta
 
-        start = as_of - timedelta(days=days)
-        # inclusive of as_of; exclusive of start day boundary via >
+    def _window_totals(start: date, end: date) -> dict[str, float | int]:
+        """Aggregate SAM totals for (start, end] — same bounds as detail windows."""
+        r = con.execute(
+            """
+            SELECT category, COUNT(*), SUM(valuation_filled)
+            FROM permits_v
+            WHERE is_sam AND issued_date > ? AND issued_date <= ?
+            GROUP BY 1
+            """,
+            [start, end],
+        ).fetchall()
+        tot_n = 0
+        tot_v = 0.0
+        tot_mat = 0.0
+        for cat, n, v in r:
+            n_i = int(n)
+            v_f = float(v or 0)
+            tot_n += n_i
+            tot_v += v_f
+            if cat == "res_repipe":
+                mat = float(
+                    mat_cfg.get("res_repipe", {}).get("fittings_value_usd", {}).get("base", 450)
+                ) * n_i
+            else:
+                mat, _ = _material_labor(cat, v_f, assumptions)
+            tot_mat += mat
+        return {
+            "sam_count": tot_n,
+            "sam_valuation": tot_v,
+            "material_usd": tot_mat,
+            "som_usd": tot_v * SOM_SHARE,
+            "som_material_usd": tot_mat * SOM_SHARE,
+        }
+
+    def _pct_change(cur: float, prev: float) -> float | None:
+        if prev is None or prev == 0:
+            return None
+        return (100.0 * (cur - prev)) / prev
+
+    def pipeline_window(
+        start: date,
+        end: date,
+        *,
+        label: str,
+        days: int | None = None,
+        prior_start: date | None = None,
+        prior_end: date | None = None,
+    ) -> dict:
+        # inclusive of end; exclusive of start day boundary via >
         rows = con.execute(
             """
             SELECT category, COALESCE(county,'Unknown'), COUNT(*), SUM(valuation_filled),
@@ -869,7 +915,7 @@ def main() -> None:
             WHERE is_sam AND issued_date > ? AND issued_date <= ?
             GROUP BY 1, 2, 5
             """,
-            [start, as_of],
+            [start, end],
         ).fetchall()
         by_county: dict[str, dict[str, float | int]] = {}
         by_cat: dict[str, dict[str, float | int]] = {}
@@ -1007,27 +1053,86 @@ def main() -> None:
         tot_sam = sum(float(c["sam_valuation"]) for c in counties_out)
         tot_mat = sum(float(c["material_usd"]) for c in counties_out)
         tot_n = sum(int(c["sam_count"]) for c in counties_out)
-        return {
+        cat_mat = sum(float(c["som_material_usd"]) for c in cats_out)
+        county_mat = sum(float(c["som_material_usd"]) for c in counties_out)
+        out: dict[str, Any] = {
+            "label": label,
             "days": days,
             "start": start.isoformat(),
-            "end": as_of.isoformat(),
+            "end": end.isoformat(),
             "sam_count": tot_n,
             "sam_valuation": tot_sam,
             "material_usd": tot_mat,
             "som_usd": tot_sam * SOM_SHARE,
             "som_material_usd": tot_mat * SOM_SHARE,
+            "reconciliation": {
+                "tigre_dura_potential": tot_mat * SOM_SHARE,
+                "sum_by_category": cat_mat,
+                "sum_by_county": county_mat,
+                "delta_category": (tot_mat * SOM_SHARE) - cat_mat,
+                "delta_county": (tot_mat * SOM_SHARE) - county_mat,
+                "ok": abs((tot_mat * SOM_SHARE) - cat_mat) < 1.0
+                and abs((tot_mat * SOM_SHARE) - county_mat) < 1.0,
+            },
             "by_county": counties_out,
             "by_category": cats_out,
             "by_county_category": county_cats_out,
             "by_contractor": contractors_out,
         }
+        if prior_start is not None and prior_end is not None:
+            prior = _window_totals(prior_start, prior_end)
+            out["prior"] = {
+                "start": prior_start.isoformat(),
+                "end": prior_end.isoformat(),
+                **prior,
+            }
+            out["growth"] = {
+                "sam_count_pct": _pct_change(float(tot_n), float(prior["sam_count"])),
+                "sam_valuation_pct": _pct_change(tot_sam, float(prior["sam_valuation"])),
+                "som_material_pct": _pct_change(
+                    tot_mat * SOM_SHARE, float(prior["som_material_usd"])
+                ),
+                "material_usd_pct": _pct_change(tot_mat, float(prior["material_usd"])),
+                "compare_note": (
+                    f"Current {start.isoformat()}→{end.isoformat()} vs prior "
+                    f"{prior_start.isoformat()}→{prior_end.isoformat()}"
+                ),
+            }
+        return out
+
+    ytd_start = date(as_of.year, 1, 1) - timedelta(days=1)  # exclusive lower bound
+    ytd_prior_end = date(as_of.year - 1, as_of.month, as_of.day)
+    ytd_prior_start = date(as_of.year - 1, 1, 1) - timedelta(days=1)
 
     pipeline = {
-        "d30": pipeline_window(30),
-        "d60": pipeline_window(60),
+        "ytd": pipeline_window(
+            ytd_start,
+            as_of,
+            label=f"YTD Jan–{date(as_of.year, ytd_through, 1).strftime('%b')} {as_of.year}",
+            days=None,
+            prior_start=ytd_prior_start,
+            prior_end=ytd_prior_end,
+        ),
+        "d30": pipeline_window(
+            as_of - timedelta(days=30),
+            as_of,
+            label="Last 30 days",
+            days=30,
+            prior_start=as_of - timedelta(days=60),
+            prior_end=as_of - timedelta(days=30),
+        ),
+        "d60": pipeline_window(
+            as_of - timedelta(days=60),
+            as_of,
+            label="Last 60 days",
+            days=60,
+            prior_start=as_of - timedelta(days=120),
+            prior_end=as_of - timedelta(days=60),
+        ),
         "note": (
-            "Permits issued in the last N days — pragmatic commercial chase list. "
-            "SOM material = 5% of estimated material content in the window."
+            "Chase windows for S&OP: YTD / last 30d / last 60d. "
+            "Tigre × Dura Potential = 5% of estimated materials in the window. "
+            "Growth vs the immediately prior equal-length window (YTD vs prior-year YTD)."
         ),
     }
 
