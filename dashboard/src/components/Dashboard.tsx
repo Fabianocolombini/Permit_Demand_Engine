@@ -45,7 +45,7 @@ const L = {
 
 const TABS: { id: TabId; label: string }[] = [
   { id: "tom", label: "Construction Market" },
-  { id: "sam", label: "Plumbing · Irrigation · Pool" },
+  { id: "sam", label: "Total Market" },
   { id: "pipeline", label: "Pipeline 30/60d" },
   { id: "regions", label: "Regions / Map" },
   { id: "contractors", label: "Contractors" },
@@ -284,6 +284,56 @@ export default function Dashboard({ data }: { data: Metrics }) {
     () => filteredCategories.reduce((s, r) => s + r.som_material_usd, 0),
     [filteredCategories]
   );
+
+  /** Category rows for Total Market tab — YTD + YoY when a single year is selected. */
+  const categoryGrowthRows = useMemo(() => {
+    if (selectedYears.length === 1) {
+      const y = selectedYears[0];
+      const cur = data.sam_som.by_category_ytd.filter((r) => r.year === y);
+      const prev = data.sam_som.by_category_ytd.filter((r) => r.year === y - 1);
+      const prevByCat = new Map(prev.map((r) => [r.category, r]));
+      return cur
+        .map((r) => {
+          const p = prevByCat.get(r.category);
+          const tigre = r.material_usd * 0.05;
+          const tigrePrev = p ? p.material_usd * 0.05 : null;
+          const tigreYoy =
+            tigrePrev != null && tigrePrev > 0
+              ? (100 * (tigre - tigrePrev)) / tigrePrev
+              : null;
+          return {
+            category: r.category,
+            count: r.count,
+            valuation: r.valuation,
+            addressable: r.som_usd,
+            material_usd: r.material_usd,
+            tigreDura: tigre,
+            count_yoy_pct: r.count_yoy_pct,
+            valuation_yoy_pct: r.valuation_yoy_pct,
+            tigre_yoy_pct: tigreYoy,
+            ytd: true as const,
+          };
+        })
+        .sort((a, b) => b.tigreDura - a.tigreDura);
+    }
+    return filteredCategories.map((r) => ({
+      category: r.category,
+      count: r.count,
+      valuation: r.valuation,
+      addressable: r.som_usd,
+      material_usd: r.material_usd,
+      tigreDura: r.som_material_usd,
+      count_yoy_pct: null as number | null,
+      valuation_yoy_pct: null as number | null,
+      tigre_yoy_pct: null as number | null,
+      ytd: false as const,
+    }));
+  }, [selectedYears, data.sam_som.by_category_ytd, filteredCategories]);
+
+  const marketTabYtd = useMemo(() => {
+    if (selectedYears.length !== 1) return null;
+    return samYtd.find((r) => r.year === selectedYears[0]) ?? null;
+  }, [selectedYears, samYtd]);
 
   const headerScopeLabel = useMemo(() => {
     if (selectedYears.length === 1) return String(selectedYears[0]);
@@ -664,84 +714,98 @@ export default function Dashboard({ data }: { data: Metrics }) {
         {tab === "sam" && (
           <div className="space-y-4">
             <div className="flex flex-wrap items-center justify-between gap-3">
+              <div>
+                <p className="text-sm text-[var(--sand)]">
+                  {L.marketShort} · {L.market}
+                </p>
+                <p className="text-xs text-[var(--muted)]">
+                  Scope {headerScopeLabel}
+                  {marketTabYtd
+                    ? ` · YTD Jan–${MONTHS[ytdM - 1]} growth vs prior year`
+                    : " · select one year to see YTD YoY by category"}
+                </p>
+              </div>
               <YearChips
                 years={yearOptions}
                 selected={selectedYears}
                 onToggle={toggleYear}
                 onOnly={onlyYear}
               />
-              <p className="text-xs text-[var(--muted)]">
-                Click a year = only that year · Ctrl/Cmd+click = add years · filters share
-                & categories
-              </p>
             </div>
-            <div className="grid gap-4 lg:grid-cols-2">
-              <Panel title={`${L.market} · ${selectedYears.join(" + ")}`}>
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <p className="text-xs uppercase tracking-[0.14em] text-[var(--muted)]">
-                      Permits
-                    </p>
-                    <p className="stat-value text-4xl text-[var(--sand)]">
-                      {pctPlain(filteredShare.sam_share_count_pct)}
-                    </p>
-                    <p className="text-sm text-[var(--muted)]">
-                      {num(filteredShare.sam_count)} of {num(filteredShare.tom_count)} TCM
-                    </p>
-                  </div>
-                  <div>
-                    <p className="text-xs uppercase tracking-[0.14em] text-[var(--muted)]">
-                      Value $
-                    </p>
-                    <p className="stat-value text-4xl text-[var(--sun)]">
-                      {pctPlain(filteredShare.sam_share_valuation_pct)}
-                    </p>
-                    <p className="text-sm text-[var(--muted)]">
-                      {L.marketShort} {usd(filteredShare.sam_valuation)}
-                    </p>
-                  </div>
-                </div>
-                <div className="mt-6 grid gap-4 border-t border-[var(--line)] pt-4 sm:grid-cols-2">
-                  <div>
-                    <p className="text-xs uppercase tracking-[0.14em] text-[var(--muted)]">
-                      {L.addressable}
-                    </p>
-                    <p className="stat-value mt-1 text-3xl text-[var(--foam)]">
-                      {usd(filteredShare.som_usd)}
-                    </p>
-                    <p className="mt-1 text-xs text-[var(--muted)]">
-                      5% of construction $ — can look large
-                    </p>
-                  </div>
-                  <div>
-                    <p className="text-xs uppercase tracking-[0.14em] text-[var(--muted)]">
-                      {L.tigreDura}
-                    </p>
-                    <p className="stat-value mt-1 text-3xl text-[var(--sun)]">
-                      {usd(materialsPotentialSelected)}
-                    </p>
-                    <p className="mt-1 text-xs text-[var(--muted)]">
-                      5% market share · materials only
-                    </p>
-                  </div>
-                </div>
-              </Panel>
 
+            <div className="grid grid-cols-2 gap-4 lg:grid-cols-5">
+              <Kpi
+                label="Permits"
+                value={num(
+                  marketTabYtd ? marketTabYtd.count : filteredShare.sam_count
+                )}
+                sub={
+                  marketTabYtd
+                    ? `YTD YoY ${pct(marketTabYtd.count_yoy_pct)}`
+                    : `${pctPlain(filteredShare.sam_share_count_pct)} of TCM permits`
+                }
+              />
+              <Kpi
+                label={`${L.marketShort} $`}
+                value={usd(
+                  marketTabYtd ? marketTabYtd.valuation : filteredShare.sam_valuation
+                )}
+                sub={
+                  marketTabYtd
+                    ? `YTD YoY ${pct(marketTabYtd.valuation_yoy_pct)}`
+                    : `${pctPlain(filteredShare.sam_share_valuation_pct)} of TCM $`
+                }
+              />
+              <Kpi
+                label={L.addressable}
+                value={usd(
+                  marketTabYtd
+                    ? marketTabYtd.valuation * 0.05
+                    : filteredShare.som_usd
+                )}
+                sub="5% of Total Market construction $"
+              />
+              <Kpi
+                label={L.tigreDura}
+                value={usd(
+                  marketTabYtd
+                    ? categoryGrowthRows.reduce((s, r) => s + r.tigreDura, 0)
+                    : materialsPotentialSelected
+                )}
+                sub="5% market share · materials only"
+              />
+              <Kpi
+                label={
+                  marketTabYtd
+                    ? `YTD YoY vs ${marketTabYtd.year - 1}`
+                    : "YTD YoY"
+                }
+                value={
+                  marketTabYtd
+                    ? pct(marketTabYtd.valuation_yoy_pct)
+                    : pct(latestSamYtd?.valuation_yoy_pct)
+                }
+                sub={`Jan–${MONTHS[ytdM - 1]} Total Market $ · permits ${pct(
+                  marketTabYtd?.count_yoy_pct ?? latestSamYtd?.count_yoy_pct
+                )}`}
+              />
+            </div>
+
+            <div className="grid gap-4 lg:grid-cols-2">
               <Panel
-                title="Click year bars to filter"
+                title={`${L.marketShort} by year · click to filter`}
                 action={<ModeToggle mode={mode} setMode={setMode} />}
               >
                 <div className="h-64">
                   <ResponsiveContainer width="100%" height="100%">
                     <BarChart
-                      data={data.sam_som.share_by_year
+                      data={samYtd
                         .filter((r) => r.year >= 2023)
                         .map((r) => ({
                           year: r.year,
                           label: String(r.year),
-                          count: r.sam_count,
-                          valuationB: r.sam_valuation / 1e9,
-                          active: selectedYears.includes(r.year),
+                          count: r.count,
+                          valuationB: r.valuation / 1e9,
                         }))}
                     >
                       <CartesianGrid stroke="rgba(232,220,200,0.08)" vertical={false} />
@@ -770,7 +834,7 @@ export default function Dashboard({ data }: { data: Metrics }) {
                           if (y) onlyYear(y);
                         }}
                       >
-                        {data.sam_som.share_by_year
+                        {samYtd
                           .filter((r) => r.year >= 2023)
                           .map((r) => (
                             <Cell
@@ -784,66 +848,110 @@ export default function Dashboard({ data }: { data: Metrics }) {
                     </BarChart>
                   </ResponsiveContainer>
                 </div>
-                <div className="mt-2 grid grid-cols-2 gap-2 text-xs text-[var(--muted)] md:grid-cols-4">
-                  {data.sam_som.share_by_year
-                    .filter((r) => r.year >= 2023)
-                    .map((r) => (
-                      <button
-                        key={r.year}
-                        type="button"
-                        onClick={() => onlyYear(r.year)}
-                        className={`rounded border border-[var(--line)] px-2 py-1.5 text-left hover:bg-white/5 ${
-                          selectedYears.includes(r.year) ? "bg-white/10" : ""
-                        }`}
-                      >
-                        <p className="text-[var(--sand)]">{r.year}</p>
-                        <p>Permits {num(r.sam_count)}</p>
-                        <p>Value {usd(r.sam_valuation)}</p>
-                      </button>
-                    ))}
-                </div>
                 <p className="mt-2 text-xs text-[var(--muted)]">
-                  YTD ref {latestSamYtd?.year}: YoY permits{" "}
-                  {pct(latestSamYtd?.count_yoy_pct)} · $ {pct(latestSamYtd?.valuation_yoy_pct)}
+                  Bars are YTD Jan–{MONTHS[ytdM - 1]} (same period every year).
                 </p>
               </Panel>
 
+              <Panel title={`YTD growth by category · ${headerScopeLabel}`}>
+                {!marketTabYtd ? (
+                  <p className="text-sm text-[var(--muted)]">
+                    Select a single year to see category YoY (permits, value,{" "}
+                    {L.tigreDura}).
+                  </p>
+                ) : (
+                  <div className="h-72">
+                    <ResponsiveContainer width="100%" height="100%">
+                      <BarChart
+                        data={categoryGrowthRows.map((r) => ({
+                          name: categoryLabel(r.category).replace(
+                            "New residential plumbing",
+                            "New resid. plumbing"
+                          ),
+                          permits: r.count_yoy_pct,
+                          value: r.valuation_yoy_pct,
+                          tigre: r.tigre_yoy_pct,
+                        }))}
+                        layout="vertical"
+                        margin={{ left: 8, right: 8 }}
+                      >
+                        <CartesianGrid stroke="rgba(232,220,200,0.08)" horizontal={false} />
+                        <XAxis
+                          type="number"
+                          stroke={SAND}
+                          tick={{ fill: SAND, fontSize: 11 }}
+                          unit="%"
+                        />
+                        <YAxis
+                          type="category"
+                          dataKey="name"
+                          width={120}
+                          stroke={SAND}
+                          tick={{ fill: SAND, fontSize: 10 }}
+                        />
+                        <Tooltip
+                          contentStyle={{
+                            background: "#0c2a32",
+                            border: "1px solid rgba(232,220,200,0.2)",
+                          }}
+                          formatter={(v) => `${Number(v).toFixed(1)}%`}
+                        />
+                        <Legend />
+                        <Bar dataKey="permits" fill={GULF} name="Permits YoY" />
+                        <Bar dataKey="value" fill={CORAL} name="Value $ YoY" />
+                        <Bar dataKey="tigre" fill={SUN} name="Tigre × Dura YoY" />
+                      </BarChart>
+                    </ResponsiveContainer>
+                  </div>
+                )}
+              </Panel>
+
               <Panel
-                title={`Categories · ${selectedYears.join(" + ")} — ${L.tigreDura} first`}
+                title={`Categories · ${headerScopeLabel}${
+                  marketTabYtd ? ` · YTD Jan–${MONTHS[ytdM - 1]}` : ""
+                }`}
               >
                 <div className="overflow-x-auto">
-                  <table className="w-full min-w-[760px] text-left text-sm">
+                  <table className="w-full min-w-[880px] text-left text-sm">
                     <thead>
                       <tr className="text-[10px] uppercase tracking-[0.12em] text-[var(--muted)]">
                         <th className="pb-2 font-medium">Category</th>
                         <th className="pb-2 font-medium">Permits</th>
-                        <th className="pb-2 font-medium">Total Market $</th>
-                        <th className="pb-2 font-medium">Addressable Market</th>
-                        <th className="pb-2 font-medium">Materials $</th>
-                        <th className="pb-2 font-medium">Tigre × Dura Potential</th>
+                        <th className="pb-2 font-medium">YTD YoY #</th>
+                        <th className="pb-2 font-medium">{L.marketShort} $</th>
+                        <th className="pb-2 font-medium">YTD YoY $</th>
+                        <th className="pb-2 font-medium">{L.addressable}</th>
+                        <th className="pb-2 font-medium">{L.tigreDura}</th>
+                        <th className="pb-2 font-medium">YTD YoY mat.</th>
                       </tr>
                     </thead>
                     <tbody>
-                      {filteredCategories.map((r) => (
+                      {categoryGrowthRows.map((r) => (
                         <tr key={r.category} className="table-row">
                           <td className="py-2.5 text-[var(--sand)]">
                             {categoryLabel(r.category)}
                           </td>
                           <td className="py-2.5">{num(r.count)}</td>
+                          <td className="py-2.5">{pct(r.count_yoy_pct)}</td>
                           <td className="py-2.5">{usd(r.valuation)}</td>
-                          <td className="py-2.5">{usd(r.som_usd)}</td>
-                          <td className="py-2.5">{usd(r.material_usd)}</td>
+                          <td className="py-2.5">{pct(r.valuation_yoy_pct)}</td>
+                          <td className="py-2.5">{usd(r.addressable)}</td>
+                          <td className="py-2.5 text-[var(--sun)]">{usd(r.tigreDura)}</td>
                           <td className="py-2.5 text-[var(--sun)]">
-                            {usd(r.som_material_usd)}
+                            {pct(r.tigre_yoy_pct)}
                           </td>
                         </tr>
                       ))}
                     </tbody>
                   </table>
                 </div>
+                <p className="mt-2 text-xs text-[var(--muted)]">
+                  Growth columns use same-period YTD only. Multi-year scope aggregates
+                  levels without YoY.
+                </p>
               </Panel>
 
-              <Panel title="Materials vs labor · selected years (Total Market)">
+              <Panel title={`Materials vs labor · ${L.marketShort}`}>
                 <div className="h-72">
                   <ResponsiveContainer width="100%" height="100%">
                     <BarChart data={filteredMatLab}>
