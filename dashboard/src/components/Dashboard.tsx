@@ -212,7 +212,6 @@ export default function Dashboard({ data }: { data: Metrics }) {
   };
   const onlyYear = (y: number) => setSelectedYears([y]);
 
-  const u = data.universe;
   const ytdM = data.ytd_through_month;
   const tomYtd = data.tom.ytd_comparison;
   const samYtd = data.sam_som.ytd_comparison;
@@ -288,6 +287,37 @@ export default function Dashboard({ data }: { data: Metrics }) {
     [filteredCategories]
   );
 
+  const headerScopeLabel = useMemo(() => {
+    if (selectedYears.length === 1) return String(selectedYears[0]);
+    if (selectedYears.length === yearOptions.length) return "2023–2026";
+    return selectedYears.join(" + ");
+  }, [selectedYears, yearOptions.length]);
+
+  const headerYoY = useMemo(() => {
+    if (selectedYears.length !== 1) return null;
+    const y = selectedYears[0];
+    const cur = data.sam_som.share_by_year.find((r) => r.year === y);
+    const prev = data.sam_som.share_by_year.find((r) => r.year === y - 1);
+    if (!cur || !prev) return null;
+    const countPct =
+      prev.sam_count > 0
+        ? (100 * (cur.sam_count - prev.sam_count)) / prev.sam_count
+        : null;
+    const valPct =
+      prev.sam_valuation > 0
+        ? (100 * (cur.sam_valuation - prev.sam_valuation)) / prev.sam_valuation
+        : null;
+    const tcmCountPct =
+      prev.tom_count > 0
+        ? (100 * (cur.tom_count - prev.tom_count)) / prev.tom_count
+        : null;
+    const tcmValPct =
+      prev.tom_valuation > 0
+        ? (100 * (cur.tom_valuation - prev.tom_valuation)) / prev.tom_valuation
+        : null;
+    return { y, countPct, valPct, tcmCountPct, tcmValPct };
+  }, [data.sam_som.share_by_year, selectedYears]);
+
   const pipe = pipelineDays === 30 ? data.pipeline.d30 : data.pipeline.d60;
 
   const pipelineCountyCats = useMemo(() => {
@@ -306,7 +336,6 @@ export default function Dashboard({ data }: { data: Metrics }) {
       .sort((a, b) => b.som_material_usd - a.som_material_usd);
   }, [data.regions.county_by_category, selectedCounty]);
 
-  const year2026 = data.sam_som.share_by_year.find((r) => r.year === 2026);
   const mat2026 = data.sam_som.material_labor_annual.find((r) => r.year === 2026);
 
   const tomMonthlyChart = useMemo(() => {
@@ -379,54 +408,71 @@ export default function Dashboard({ data }: { data: Metrics }) {
                 Tigre <span className="text-[var(--gulf)]">×</span> Dura
               </p>
               <p className="mt-1 text-sm text-[var(--muted)]">
-                Florida Permit Demand · {L.market} · as of {data.as_of} · YTD Jan–
-                {MONTHS[ytdM - 1]}
+                Florida Permit Demand · {L.market} · as of {data.as_of}
+                {selectedYears.length === 1 && selectedYears[0] === 2026
+                  ? ` · YTD Jan–${MONTHS[ytdM - 1]}`
+                  : ` · calendar scope ${headerScopeLabel}`}
               </p>
             </div>
-            <ModeToggle mode={mode} setMode={setMode} />
+            <div className="flex flex-col items-end gap-2">
+              <YearChips
+                years={yearOptions}
+                selected={selectedYears}
+                onToggle={toggleYear}
+                onOnly={onlyYear}
+              />
+              <ModeToggle mode={mode} setMode={setMode} />
+            </div>
           </div>
           <div className="mt-6 grid grid-cols-2 gap-6 lg:grid-cols-5">
             <Kpi
-              label={L.tcm}
-              value={num(u.tom)}
-              sub={`${usd(u.tom_valuation)} construction $`}
+              label={`${L.tcm} · ${headerScopeLabel}`}
+              value={usd(filteredShare.tom_valuation)}
+              sub={`${num(filteredShare.tom_count)} permits`}
             />
             <Kpi
-              label={L.marketShort}
-              value={usd(u.sam_valuation)}
-              sub={`${num(u.sam)} permits · ${pctPlain(u.sam_share_count_pct)} of TCM`}
+              label={`${L.marketShort} · ${headerScopeLabel}`}
+              value={usd(filteredShare.sam_valuation)}
+              sub={`${num(filteredShare.sam_count)} permits · ${pctPlain(filteredShare.sam_share_valuation_pct)} of TCM $ · ${pctPlain(filteredShare.sam_share_count_pct)} of permits`}
             />
             <Kpi
-              label={L.potentialShort}
-              value={usd(u.som_usd)}
-              sub="5% of Total Market construction $"
+              label={`${L.potentialShort} · ${headerScopeLabel}`}
+              value={usd(filteredShare.som_usd)}
+              sub="5% of Plumbing · Irrigation · Pool construction $"
             />
             <Kpi
-              label={L.materialsShort}
-              value={usd(
-                data.sam_som.material_labor_annual.reduce(
-                  (s, r) => s + r.som_material_usd,
-                  0
-                )
-              )}
+              label={`${L.materialsShort} · ${headerScopeLabel}`}
+              value={usd(materialsPotentialSelected)}
               sub="5% of estimated materials (Tigre-relevant)"
             />
             <Kpi
-              label={`TCM YTD ${latestTomYtd?.year} vs LY`}
-              value={pct(latestTomYtd?.count_yoy_pct)}
-              sub={`Value $ ${pct(latestTomYtd?.valuation_yoy_pct)}`}
+              label={
+                headerYoY
+                  ? `YoY vs ${headerYoY.y - 1}`
+                  : `TCM YTD ${latestTomYtd?.year} vs LY`
+              }
+              value={
+                headerYoY
+                  ? pct(headerYoY.valPct)
+                  : pct(latestTomYtd?.valuation_yoy_pct)
+              }
+              sub={
+                headerYoY
+                  ? `Market $ YoY · permits ${pct(headerYoY.countPct)} · TCM $ ${pct(headerYoY.tcmValPct)}`
+                  : `Permits ${pct(latestTomYtd?.count_yoy_pct)}`
+              }
             />
           </div>
-          {year2026 && (
-            <p className="mt-4 max-w-4xl text-xs text-[var(--muted)]">
-              <span className="text-[var(--sand)]">2026 only:</span> Total Market{" "}
-              {usd(year2026.sam_valuation)} ({num(year2026.sam_count)} permits) ·{" "}
-              {L.potentialShort} {usd(year2026.som_usd)} · Materials Potential{" "}
-              {usd(mat2026?.som_material_usd ?? 0)}. Construction $ can look huge
-              (Miami-Dade often posts whole-building values on trade permits); the
-              Tigre materials slice is the commercial number.
-            </p>
-          )}
+          <p className="mt-4 max-w-4xl text-xs text-[var(--muted)]">
+            <span className="text-[var(--sand)]">Scope {headerScopeLabel}:</span>{" "}
+            click a year above to refresh these KPIs. Plumbing · Irrigation · Pool
+            usually sits around ~40–47% of construction $ (stable share). Potential
+            5% is construction addressable; Materials Potential is the commercial
+            Tigre number
+            {selectedYears.length === 1 && selectedYears[0] === 2026 && mat2026
+              ? ` (~${usd(mat2026.som_material_usd)} in 2026).`
+              : "."}
+          </p>
         </div>
       </header>
 
