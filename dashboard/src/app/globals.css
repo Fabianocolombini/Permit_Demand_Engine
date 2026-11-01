@@ -1,0 +1,185 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --bg: #071a1f;
+  --bg-2: #0c2a32;
+  --sand: #e8dcc8;
+  --foam: #f4f7f5;
+  --gulf: #0e7c86;
+  --gulf-deep: #06545c;
+  --mangrove: #1f6b4f;
+  --coral: #c45c3e;
+  --sun: #e2b14a;
+  --ink: #0a1619;
+  --muted: #8aa3a8;
+  --line: rgba(232, 220, 200, 0.14);
+  --hero-overlay: linear-gradient(
+    105deg,
+    rgba(7, 26, 31, 0.92) 0%,
+    rgba(7, 26, 31, 0.72) 42%,
+    rgba(6, 84, 92, 0.35) 100%
+  );
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  color: var(--foam);
+  background:
+    radial-gradient(1200px 600px at 80% -10%, rgba(14, 124, 134, 0.28), transparent 60%),
+    radial-gradient(900px 500px at -10% 40%, rgba(31, 107, 79, 0.18), transparent 55%),
+    linear-gradient(180deg, #071a1f 0%, #0a2229 40%, #071a1f 100%);
+  font-family: var(--font-outfit), system-ui, sans-serif;
+  min-height: 100vh;
+}
+
+/* Leaflet dark map tweaks inside dashboard */
+.leaflet-container {
+  background: #071a1f;
+  font: inherit;
+}
+.leaflet-tooltip {
+  background: #0c2a32;
+  border: 1px solid rgba(232, 220, 200, 0.25);
+  color: #f4f7f5;
+  box-shadow: none;
+}
+
+h1,
+h2,
+h3,
+.brand-display {
+  font-family: var(--font-fraunces), Georgia, serif;
+  font-optical-sizing: auto;
+}
+
+.hero-shell {
+  position: relative;
+  min-height: 100vh;
+  min-height: 100dvh;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.hero-media {
+  position: absolute;
+  inset: 0;
+  background-image: url("/images/florida-keys.jpg");
+  background-size: cover;
+  background-position: center 40%;
+  transform: scale(1.04);
+  animation: heroDrift 28s ease-in-out infinite alternate;
+}
+
+.hero-media::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: var(--hero-overlay);
+}
+
+@keyframes heroDrift {
+  from {
+    transform: scale(1.04) translate3d(0, 0, 0);
+  }
+  to {
+    transform: scale(1.08) translate3d(-1.2%, -0.8%, 0);
+  }
+}
+
+@keyframes riseIn {
+  from {
+    opacity: 0;
+    transform: translateY(18px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.rise {
+  animation: riseIn 0.9s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.rise-delay-1 {
+  animation-delay: 0.12s;
+}
+.rise-delay-2 {
+  animation-delay: 0.24s;
+}
+.rise-delay-3 {
+  animation-delay: 0.36s;
+}
+
+.section-band {
+  border-top: 1px solid var(--line);
+}
+
+.stat-value {
+  font-family: var(--font-fraunces), Georgia, serif;
+  font-weight: 560;
+  letter-spacing: -0.02em;
+  line-height: 1.05;
+}
+
+.chart-panel {
+  background: linear-gradient(160deg, rgba(12, 42, 50, 0.85), rgba(7, 26, 31, 0.92));
+  border: 1px solid var(--line);
+  border-radius: 2px;
+}
+
+.table-row {
+  border-bottom: 1px solid var(--line);
+}
+
+.table-row:hover {
+  background: rgba(14, 124, 134, 0.08);
+}
+
+.pill-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: var(--gulf);
+  color: var(--foam);
+  padding: 0.85rem 1.35rem;
+  border-radius: 999px;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  transition: background 0.25s ease, transform 0.25s ease;
+}
+
+.pill-cta:hover {
+  background: #12929e;
+  transform: translateY(-1px);
+}
+
+.ghost-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  border: 1px solid rgba(232, 220, 200, 0.35);
+  color: var(--sand);
+  padding: 0.85rem 1.35rem;
+  border-radius: 999px;
+  font-weight: 500;
+  transition: border-color 0.25s ease, background 0.25s ease;
+}
+
+.ghost-cta:hover {
+  border-color: var(--sand);
+  background: rgba(232, 220, 200, 0.06);
+}
+
+.wave-divider {
+  height: 72px;
+  width: 100%;
+  background: linear-gradient(180deg, transparent, rgba(14, 124, 134, 0.12));
+  clip-path: polygon(0 40%, 8% 55%, 18% 35%, 30% 60%, 42% 30%, 55% 58%, 68% 38%, 80% 62%, 92% 42%, 100% 55%, 100% 100%, 0 100%);
+}
