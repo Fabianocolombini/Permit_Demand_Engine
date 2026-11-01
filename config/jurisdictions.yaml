@@ -1,0 +1,865 @@
+# Jurisdiction registry — Onda 1 Tier A endpoints successfully probed (2026-10-30).
+# covers is critical: county Hub feeds are often unincorporated-only.
+# Identity: PermitNumber (or local equivalent). Never map ContractorZip as site ZIP.
+# Valuation: USD dollars.
+
+- id: fl_miami_dade_county
+  name: "Miami-Dade County (unincorporated)"
+  state: FL
+  county: "Miami-Dade"
+  county_fips: "12086"
+  level: county
+  covers: unincorporated_only
+  tier: A
+  connector: arcgis
+  endpoint: "https://services.arcgis.com/8Pc9XBTAsYuxx9Ny/arcgis/rest/services/miamidade_permit_data/FeatureServer"
+  layer: 0
+  bronze_glob: "data/bronze/fl_miami_dade_county/*.{csv,xlsx,xls}"
+  raw_glob: "data/raw/fl_miami_dade_county/*.{csv,xlsx,xls}"
+  export_date_field: PermitIssuedDate
+  arcgis_date_format: date_only
+  export_monthly: true
+  field_map:
+    permit_id: PermitNumber
+    issued_date: PermitIssuedDate
+    applied_date: ApplicationDate
+    address_raw: PropertyAddress
+    city: City
+    state: State
+    description_raw: DetailDescriptionComments
+    work_class_raw: ProposedUseDescription
+    permit_type_raw: PermitType
+    declared_valuation: EstimatedValue
+    contractor_name: ContractorName
+    contractor_license: ContractorNumber
+    owner_name: OwnerName
+    square_feet: SquareFootage
+    units: StructureUnits
+    is_residential: ResidentialCommercial
+  date_format: mixed
+  issued_date_min: "2021-01-01"
+  notes: >
+    Unincorporated county only — incorporated cities (Miami, Hialeah, etc.) emit
+    separately. Hub table has no native geometry or site ZIP; never use ContractorZip.
+    Post-2021 window ≈420k rows (probed).
+
+- id: fl_miami_city
+  name: "City of Miami"
+  state: FL
+  county: "Miami-Dade"
+  county_fips: "12086"
+  level: city
+  covers: city
+  tier: A
+  connector: arcgis
+  endpoint: "https://services1.arcgis.com/CvuPhqcTQpZPT9qY/arcgis/rest/services/Building_Permits_Since_2014/FeatureServer"
+  layer: 0
+  bronze_glob: "data/bronze/fl_miami_city/*.{csv,xlsx,xls}"
+  export_date_field: IssuedDate
+  arcgis_date_format: date_only
+  export_monthly: true
+  return_geometry: true
+  field_map:
+    permit_id: PermitNumber
+    issued_date: IssuedDate
+    address_raw: DeliveryAddress
+    description_raw: ScopeofWork
+    work_class_raw: WorkItems
+    permit_type_raw: PropertyType
+    declared_valuation: TotalCost
+    contractor_name: CompanyName
+    square_feet: TotalSQFT
+  date_format: epoch_ms
+  issued_date_min: "2021-01-01"
+  notes: >
+    City of Miami Building Department permits since 2014 (owner CityMiamiFL).
+    Complements Miami-Dade unincorporated Hub. Attributes include Miami21Zone.
+    IssuedDate stored as epoch ms; WHERE clause accepts date_only strings.
+    Valuation = TotalCost (USD). CompanyZip is contractor — never site ZIP.
+
+- id: fl_broward_county
+  name: "Broward County HCED Posse Permits"
+  state: FL
+  county: "Broward"
+  county_fips: "12011"
+  level: county
+  covers: unknown
+  tier: A
+  connector: arcgis
+  endpoint: "https://bcgishub.broward.org/posse/rest/services/HCED/HCEDPossePermitsRef/FeatureServer"
+  layer: 4
+  bronze_glob: "data/bronze/fl_broward_county/*.{csv,xlsx,xls}"
+  export_date_field: ISSUEDATE
+  arcgis_date_format: sql_date
+  return_geometry: true
+  field_map:
+    permit_id: PERMITNUM
+    issued_date: ISSUEDATE
+    address_raw: JOBADDRESS
+    city: CITY
+    zip: ZIPTEXT
+    description_raw: WORKDESCRIPTION
+    work_class_raw: PERMITTYPE
+    contractor_name: PERMITTEE
+  date_format: epoch_ms
+  issued_date_min: "2021-01-01"
+  notes: >
+    Geocoded HCED Posse permits (Broward). Small universe (~7.4k total / ~2.3k
+    post-2021) — appears skewed to engineering/ROW-style jobs (e.g. driveway),
+    not full Accela building volume. Full county building feed still Tier B
+    (dpepp.broward.org BCS portal, no open API). Site ZIP present as ZIPTEXT.
+
+- id: fl_hillsborough_county
+  name: "Hillsborough County (Planning Commission Building Permits)"
+  state: FL
+  county: "Hillsborough"
+  county_fips: "12057"
+  level: county
+  covers: full_county
+  tier: A
+  connector: arcgis
+  endpoint: "https://gis.tpcmaps.org/arcgis/rest/services/Websites/BuildingPermits/MapServer"
+  layer: 1
+  bronze_glob: "data/bronze/fl_hillsborough_county/*.{csv,xlsx,xls}"
+  export_date_field: ISSUE_YR
+  arcgis_date_format: year_int
+  export_monthly: false
+  export_where: "ISSUE_YR >= 2021"
+  return_geometry: true
+  field_map:
+    permit_id: PERMITNO
+    issued_date: ISSUE_DATE
+    address_raw: ADDRESS
+    description_raw: DESCRIPTION
+    work_class_raw: CLASS
+    permit_type_raw: TYPE
+    declared_valuation: VALUATION
+    units: NUNITS
+  date_format: iso_text
+  issued_date_min: "2021-01-01"
+  notes: >
+    Hillsborough Planning Commission layer labeled with jurisdictions including
+    Hillsborough County, Tampa, Plant City, Temple Terrace — treat as full_county
+    until city-level feeds are dual-ingested. ISSUE_DATE is a YYYY_MM period key
+    (not a day); filter via ISSUE_YR >= 2021. Post-2021 ≈30k rows (probed).
+
+- id: fl_orlando_city
+  name: "City of Orlando"
+  state: FL
+  county: "Orange"
+  county_fips: "12095"
+  level: city
+  covers: city
+  tier: A
+  connector: socrata
+  endpoint: "https://data.cityoforlando.net/resource/ryhf-m453.json"
+  bronze_glob: "data/bronze/fl_orlando_city/*.{csv,xlsx,xls}"
+  export_date_field: issue_permit_date
+  page_size: 5000
+  field_map:
+    permit_id: permit_number
+    issued_date: issue_permit_date
+    address_raw: permit_address
+    description_raw: application_name
+    work_class_raw: worktype
+    permit_type_raw: application_type
+    declared_valuation: estimated_cost
+    contractor_name: contractor_name
+  date_format: iso_text
+  issued_date_min: "2021-01-01"
+  notes: >
+    Socrata Permit Applications. City of Orlando only — Orange County
+    unincorporated (FastTrack portal) is Tier B. Post-2021 ≈192k rows (probed).
+
+- id: fl_cape_coral_city
+  name: "City of Cape Coral (Active Building Permits)"
+  state: FL
+  county: "Lee"
+  county_fips: "12071"
+  level: city
+  covers: city
+  tier: A
+  connector: arcgis
+  endpoint: "https://capeims.capecoral.gov/arcgis/rest/services/AGOL/Building_Permits_Map/MapServer"
+  layer: 1
+  bronze_glob: "data/bronze/fl_cape_coral_city/*.{csv,xlsx,xls}"
+  export_date_field: ISSUEDATE
+  arcgis_date_format: sql_date
+  return_geometry: false
+  field_map:
+    permit_id: PERMITNUMBER
+    issued_date: ISSUEDATE
+    applied_date: APPLYDATE
+    final_date: FINALIZEDATE
+    address_raw: Site_Address
+    city: MAIN_SITE_City
+    state: MAIN_SITE_State
+    zip: MAIN_SITE_Zip
+    description_raw: DESCRIPTION
+    work_class_raw: Work_Class
+    permit_type_raw: Permit_Type
+    declared_valuation: Permit_Value
+    owner_name: OWNER_NAME
+  date_format: epoch_ms
+  issued_date_min: "2021-01-01"
+  notes: >
+    Active Building Permits layer (polygons) — not a full historical archive.
+    ~14.5k active; nearly all issued >= 2021. Lee County unincorporated still Tier B.
+    Site ZIP available as MAIN_SITE_Zip.
+
+- id: fl_manatee_active_residential
+  name: "Manatee County Active Building Permits (Residential)"
+  state: FL
+  county: "Manatee"
+  county_fips: "12081"
+  level: county
+  covers: unknown
+  tier: A
+  connector: arcgis
+  endpoint: "https://www.mymanatee.org/gisbads/rest/services/Permit/ActiveBuildingPermits/MapServer"
+  layer: 0
+  bronze_glob: "data/bronze/fl_manatee_active_residential/*.{csv,xlsx,xls}"
+  export_date_field: PERMIT_ISSUE
+  arcgis_date_format: sql_date
+  return_geometry: true
+  field_map:
+    permit_id: PERMIT_NO
+    issued_date: PERMIT_ISSUE
+    address_raw: ADDRESS
+    permit_type_raw: PERMIT_TYPE
+    units: PERMIT_UNITS
+  date_format: mixed
+  issued_date_min: "2021-01-01"
+  notes: >
+    Active residential permits only (MapServer layer 0). Prefer
+    fl_manatee_county (PermitData table) for full post-2021 history.
+
+- id: fl_manatee_county
+  name: "Manatee County PermitData (full history table)"
+  state: FL
+  county: "Manatee"
+  county_fips: "12081"
+  level: county
+  covers: full_county
+  tier: A
+  connector: arcgis
+  endpoint: "https://www.mymanatee.org/gisbads/rest/services/Permit/permitlinks/MapServer"
+  layer: 1
+  bronze_glob: "data/bronze/fl_manatee_county/*.{csv,xlsx,xls}"
+  export_date_field: ISSUED
+  arcgis_date_format: date_only
+  export_monthly: true
+  return_geometry: false
+  order_by_fields: OBJECTID
+  page_size: 2000
+  field_map:
+    permit_id: PERMITNUM
+    issued_date: ISSUED
+    applied_date: APPLYDATE
+    address_raw: ADDRESS
+    city: CITY
+    description_raw: NOTE
+    work_class_raw: SUBTYPE
+    permit_type_raw: PERMITTYPE
+    declared_valuation: JOBVALUE
+    units: NUMOFUNITS
+    is_residential: TYPEOFPROJECT
+  date_format: mixed
+  issued_date_min: "2021-01-01"
+  notes: >
+    Permit/permitlinks MapServer table PermitData (~555k total; ~248k issued
+    >= 2021). ISSUED is ISO text (YYYY-MM-DD). No native geometry or site ZIP —
+    compose ADDRESS from HOUSE/STREET* at normalize. Accela deeplink in DEEPLINK.
+    Preferred non-Shovels full-history Manatee feed (path B).
+
+# --- Onda 1 Tier B via Shovels.ai (paid/aggregated API) ---
+# Resolve geo_id at pull time via /counties|/cities|/jurisdictions/search.
+# Auth: SHOVELS_API_KEY env secret. Window: issued/start ≥ 2021-01-01.
+# job_value from Shovels is cents; export adds job_value_usd.
+
+- id: fl_broward_full_building
+  name: "Broward County full building permits (Shovels)"
+  state: FL
+  county: "Broward"
+  county_fips: "12011"
+  level: county
+  covers: full_county
+  tier: B
+  connector: shovels
+  bronze_glob: "data/bronze/fl_broward_full_building/*.{csv,xlsx,xls}"
+  shovels_county_q: "Broward"
+  export_date_field: issue_date
+  field_map:
+    permit_id: number
+    issued_date: issue_date
+    address_raw: address_name
+    city: address_city
+    zip: address_zip_code
+    description_raw: description
+    work_class_raw: type
+    permit_type_raw: subtype
+    declared_valuation: job_value_usd
+  date_format: iso_text
+  issued_date_min: "2021-01-01"
+  notes: >
+    Paid Shovels deferred. Partial open fill via fl_fort_lauderdale_city
+    (~205k SUBMITDT>=2021). BCS citizen portal / bcgishub BCS folder still
+    token-required — not full-county open API.
+
+- id: fl_palm_beach_county
+  name: "Palm Beach County (Shovels)"
+  state: FL
+  county: "Palm Beach"
+  county_fips: "12099"
+  level: county
+  covers: full_county
+  tier: B
+  connector: shovels
+  bronze_glob: "data/bronze/fl_palm_beach_county/*.{csv,xlsx,xls}"
+  shovels_county_q: "Palm Beach"
+  export_date_field: issue_date
+  field_map:
+    permit_id: number
+    issued_date: issue_date
+    address_raw: address_name
+    city: address_city
+    zip: address_zip_code
+    description_raw: description
+    work_class_raw: type
+    permit_type_raw: subtype
+    declared_valuation: job_value_usd
+  date_format: iso_text
+  issued_date_min: "2021-01-01"
+  notes: >
+    Shovels county pull. Open ePermits MapServer is ROW/utility only; building
+    search was portal-only (discover.pbcgov.org). covers=full_county pending
+    jurisdiction-level validation against incorporated cities.
+
+- id: fl_orange_county
+  name: "Orange County (Shovels)"
+  state: FL
+  county: "Orange"
+  county_fips: "12095"
+  level: county
+  covers: full_county
+  tier: B
+  connector: shovels
+  bronze_glob: "data/bronze/fl_orange_county/*.{csv,xlsx,xls}"
+  shovels_county_q: "Orange"
+  export_date_field: issue_date
+  field_map:
+    permit_id: number
+    issued_date: issue_date
+    address_raw: address_name
+    city: address_city
+    zip: address_zip_code
+    description_raw: description
+    work_class_raw: type
+    permit_type_raw: subtype
+    declared_valuation: job_value_usd
+  date_format: iso_text
+  issued_date_min: "2021-01-01"
+  notes: >
+    Shovels county pull (includes Orlando + unincorporated). City of Orlando
+    Tier A Socrata extract remains separate — dedupe before gold.
+
+- id: fl_duval_jacksonville
+  name: "Duval / Jacksonville (Shovels)"
+  state: FL
+  county: "Duval"
+  county_fips: "12031"
+  level: city
+  covers: full_county
+  tier: B
+  connector: shovels
+  bronze_glob: "data/bronze/fl_duval_jacksonville/*.{csv,xlsx,xls}"
+  shovels_county_q: "Duval"
+  export_date_field: issue_date
+  field_map:
+    permit_id: number
+    issued_date: issue_date
+    address_raw: address_name
+    city: address_city
+    zip: address_zip_code
+    description_raw: description
+    work_class_raw: type
+    permit_type_raw: subtype
+    declared_valuation: job_value_usd
+  date_format: iso_text
+  issued_date_min: "2021-01-01"
+  notes: >
+    Shovels Duval County geo (Jacksonville consolidated city/county). JAXEPICS
+    portal had no open record API.
+
+- id: fl_pinellas_county
+  name: "Pinellas County Property Appraiser RP_PERMITS"
+  state: FL
+  county: "Pinellas"
+  county_fips: "12103"
+  level: county
+  covers: full_county
+  tier: B
+  connector: file
+  endpoint: "https://www.pcpao.gov/dal/databasefile/downloadDatabaseFile"
+  bronze_glob: "data/bronze/fl_pinellas_county/*.{csv,xlsx,xls}"
+  export_date_field: ISSUE_DT
+  field_map:
+    permit_id: PERMIT_NUMBER
+    issued_date: ISSUE_DT
+    description_raw: PERMIT_DSCR
+    work_class_raw: PERMIT_TYPE
+    permit_type_raw: PERMIT_TYPE
+    declared_valuation: EST_VAL
+    parcel_id: STRAP
+  date_format: mixed
+  issued_date_min: "2021-01-01"
+  notes: >
+    Path B open CSV: PCPAO POST /dal/databasefile/downloadDatabaseFile
+    (hdn_tbl_name=RP_PERMITS, hdn_ftype=csv → ZIP). County + municipalities
+    (~584k ISSUE_DT >= 2021). No site street address in table (STRAP only).
+    Paid Shovels deferred. Accela PINELLAS CapHome still portal UI.
+
+- id: fl_lee_county
+  name: "Lee County (Shovels stub — open partial via Auburn SF)"
+  state: FL
+  county: "Lee"
+  county_fips: "12071"
+  level: county
+  covers: full_county
+  tier: B
+  connector: shovels
+  bronze_glob: "data/bronze/fl_lee_county/*.{csv,xlsx,xls}"
+  shovels_county_q: "Lee"
+  export_date_field: issue_date
+  field_map:
+    permit_id: number
+    issued_date: issue_date
+    address_raw: address_name
+    city: address_city
+    zip: address_zip_code
+    description_raw: description
+    work_class_raw: type
+    permit_type_raw: subtype
+    declared_valuation: job_value_usd
+  date_format: iso_text
+  issued_date_min: "2021-01-01"
+  notes: >
+    Paid Shovels deferred. Thin open supplement via fl_lee_new_sf_auburn
+    (~7.4k new SF research layer). Accela LEECO + Cape Coral Active ArcGIS
+    remain the other non-Shovels options (Active ≠ full history).
+
+- id: fl_polk_county
+  name: "Polk County (Shovels)"
+  state: FL
+  county: "Polk"
+  county_fips: "12105"
+  level: county
+  covers: full_county
+  tier: B
+  connector: shovels
+  bronze_glob: "data/bronze/fl_polk_county/*.{csv,xlsx,xls}"
+  shovels_county_q: "Polk"
+  export_date_field: issue_date
+  field_map:
+    permit_id: number
+    issued_date: issue_date
+    address_raw: address_name
+    city: address_city
+    zip: address_zip_code
+    description_raw: description
+    work_class_raw: type
+    permit_type_raw: subtype
+    declared_valuation: job_value_usd
+  date_format: iso_text
+  issued_date_min: "2021-01-01"
+  notes: >
+    Paid Shovels deferred. Partial open fill via fl_lakeland_city IMS
+    (~26k issued >= 2021). County Accela polkco still portal-only.
+
+- id: fl_brevard_county
+  name: "Brevard County (Shovels)"
+  state: FL
+  county: "Brevard"
+  county_fips: "12009"
+  level: county
+  covers: full_county
+  tier: B
+  connector: shovels
+  bronze_glob: "data/bronze/fl_brevard_county/*.{csv,xlsx,xls}"
+  shovels_county_q: "Brevard"
+  export_date_field: issue_date
+  field_map:
+    permit_id: number
+    issued_date: issue_date
+    address_raw: address_name
+    city: address_city
+    zip: address_zip_code
+    description_raw: description
+    work_class_raw: type
+    permit_type_raw: subtype
+    declared_valuation: job_value_usd
+  date_format: iso_text
+  issued_date_min: "2021-01-01"
+  notes: >
+    Paid Shovels deferred. Partial open fill via fl_palm_bay_city
+    (~20k issued >= 2021). Accela BASS still portal-only.
+
+- id: fl_volusia_county
+  name: "Volusia County (Shovels)"
+  state: FL
+  county: "Volusia"
+  county_fips: "12127"
+  level: county
+  covers: full_county
+  tier: B
+  connector: shovels
+  bronze_glob: "data/bronze/fl_volusia_county/*.{csv,xlsx,xls}"
+  shovels_county_q: "Volusia"
+  export_date_field: issue_date
+  field_map:
+    permit_id: number
+    issued_date: issue_date
+    address_raw: address_name
+    city: address_city
+    zip: address_zip_code
+    description_raw: description
+    work_class_raw: type
+    permit_type_raw: subtype
+    declared_valuation: job_value_usd
+  date_format: iso_text
+  issued_date_min: "2021-01-01"
+  notes: >
+    Paid Shovels deferred. Only open/active AMANDA layer found
+    (fl_volusia_active_permits ~2.8k) — not full history.
+
+- id: fl_pasco_county
+  name: "Pasco County (Shovels)"
+  state: FL
+  county: "Pasco"
+  county_fips: "12101"
+  level: county
+  covers: full_county
+  tier: B
+  connector: shovels
+  bronze_glob: "data/bronze/fl_pasco_county/*.{csv,xlsx,xls}"
+  shovels_county_q: "Pasco"
+  export_date_field: issue_date
+  field_map:
+    permit_id: number
+    issued_date: issue_date
+    address_raw: address_name
+    city: address_city
+    zip: address_zip_code
+    description_raw: description
+    work_class_raw: type
+    permit_type_raw: subtype
+    declared_valuation: job_value_usd
+  date_format: iso_text
+  issued_date_min: "2021-01-01"
+  notes: "Shovels county pull. No open FeatureServer in prior probe."
+
+- id: fl_osceola_county
+  name: "Osceola County (Shovels)"
+  state: FL
+  county: "Osceola"
+  county_fips: "12097"
+  level: county
+  covers: full_county
+  tier: B
+  connector: shovels
+  bronze_glob: "data/bronze/fl_osceola_county/*.{csv,xlsx,xls}"
+  shovels_county_q: "Osceola"
+  export_date_field: issue_date
+  field_map:
+    permit_id: number
+    issued_date: issue_date
+    address_raw: address_name
+    city: address_city
+    zip: address_zip_code
+    description_raw: description
+    work_class_raw: type
+    permit_type_raw: subtype
+    declared_valuation: job_value_usd
+  date_format: iso_text
+  issued_date_min: "2021-01-01"
+  notes: "Shovels county pull. No open FeatureServer in prior probe."
+
+- id: fl_sarasota_county
+  name: "Sarasota County (Shovels)"
+  state: FL
+  county: "Sarasota"
+  county_fips: "12115"
+  level: county
+  covers: full_county
+  tier: B
+  connector: shovels
+  bronze_glob: "data/bronze/fl_sarasota_county/*.{csv,xlsx,xls}"
+  shovels_county_q: "Sarasota"
+  export_date_field: issue_date
+  field_map:
+    permit_id: number
+    issued_date: issue_date
+    address_raw: address_name
+    city: address_city
+    zip: address_zip_code
+    description_raw: description
+    work_class_raw: type
+    permit_type_raw: subtype
+    declared_valuation: job_value_usd
+  date_format: iso_text
+  issued_date_min: "2021-01-01"
+  notes: >
+    Paid Shovels deferred. Thin open supplement via fl_sarasota_new_sf_auburn
+    (~0.5k new SF research layer). Accela Civic Application still portal/login.
+
+# --- Historical backfill where Tier A was Active-only ---
+
+- id: fl_cape_coral_shovels
+  name: "City of Cape Coral (Shovels historical)"
+  state: FL
+  county: "Lee"
+  county_fips: "12071"
+  level: city
+  covers: city
+  tier: B
+  connector: shovels
+  bronze_glob: "data/bronze/fl_cape_coral_shovels/*.{csv,xlsx,xls}"
+  shovels_city_q: "Cape Coral"
+  export_date_field: issue_date
+  field_map:
+    permit_id: number
+    issued_date: issue_date
+    address_raw: address_name
+    city: address_city
+    zip: address_zip_code
+    description_raw: description
+    work_class_raw: type
+    permit_type_raw: subtype
+    declared_valuation: job_value_usd
+  date_format: iso_text
+  issued_date_min: "2021-01-01"
+  notes: >
+    Shovels city geo backfill — preferred over Cape Coral Active Building
+    Permits ArcGIS layer for post-2021 history.
+
+- id: fl_manatee_county_shovels
+  name: "Manatee County (Shovels historical)"
+  state: FL
+  county: "Manatee"
+  county_fips: "12081"
+  level: county
+  covers: full_county
+  tier: B
+  connector: shovels
+  bronze_glob: "data/bronze/fl_manatee_county_shovels/*.{csv,xlsx,xls}"
+  shovels_county_q: "Manatee"
+  export_date_field: issue_date
+  field_map:
+    permit_id: number
+    issued_date: issue_date
+    address_raw: address_name
+    city: address_city
+    zip: address_zip_code
+    description_raw: description
+    work_class_raw: type
+    permit_type_raw: subtype
+    declared_valuation: job_value_usd
+  date_format: iso_text
+  issued_date_min: "2021-01-01"
+  notes: >
+    Shovels county geo backfill — preferred over Manatee Active residential
+    MapServer for complete post-2021 history. Paid Shovels deferred; use
+    fl_manatee_county ArcGIS PermitData instead.
+
+# --- Onda 1 Tier B open-API / CSV fallbacks (no paid Shovels) ---
+# Added 2026-11-01 after portal/API rediscovery. Prefer these over Shovels
+# stubs above when bronze CSVs exist.
+
+- id: fl_fort_lauderdale_city
+  name: "City of Fort Lauderdale Building Permits"
+  state: FL
+  county: "Broward"
+  county_fips: "12011"
+  level: city
+  covers: city
+  tier: B
+  connector: arcgis
+  endpoint: "https://gis.fortlauderdale.gov/server/rest/services/BuildingPermits/FeatureServer"
+  layer: 0
+  bronze_glob: "data/bronze/fl_fort_lauderdale_city/*.{csv,xlsx,xls}"
+  export_date_field: SUBMITDT
+  arcgis_date_format: sql_date
+  export_monthly: true
+  page_size: 2000
+  field_map:
+    permit_id: PERMITID
+    issued_date: SUBMITDT
+    applied_date: SUBMITDT
+    address_raw: FULLADDR
+    description_raw: PERMITDESC
+    work_class_raw: PERMITTYPE
+    permit_type_raw: PERMITTYPE
+    status_raw: PERMITSTAT
+    declared_valuation: ESTCOST
+    contractor_name: CONTRACTOR
+    owner_name: OWNERNAME
+  date_format: epoch_ms
+  issued_date_min: "2021-01-01"
+  notes: >
+    Open ArcGIS FeatureServer. APPROVEDT is null for all rows in probe —
+    window uses SUBMITDT (Date Submitted) as issued proxy. ~205k rows with
+    SUBMITDT >= 2021. Complements tiny HCED Posse Tier A; still not full
+    Broward BCS county volume (BCS FeatureServer token-required).
+
+- id: fl_palm_bay_city
+  name: "City of Palm Bay Building Permits"
+  state: FL
+  county: "Brevard"
+  county_fips: "12009"
+  level: city
+  covers: city
+  tier: B
+  connector: arcgis
+  endpoint: "https://gis.palmbayflorida.org/arcgis/rest/services/GrowthManagement/BuildingPermits/FeatureServer"
+  layer: 0
+  bronze_glob: "data/bronze/fl_palm_bay_city/*.{csv,xlsx,xls}"
+  export_date_field: issueDate
+  arcgis_date_format: sql_date
+  export_monthly: true
+  field_map:
+    permit_id: ApplicationNumber
+    issued_date: issueDate
+    applied_date: ApplicationDate
+    address_raw: ADDRESS
+    description_raw: ApplicationDescription
+    work_class_raw: ApplicationType
+    permit_type_raw: PermitType
+    status_raw: PermitStatus
+    declared_valuation: EstimateValuation
+  date_format: epoch_ms
+  issued_date_min: "2021-01-01"
+  notes: >
+    City of Palm Bay (Brevard) open FeatureServer. ~20k issued >= 2021.
+    County Accela BASS still portal-only (no open FeatureServer).
+
+- id: fl_lakeland_city
+  name: "City of Lakeland IMS Projects/Permits"
+  state: FL
+  county: "Polk"
+  county_fips: "12105"
+  level: city
+  covers: city
+  tier: B
+  connector: arcgis
+  endpoint: "https://arcgis.lakelandgov.net/maps/rest/services/IMS/IMS_Projects_Permits/FeatureServer"
+  layer: 6
+  bronze_glob: "data/bronze/fl_lakeland_city/*.{csv,xlsx,xls}"
+  export_date_field: ISSUED
+  arcgis_date_format: sql_date
+  export_monthly: true
+  export_where: "TYPE = 'Permit' AND ISSUED >= DATE '2021-01-01'"
+  field_map:
+    permit_id: PERMIT_NO
+    issued_date: ISSUED
+    applied_date: APPLIED
+    address_raw: SITE_ADDR
+    city: SITE_CITY
+    state: SITE_STATE
+    zip: SITE_ZIP
+    description_raw: DESCRIPTION
+    work_class_raw: PERMITORPROJECTTYPE
+    permit_type_raw: TYPE
+    declared_valuation: JOBVALUE
+    contractor_name: APPLICANT_NAME
+  date_format: epoch_ms
+  issued_date_min: "2021-01-01"
+  notes: >
+    City of Lakeland historical IMS permits FeatureServer (~26k issued >= 2021
+    with TYPE='Permit'). Polk County Accela (polkco) still portal-only; county
+    GIS host redirects from this VM.
+
+- id: fl_volusia_active_permits
+  name: "Volusia County Current Projects Permits (AMANDA open)"
+  state: FL
+  county: "Volusia"
+  county_fips: "12127"
+  level: county
+  covers: unknown
+  tier: B
+  connector: arcgis
+  endpoint: "https://maps5.vcgov.org/arcgis/rest/services/CurrentProjects/FeatureServer"
+  layer: 1
+  bronze_glob: "data/bronze/fl_volusia_active_permits/*.{csv,xlsx,xls}"
+  export_date_field: INDATE
+  arcgis_date_format: sql_date
+  export_where: "1=1"
+  field_map:
+    permit_id: REFERENCEFILE
+    issued_date: INDATE
+    description_raw: FOLDERDESCRIPTION
+    work_class_raw: FOLDERTYPE
+    permit_type_raw: FOLDERGROUP
+    status_raw: STATUSDESC
+  date_format: epoch_ms
+  issued_date_min: "2021-01-01"
+  notes: >
+    Open/active AMANDA processes only (~2.8k), not full issued history.
+    Documented as partial Tier B fill. Accela slug /VOLUSIA 404.
+
+- id: fl_lee_new_sf_auburn
+  name: "Lee County new SF permits post-2021 (Auburn research layer)"
+  state: FL
+  county: "Lee"
+  county_fips: "12071"
+  level: county
+  covers: unknown
+  tier: B
+  connector: arcgis
+  endpoint: "https://services.arcgis.com/5UFHFK7ZmWoapZj1/arcgis/rest/services/NewPermits_Post2021_LeeManateeSarasotaCharlotte/FeatureServer"
+  layer: 0
+  bronze_glob: "data/bronze/fl_lee_new_sf_auburn/*.{csv,xlsx,xls}"
+  export_date_field: Date
+  export_where: "layer = 'Lee County permits'"
+  field_map:
+    permit_id: Permit_Num
+    issued_date: Date
+    address_raw: Address
+    description_raw: Descriptio
+    work_class_raw: Permit_Typ
+    permit_type_raw: Permit_Typ
+    status_raw: Status
+  date_format: mixed
+  issued_date_min: "2021-01-01"
+  notes: >
+    Third-party Auburn University AGOL layer of geocoded new residential SF
+    permits post-2021 (~7.4k Lee). NOT official Lee County feed — Accela LEECO
+    still portal-only; Lee GIS DataExplorer/Permitting is zoning/coastal only.
+    Use as thin SAM-relevant supplement only.
+
+- id: fl_sarasota_new_sf_auburn
+  name: "Sarasota County new SF permits post-2021 (Auburn research layer)"
+  state: FL
+  county: "Sarasota"
+  county_fips: "12115"
+  level: county
+  covers: unknown
+  tier: B
+  connector: arcgis
+  endpoint: "https://services.arcgis.com/5UFHFK7ZmWoapZj1/arcgis/rest/services/NewPermits_Post2021_LeeManateeSarasotaCharlotte/FeatureServer"
+  layer: 0
+  bronze_glob: "data/bronze/fl_sarasota_new_sf_auburn/*.{csv,xlsx,xls}"
+  export_date_field: Date
+  export_where: "layer = 'Sarasota County permits'"
+  field_map:
+    permit_id: Permit_Num
+    issued_date: Date
+    address_raw: Address
+    description_raw: Descriptio
+    work_class_raw: Permit_Typ
+    permit_type_raw: Permit_Typ
+    status_raw: Status
+  date_format: mixed
+  issued_date_min: "2021-01-01"
+  notes: >
+    Same Auburn research layer filtered to Sarasota (~0.5k new SF). Thin
+    supplement only; scgov Accela Civic Application remains portal/login.

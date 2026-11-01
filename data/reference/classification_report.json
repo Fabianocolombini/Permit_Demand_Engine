@@ -1,0 +1,1313 @@
+{
+  "generated_at": "2026-10-30T18:27:40.650339+00:00",
+  "definitions": {
+    "TOM": "Total permits ingested (all rows; raw universe).",
+    "SAM": "Subset affecting Tigre USA / Dura: res_new_plumbing (incl. new residential construction / SFR/townhouse \u2014 implied plumbing rough-in), res_repipe, res_remodel_plumbing, pool_spa, irrigation. Excludes roof/windows/AC-only/fence/demo/electrical-only noise.",
+    "SAM_categories": [
+      "irrigation",
+      "pool_spa",
+      "res_new_plumbing",
+      "res_remodel_plumbing",
+      "res_repipe"
+    ]
+  },
+  "jurisdictions": [
+    "fl_miami_dade_county",
+    "fl_miami_city",
+    "fl_broward_county",
+    "fl_hillsborough_county",
+    "fl_orlando_city",
+    "fl_cape_coral_city",
+    "fl_manatee_active_residential",
+    "fl_manatee_county"
+  ],
+  "TOM": 1089121,
+  "SAM": 301667,
+  "SAM_pct_of_TOM": 27.7,
+  "category_counts": {
+    "other": 770530,
+    "res_new_plumbing": 222623,
+    "pool_spa": 68771,
+    "res_water_heater": 11942,
+    "irrigation": 7556,
+    "fire_protection": 4395,
+    "res_remodel_plumbing": 1893,
+    "res_repipe": 824,
+    "site_utility": 586,
+    "comm_plumbing": 1
+  },
+  "sam_category_counts": {
+    "res_new_plumbing": 222623,
+    "pool_spa": 68771,
+    "irrigation": 7556,
+    "res_remodel_plumbing": 1893,
+    "res_repipe": 824
+  },
+  "method_counts": {
+    "regex": 318591,
+    "unclassified": 243631,
+    "excluded_roof": 168328,
+    "excluded_electrical": 100117,
+    "excluded_windows_doors": 93989,
+    "excluded_ac_mechanical": 82969,
+    "excluded_misc_non_plumbing": 58867,
+    "excluded_demolition": 22629
+  },
+  "excluded_noise_rows": 526899,
+  "excluded_noise_pct": 48.38,
+  "unclassified_rows": 243631,
+  "unclassified_pct": 22.37,
+  "top_unclassified": [
+    {
+      "text": "Mechanical Permit | Repair",
+      "n": 14799
+    },
+    {
+      "text": "Building Permit | Repair",
+      "n": 8941
+    },
+    {
+      "text": "Building Permit | Alteration",
+      "n": 8488
+    },
+    {
+      "text": "Mechanical Permit | New",
+      "n": 7430
+    },
+    {
+      "text": "Engineering | Other",
+      "n": 7241
+    },
+    {
+      "text": "Commercial | BUILDING RECERTIFICATION/MILESTONE INSPECTION | BUILDING RECERTIFICATION/MILESTONE INSPECTION",
+      "n": 6152
+    },
+    {
+      "text": "Engineering | SFR",
+      "n": 6058
+    },
+    {
+      "text": "Fire Permit | FireSupp",
+      "n": 5978
+    },
+    {
+      "text": "Fire Permit | FA",
+      "n": 4642
+    },
+    {
+      "text": "Residential",
+      "n": 4176
+    },
+    {
+      "text": "Mechanical Permit | Alteration",
+      "n": 3287
+    },
+    {
+      "text": "Commercial | EXISTING FIRE ALARM SYSTEM | REMODELING/REPAIRS",
+      "n": 2278
+    },
+    {
+      "text": "1 | 11 | Detached",
+      "n": 2273
+    },
+    {
+      "text": "GAS | Natural",
+      "n": 1940
+    },
+    {
+      "text": "Building Permit | Accessory",
+      "n": 1846
+    },
+    {
+      "text": "Commercial | WOOD/LAMINATE/TILE/VINYL | REMODELING/REPAIRS",
+      "n": 1840
+    },
+    {
+      "text": "Engineering | Comm",
+      "n": 1740
+    },
+    {
+      "text": "Commercial | OWNER IDENTIFICATION SIGNS (ELECTRICAL): NEW SINGLE FACED | SIGN",
+      "n": 1480
+    },
+    {
+      "text": "Engineering | SiteWO",
+      "n": 1399
+    },
+    {
+      "text": "Commercial | PROFESSIONAL OFFICE / BANK / FINANCIAL INSTITUTION | REMODELING/REPAIRS",
+      "n": 1233
+    },
+    {
+      "text": "Commercial | MAJOR REPAIRS / ALTERATION / EQUIPMENT MODERNIZATION (COMMERCIAL) | ELEVATOR",
+      "n": 1198
+    },
+    {
+      "text": "Commercial | LIGHT SOCKET|ROUGH WIRING OUTLETS | REMODELING/REPAIRS",
+      "n": 1180
+    },
+    {
+      "text": "Commercial | LOW VOLTAGE DATA-COMM | REMODELING/REPAIRS",
+      "n": 1129
+    },
+    {
+      "text": "Commercial | TEMPORARY FOR TESTING | REMODELING/REPAIRS",
+      "n": 1008
+    },
+    {
+      "text": "MBLD | 5 UNITS OR MORE  - RESIDENTIAL | ALTER - INTERIOR | 3 | 520 | MUNICIPAL GENERAL BUILDING | INTERIOR REMODEL",
+      "n": 927
+    },
+    {
+      "text": "GAS | Propane",
+      "n": 913
+    },
+    {
+      "text": "MBLD | 5 UNITS OR MORE  - RESIDENTIAL | ALTER - INTERIOR | 3 | 520 | MUNICIPAL GENERAL BUILDING",
+      "n": 899
+    },
+    {
+      "text": "Building Permit | Addition",
+      "n": 847
+    },
+    {
+      "text": "Commercial | KITCHEN REPAIR/BATHROOM REPAIR/LAUNDRY REPAIR/CABINETS/SOFFIT REPAIRS | REMODELING/REPAIRS",
+      "n": 837
+    },
+    {
+      "text": "FloodPlain | ElevCert",
+      "n": 792
+    },
+    {
+      "text": "Commercial | PASSENGER TRACTION | ELEVATOR",
+      "n": 766
+    },
+    {
+      "text": "FIRE | 5 UNITS OR MORE  - RESIDENTIAL | ALTER - INTERIOR | 3 | 520 | FIRE SPRINKLERS | FIRE SPRINKLERS",
+      "n": 765
+    },
+    {
+      "text": "Commercial | MULTI-FAMILY (CONDO) | REMODELING/REPAIRS",
+      "n": 750
+    },
+    {
+      "text": "1 | 11 | Comp Type: NSFR Sub Type: FLOOD-N",
+      "n": 725
+    },
+    {
+      "text": "Commercial | WOOD/LAMINATE/TILE/VINYL|KITCHEN REPAIR/BATHROOM REPAIR/LAUNDRY REPAIR/CABINETS/SOFFIT REPAIRS | REMODELING/REPAIRS",
+      "n": 701
+    },
+    {
+      "text": "Building Permit | Tent",
+      "n": 701
+    },
+    {
+      "text": "MBLD | 5 UNITS OR MORE  - RESIDENTIAL | ALTER - INTERIOR | 3 | 520 | MUNICIPAL GENERAL BUILDING | INTERIOR REMODELING",
+      "n": 618
+    },
+    {
+      "text": "Commercial | RETAIL OF GOODS:SUPERMARKET/CLOTHING/FURNITURE/BOOK STORE/ART PRODUCTS | REMODELING/REPAIRS",
+      "n": 589
+    },
+    {
+      "text": "BLDG | SINGLE FAM RES-CLUST-ZERO LOT-TOWN HOUSE | ALTER - EXTERIOR | 4 | 220 | METAL AWNG & SHUTR | ACCORDION SHUTTERS",
+      "n": 583
+    },
+    {
+      "text": "Commercial | EMPTY CONDUIT INSTALLATION | REMODELING/REPAIRS",
+      "n": 571
+    }
+  ],
+  "by_jurisdiction": [
+    {
+      "jurisdiction_id": "fl_miami_dade_county",
+      "TOM": 420160,
+      "SAM": 111147,
+      "SAM_pct_of_TOM": 26.45,
+      "sam_category_counts": {
+        "res_new_plumbing": 80656,
+        "pool_spa": 28601,
+        "irrigation": 1248,
+        "res_remodel_plumbing": 596,
+        "res_repipe": 46
+      },
+      "unclassified_pct": 16.1
+    },
+    {
+      "jurisdiction_id": "fl_miami_city",
+      "TOM": 169827,
+      "SAM": 41956,
+      "SAM_pct_of_TOM": 24.71,
+      "sam_category_counts": {
+        "res_new_plumbing": 32164,
+        "pool_spa": 8446,
+        "res_remodel_plumbing": 688,
+        "irrigation": 658
+      },
+      "unclassified_pct": 31.21
+    },
+    {
+      "jurisdiction_id": "fl_broward_county",
+      "TOM": 2350,
+      "SAM": 16,
+      "SAM_pct_of_TOM": 0.68,
+      "sam_category_counts": {
+        "irrigation": 9,
+        "res_new_plumbing": 6,
+        "pool_spa": 1
+      },
+      "unclassified_pct": 84.04
+    },
+    {
+      "jurisdiction_id": "fl_hillsborough_county",
+      "TOM": 38632,
+      "SAM": 26367,
+      "SAM_pct_of_TOM": 68.25,
+      "sam_category_counts": {
+        "res_new_plumbing": 26205,
+        "pool_spa": 160,
+        "irrigation": 1,
+        "res_remodel_plumbing": 1
+      },
+      "unclassified_pct": 23.0
+    },
+    {
+      "jurisdiction_id": "fl_orlando_city",
+      "TOM": 191566,
+      "SAM": 36652,
+      "SAM_pct_of_TOM": 19.13,
+      "sam_category_counts": {
+        "res_new_plumbing": 27811,
+        "irrigation": 4682,
+        "pool_spa": 4159
+      },
+      "unclassified_pct": 41.4
+    },
+    {
+      "jurisdiction_id": "fl_cape_coral_city",
+      "TOM": 14385,
+      "SAM": 3504,
+      "SAM_pct_of_TOM": 24.36,
+      "sam_category_counts": {
+        "pool_spa": 2168,
+        "res_new_plumbing": 716,
+        "irrigation": 522,
+        "res_repipe": 74,
+        "res_remodel_plumbing": 24
+      },
+      "unclassified_pct": 37.05
+    },
+    {
+      "jurisdiction_id": "fl_manatee_active_residential",
+      "TOM": 4355,
+      "SAM": 0,
+      "SAM_pct_of_TOM": 0.0,
+      "sam_category_counts": {},
+      "unclassified_pct": 100.0
+    },
+    {
+      "jurisdiction_id": "fl_manatee_county",
+      "TOM": 247846,
+      "SAM": 82025,
+      "SAM_pct_of_TOM": 33.1,
+      "sam_category_counts": {
+        "res_new_plumbing": 55065,
+        "pool_spa": 25236,
+        "res_repipe": 704,
+        "res_remodel_plumbing": 584,
+        "irrigation": 436
+      },
+      "unclassified_pct": 9.34
+    }
+  ],
+  "by_jurisdiction_detail": [
+    {
+      "jurisdiction_id": "fl_miami_dade_county",
+      "TOM": 420160,
+      "SAM": 111147,
+      "SAM_pct_of_TOM": 26.45,
+      "category_counts": {
+        "other": 306652,
+        "res_new_plumbing": 80656,
+        "pool_spa": 28601,
+        "irrigation": 1248,
+        "fire_protection": 1170,
+        "res_water_heater": 687,
+        "res_remodel_plumbing": 596,
+        "site_utility": 504,
+        "res_repipe": 46
+      },
+      "sam_category_counts": {
+        "res_new_plumbing": 80656,
+        "pool_spa": 28601,
+        "irrigation": 1248,
+        "res_remodel_plumbing": 596,
+        "res_repipe": 46
+      },
+      "method_counts": {
+        "regex": 113508,
+        "excluded_roof": 80334,
+        "unclassified": 67625,
+        "excluded_windows_doors": 50311,
+        "excluded_electrical": 44619,
+        "excluded_misc_non_plumbing": 28801,
+        "excluded_ac_mechanical": 26405,
+        "excluded_demolition": 8557
+      },
+      "excluded_noise_rows": 239027,
+      "excluded_noise_pct": 56.89,
+      "unclassified_rows": 67625,
+      "unclassified_pct": 16.1,
+      "top_unclassified": [
+        {
+          "text": "MBLD | 5 UNITS OR MORE  - RESIDENTIAL | ALTER - INTERIOR | 3 | 520 | MUNICIPAL GENERAL BUILDING | INTERIOR REMODEL",
+          "n": 927
+        },
+        {
+          "text": "MBLD | 5 UNITS OR MORE  - RESIDENTIAL | ALTER - INTERIOR | 3 | 520 | MUNICIPAL GENERAL BUILDING",
+          "n": 899
+        },
+        {
+          "text": "FIRE | 5 UNITS OR MORE  - RESIDENTIAL | ALTER - INTERIOR | 3 | 520 | FIRE SPRINKLERS | FIRE SPRINKLERS",
+          "n": 765
+        },
+        {
+          "text": "MBLD | 5 UNITS OR MORE  - RESIDENTIAL | ALTER - INTERIOR | 3 | 520 | MUNICIPAL GENERAL BUILDING | INTERIOR REMODELING",
+          "n": 618
+        },
+        {
+          "text": "BLDG | SINGLE FAM RES-CLUST-ZERO LOT-TOWN HOUSE | ALTER - EXTERIOR | 4 | 220 | METAL AWNG & SHUTR | ACCORDION SHUTTERS",
+          "n": 583
+        },
+        {
+          "text": "BLDG | SINGLE FAM RES-CLUST-ZERO LOT-TOWN HOUSE | ALTER - EXTERIOR | 4 | 220 | METAL AWNG & SHUTR | SHUTTERS",
+          "n": 516
+        },
+        {
+          "text": "BLDG | SINGLE FAM RES-CLUST-ZERO LOT-TOWN HOUSE | ADDITION - DETACHED | 2 | 220 | BUILDING (COUNTY) | SHED",
+          "n": 470
+        },
+        {
+          "text": "FIRE | RETAIL SALES | ALTER - INTERIOR | 3 | 1734 | FIRE SPRINKLERS | FIRE SPRINKLERS",
+          "n": 407
+        },
+        {
+          "text": "MBLD | SINGLE FAM RES-CLUST-ZERO LOT-TOWN HOUSE | ADDITION - ATTACHED | 1 | 220 | MUNICIPAL SUB-GENERAL BLDR | ADDITION",
+          "n": 406
+        },
+        {
+          "text": "MBLD | 5 UNITS OR MORE  - RESIDENTIAL | ALTER - INTERIOR | 3 | 520 | MUNICIPAL GENERAL BUILDING | REMODELING",
+          "n": 400
+        },
+        {
+          "text": "MBLD | 5 UNITS OR MORE  - RESIDENTIAL | ALTER - INTERIOR | 3 | 520 | MUNICIPAL GENERAL BUILDING | ALT INT",
+          "n": 358
+        },
+        {
+          "text": "MBLD | 5 UNITS OR MORE  - RESIDENTIAL | ALTER - INTERIOR | 3 | 520 | MUNICIPAL GENERAL BUILDING | INTERIOR RENOVATION",
+          "n": 323
+        },
+        {
+          "text": "MBLD | RETAIL SALES | ALTER - INTERIOR | 3 | 1734 | MUNICIPAL GENERAL BUILDING",
+          "n": 308
+        },
+        {
+          "text": "MBLD | 5 UNITS OR MORE  - RESIDENTIAL | ALTER - INTERIOR | 3 | 520 | MUNICIPAL GENERAL BUILDING | INT REMODEL",
+          "n": 307
+        },
+        {
+          "text": "MBLD | OFFICE - PROFESSIONAL BUILDINGS | ALTER - INTERIOR | 3 | 1421 | MUNICIPAL GENERAL BUILDING",
+          "n": 299
+        },
+        {
+          "text": "BLDG | 5 UNITS OR MORE  - RESIDENTIAL | ALTER - EXTERIOR | 4 | 520 | METAL AWNG & SHUTR | ACCORDION SHUTTERS",
+          "n": 285
+        },
+        {
+          "text": "BLDG | GOVERNMENT FACILITIES | RIGHT OF WAY | 31 | 1822 | BUS SHELTER | BUS SHELTER",
+          "n": 279
+        },
+        {
+          "text": "FIRE | OFFICE - PROFESSIONAL BUILDINGS | ALTER - INTERIOR | 3 | 1421 | FIRE SPRINKLERS | FIRE SPRINKLERS",
+          "n": 262
+        },
+        {
+          "text": "BLDG | SINGLE FAM RES-CLUST-ZERO LOT-TOWN HOUSE | ADDITION - ATTACHED | 1 | 220 | BUILDING (COUNTY) | ADDITION",
+          "n": 241
+        },
+        {
+          "text": "MBLD | 5 UNITS OR MORE  - RESIDENTIAL | ALTER - INTERIOR | 3 | 520 | MUNICIPAL GENERAL BUILDING | INT REMODELING",
+          "n": 221
+        },
+        {
+          "text": "BLDG | SINGLE FAM RES-CLUST-ZERO LOT-TOWN HOUSE | ALTER - EXTERIOR | 4 | 220 | BUILDING (COUNTY) | SHED",
+          "n": 215
+        },
+        {
+          "text": "MBLD | RETAIL SALES | ALTER - INTERIOR | 3 | 1734 | MUNICIPAL GENERAL BUILDING | INTERIOR REMODEL",
+          "n": 211
+        },
+        {
+          "text": "MBLD | 5 UNITS OR MORE  - RESIDENTIAL | ALTER - INTERIOR | 3 | 520 | MUNICIPAL GENERAL BUILDING | INTERIOR ALTERATION",
+          "n": 205
+        },
+        {
+          "text": "FIRE | WAREHOUSE | ALTER - INTERIOR | 3 | 1737 | FIRE SPRINKLERS | FIRE SPRINKLERS",
+          "n": 203
+        },
+        {
+          "text": "MBLD | 5 UNITS OR MORE  - RESIDENTIAL | ALTER - INTERIOR | 3 | 520 | MUNICIPAL GENERAL BUILDING | REMODEL",
+          "n": 203
+        }
+      ]
+    },
+    {
+      "jurisdiction_id": "fl_miami_city",
+      "TOM": 169827,
+      "SAM": 41956,
+      "SAM_pct_of_TOM": 24.71,
+      "category_counts": {
+        "other": 116264,
+        "res_new_plumbing": 32164,
+        "res_water_heater": 8606,
+        "pool_spa": 8446,
+        "fire_protection": 3001,
+        "res_remodel_plumbing": 688,
+        "irrigation": 658
+      },
+      "sam_category_counts": {
+        "res_new_plumbing": 32164,
+        "pool_spa": 8446,
+        "res_remodel_plumbing": 688,
+        "irrigation": 658
+      },
+      "method_counts": {
+        "regex": 53563,
+        "unclassified": 52995,
+        "excluded_roof": 15559,
+        "excluded_ac_mechanical": 12551,
+        "excluded_windows_doors": 10645,
+        "excluded_electrical": 10094,
+        "excluded_demolition": 7634,
+        "excluded_misc_non_plumbing": 6786
+      },
+      "excluded_noise_rows": 63269,
+      "excluded_noise_pct": 37.25,
+      "unclassified_rows": 52995,
+      "unclassified_pct": 31.21,
+      "top_unclassified": [
+        {
+          "text": "Commercial | BUILDING RECERTIFICATION/MILESTONE INSPECTION | BUILDING RECERTIFICATION/MILESTONE INSPECTION",
+          "n": 6152
+        },
+        {
+          "text": "Commercial | EXISTING FIRE ALARM SYSTEM | REMODELING/REPAIRS",
+          "n": 2278
+        },
+        {
+          "text": "Commercial | WOOD/LAMINATE/TILE/VINYL | REMODELING/REPAIRS",
+          "n": 1840
+        },
+        {
+          "text": "Commercial | OWNER IDENTIFICATION SIGNS (ELECTRICAL): NEW SINGLE FACED | SIGN",
+          "n": 1480
+        },
+        {
+          "text": "Commercial | PROFESSIONAL OFFICE / BANK / FINANCIAL INSTITUTION | REMODELING/REPAIRS",
+          "n": 1233
+        },
+        {
+          "text": "Commercial | MAJOR REPAIRS / ALTERATION / EQUIPMENT MODERNIZATION (COMMERCIAL) | ELEVATOR",
+          "n": 1198
+        },
+        {
+          "text": "Commercial | LIGHT SOCKET|ROUGH WIRING OUTLETS | REMODELING/REPAIRS",
+          "n": 1180
+        },
+        {
+          "text": "Commercial | LOW VOLTAGE DATA-COMM | REMODELING/REPAIRS",
+          "n": 1129
+        },
+        {
+          "text": "Commercial | TEMPORARY FOR TESTING | REMODELING/REPAIRS",
+          "n": 1008
+        },
+        {
+          "text": "Commercial | KITCHEN REPAIR/BATHROOM REPAIR/LAUNDRY REPAIR/CABINETS/SOFFIT REPAIRS | REMODELING/REPAIRS",
+          "n": 837
+        },
+        {
+          "text": "Commercial | PASSENGER TRACTION | ELEVATOR",
+          "n": 766
+        },
+        {
+          "text": "Commercial | MULTI-FAMILY (CONDO) | REMODELING/REPAIRS",
+          "n": 750
+        },
+        {
+          "text": "Commercial | WOOD/LAMINATE/TILE/VINYL|KITCHEN REPAIR/BATHROOM REPAIR/LAUNDRY REPAIR/CABINETS/SOFFIT REPAIRS | REMODELING/REPAIRS",
+          "n": 701
+        },
+        {
+          "text": "Commercial | RETAIL OF GOODS:SUPERMARKET/CLOTHING/FURNITURE/BOOK STORE/ART PRODUCTS | REMODELING/REPAIRS",
+          "n": 589
+        },
+        {
+          "text": "Commercial | EMPTY CONDUIT INSTALLATION | REMODELING/REPAIRS",
+          "n": 571
+        },
+        {
+          "text": "Commercial | FIBERGLASS DUCTWORK | REMODELING/REPAIRS",
+          "n": 546
+        },
+        {
+          "text": "Commercial | LOW VOLTAGE COMPUTER / TV CABLE / PHONE TERMINAL | REMODELING/REPAIRS",
+          "n": 520
+        },
+        {
+          "text": "Commercial | WOOD/LAMINATE/TILE/VINYL|MULTI-FAMILY (CONDO) | REMODELING/REPAIRS",
+          "n": 464
+        },
+        {
+          "text": "Commercial | EXISTING FIRE ALARM SYSTEM | FIRE",
+          "n": 455
+        },
+        {
+          "text": "Residential | SINGLE FAMILY RESIDENCE | ADDITION AND REMODELING",
+          "n": 436
+        },
+        {
+          "text": "Residential | SINGLE FAMILY RESIDENCE | REMODELING/REPAIRS",
+          "n": 414
+        },
+        {
+          "text": "Commercial | INTERIOR PARTITIONS / INTERIOR GLASS SYSTEMS | REMODELING/REPAIRS",
+          "n": 385
+        },
+        {
+          "text": "Residential | CONCRETE DRIVEWAYS | REMODELING/REPAIRS",
+          "n": 364
+        },
+        {
+          "text": "Commercial | NEW FIRE ALARM SYSTEM | REMODELING/REPAIRS",
+          "n": 352
+        },
+        {
+          "text": "Commercial | ROUGH WIRING OUTLETS | REMODELING/REPAIRS",
+          "n": 340
+        }
+      ]
+    },
+    {
+      "jurisdiction_id": "fl_broward_county",
+      "TOM": 2350,
+      "SAM": 16,
+      "SAM_pct_of_TOM": 0.68,
+      "category_counts": {
+        "other": 2255,
+        "site_utility": 79,
+        "irrigation": 9,
+        "res_new_plumbing": 6,
+        "pool_spa": 1
+      },
+      "sam_category_counts": {
+        "irrigation": 9,
+        "res_new_plumbing": 6,
+        "pool_spa": 1
+      },
+      "method_counts": {
+        "unclassified": 1975,
+        "excluded_misc_non_plumbing": 278,
+        "regex": 95,
+        "excluded_roof": 1,
+        "excluded_demolition": 1
+      },
+      "excluded_noise_rows": 280,
+      "excluded_noise_pct": 11.91,
+      "unclassified_rows": 1975,
+      "unclassified_pct": 84.04,
+      "top_unclassified": [
+        {
+          "text": "Telephone | DIRECTIONAL BORE 2-1.5\" HDPE CONDUITS AND INSTALL HANDHOLES",
+          "n": 21
+        },
+        {
+          "text": "Miscellaneous | INSTALL NEW ART WRAPS ON BROWARD COUNTY TRAFFIC SIGNAL BOXES",
+          "n": 21
+        },
+        {
+          "text": "Telephone | DIRECTIONAL BORE 2-1.5\" HDPE CONDUITS AND INSTALL HANDHOLE",
+          "n": 18
+        },
+        {
+          "text": "Water | INSTALL SERVICE LINE AND DOMESTIC WATER METER BOX PER PLAN",
+          "n": 16
+        },
+        {
+          "text": "Telephone | DIRECTIONAL BORE 1-2\" HDPE CONDUIT AND INSTALL HANDHOLE",
+          "n": 11
+        },
+        {
+          "text": "Electric Power | REPLACE CONCRETE POLE AND TRANSFER FACILITIES",
+          "n": 10
+        },
+        {
+          "text": "Telephone | INSTALL 50' CONCRETE POLE WITH SMALL CELL EQUIPMENT ATTACHED",
+          "n": 10
+        },
+        {
+          "text": "Gas | DIRECTIONAL BORE 1-1/4\" PLASTIC GAS SERVICE PIPE PER PLAN",
+          "n": 9
+        },
+        {
+          "text": "Miscellaneous | SPECIAL EVENT ROAD CLOSURES - 5K RUN / WALK",
+          "n": 9
+        },
+        {
+          "text": "Telephone | DIRECTIONAL BORE 1-2\" HDPE CONDUIT",
+          "n": 8
+        },
+        {
+          "text": "Telephone | PULL FIBER OPTIC CABLE THROUGH EXISTING CONDUIT",
+          "n": 8
+        },
+        {
+          "text": "Electric Power | REPLACE POLE AND TRANSFER FACILITIES",
+          "n": 7
+        },
+        {
+          "text": "Electric Power | DIRECTIONAL BORE 3-2\" HDPE CONDUITS AND PLACE HANDHOLES",
+          "n": 7
+        },
+        {
+          "text": "Telephone | DIRECTIONAL BORE 1-2\" HDPE CONDUIT AND INSTALL HANDHOLES",
+          "n": 7
+        },
+        {
+          "text": "Telephone | INSTALL CONCRETE POLE WITH SMALL CELL EQUIPMENT ATTACHED",
+          "n": 7
+        },
+        {
+          "text": "Telephone | OVERLASH FIBER OPTIC CABLE ONTO EXISTING STRAND",
+          "n": 7
+        },
+        {
+          "text": "Electric Power | REPLACE WOOD POLE WITH CONCRETE AND TRANSFER FACILITIES",
+          "n": 7
+        },
+        {
+          "text": "Miscellaneous | INSTALL TEMPORARY OVERHEAD PROTECTION FOR PEDESTRIAN WALKWAY",
+          "n": 7
+        },
+        {
+          "text": "Miscellaneous | LANE CLOSURES PER PLAN - CYCLING EVENT FOR CANCER RESEARCH",
+          "n": 6
+        },
+        {
+          "text": "Miscellaneous | SPECIAL EVENT LANE CLOSURES - 5K RUN/WALK - TO END DRUNK DRIVING",
+          "n": 6
+        },
+        {
+          "text": "Telephone | DIRECTIONAL BORE 1-2\" HDPE CONDUIT ALONG AND ACROSS SUNRISE BOULEVARD",
+          "n": 6
+        },
+        {
+          "text": "Telephone | TRENCH 2-1.5\" HDPE CONDUITS AND INSTALL DISTRIBUTION CABINET",
+          "n": 6
+        },
+        {
+          "text": "Telephone | DIRECTIONAL BORE 1-2\" HDPE CONDUIT ALONG SUNRISE BOULEVARD",
+          "n": 6
+        },
+        {
+          "text": "Telephone | DIRECTIONAL BORE 2-1.5\" HDPE CONDUITS",
+          "n": 5
+        },
+        {
+          "text": "Telephone | DIRECTIONAL BORE 1-2\" HDPE CONDUIT ACROSS PINE ISLAND ROAD",
+          "n": 5
+        }
+      ]
+    },
+    {
+      "jurisdiction_id": "fl_hillsborough_county",
+      "TOM": 38632,
+      "SAM": 26367,
+      "SAM_pct_of_TOM": 68.25,
+      "category_counts": {
+        "res_new_plumbing": 26205,
+        "other": 12264,
+        "pool_spa": 160,
+        "irrigation": 1,
+        "fire_protection": 1,
+        "res_remodel_plumbing": 1
+      },
+      "sam_category_counts": {
+        "res_new_plumbing": 26205,
+        "pool_spa": 160,
+        "irrigation": 1,
+        "res_remodel_plumbing": 1
+      },
+      "method_counts": {
+        "regex": 26368,
+        "unclassified": 8887,
+        "excluded_demolition": 3285,
+        "excluded_misc_non_plumbing": 35,
+        "excluded_roof": 28,
+        "excluded_windows_doors": 12,
+        "excluded_ac_mechanical": 11,
+        "excluded_electrical": 6
+      },
+      "excluded_noise_rows": 3377,
+      "excluded_noise_pct": 8.74,
+      "unclassified_rows": 8887,
+      "unclassified_pct": 23.0,
+      "top_unclassified": [
+        {
+          "text": "1 | 11 | Detached",
+          "n": 2273
+        },
+        {
+          "text": "1 | 11 | Comp Type: NSFR Sub Type: FLOOD-N",
+          "n": 725
+        },
+        {
+          "text": "1 | 11",
+          "n": 506
+        },
+        {
+          "text": "1 | 11 | Attached",
+          "n": 481
+        },
+        {
+          "text": "11 | 11",
+          "n": 348
+        },
+        {
+          "text": "1 | 11 | Comp Type: NSFT Sub Type: FLOOD-N",
+          "n": 191
+        },
+        {
+          "text": "1 | 11 | Comp Type: NSFR Sub Type: FLOOD-Y",
+          "n": 134
+        },
+        {
+          "text": "1 | 11 | *FEMA SFHA: LIMITED PRIVATE PROVIDER \u2013 PLAN REVIEW",
+          "n": 134
+        },
+        {
+          "text": "1 | 12 | *PRIVATE PROVIDER \u2013 PLAN REVIEW AND INSPECTIONS* N",
+          "n": 110
+        },
+        {
+          "text": "1 | 11 | *PRIVATE PROVIDER \u2013 PLAN REVIEW AND INSPECTIONS* N",
+          "n": 80
+        },
+        {
+          "text": "1 | 11 | *PRIVATE PROVIDER \u2013 PLAN REVIEW AND INSPECTIONS*",
+          "n": 64
+        },
+        {
+          "text": "1 | 11 | Comp Type: NSFT Sub Type: FLOOD-Y",
+          "n": 55
+        },
+        {
+          "text": "11 | 31",
+          "n": 52
+        },
+        {
+          "text": "1 | 31 | Industrial",
+          "n": 50
+        },
+        {
+          "text": "1 | 12 | *FEMA SFHA: LIMITED PRIVATE PROVIDER \u2013 PLAN REVIE",
+          "n": 50
+        },
+        {
+          "text": "1 | 12 | *PRIVATE PROVIDER - PLAN REVIEW AND INSPECTIONS* N",
+          "n": 45
+        },
+        {
+          "text": "1 | 11 | *FEMA SFHA: LIMITED PRIVATE PROVIDER \u2013 PLAN REVIE",
+          "n": 45
+        },
+        {
+          "text": "1 | 31 | Offices / Banks / Professional",
+          "n": 43
+        },
+        {
+          "text": "1 | 11 | Comp Type: NMF",
+          "n": 43
+        },
+        {
+          "text": "1 | 11 | *FEMA SFHA: LIMITED PRIVATE PROVIDER \u2013INSPECTIONS",
+          "n": 41
+        },
+        {
+          "text": "1 | 12 | *FEMA SFHA: LIMITED PRIVATE PROVIDER \u2013 PLAN REVIEW",
+          "n": 31
+        },
+        {
+          "text": "1 | 31 | Construction trailer",
+          "n": 28
+        },
+        {
+          "text": "1 | 12 | *PRIVATE PROVIDER: PLAN REVIEW AND INSPECTIONS* Ne",
+          "n": 28
+        },
+        {
+          "text": "1 | 22",
+          "n": 28
+        },
+        {
+          "text": "1 | 11 | FEMA SFHA: LIMITED PRIVATE PROVIDER \u2013 PLAN REVIEW",
+          "n": 26
+        }
+      ]
+    },
+    {
+      "jurisdiction_id": "fl_orlando_city",
+      "TOM": 191566,
+      "SAM": 36652,
+      "SAM_pct_of_TOM": 19.13,
+      "category_counts": {
+        "other": 154914,
+        "res_new_plumbing": 27811,
+        "irrigation": 4682,
+        "pool_spa": 4159
+      },
+      "sam_category_counts": {
+        "res_new_plumbing": 27811,
+        "irrigation": 4682,
+        "pool_spa": 4159
+      },
+      "method_counts": {
+        "unclassified": 79313,
+        "excluded_electrical": 36904,
+        "regex": 36652,
+        "excluded_roof": 28790,
+        "excluded_misc_non_plumbing": 8802,
+        "excluded_demolition": 1105
+      },
+      "excluded_noise_rows": 75601,
+      "excluded_noise_pct": 39.46,
+      "unclassified_rows": 79313,
+      "unclassified_pct": 41.4,
+      "top_unclassified": [
+        {
+          "text": "Mechanical Permit | Repair",
+          "n": 14799
+        },
+        {
+          "text": "Building Permit | Repair",
+          "n": 8941
+        },
+        {
+          "text": "Building Permit | Alteration",
+          "n": 8488
+        },
+        {
+          "text": "Mechanical Permit | New",
+          "n": 7430
+        },
+        {
+          "text": "Engineering | Other",
+          "n": 7241
+        },
+        {
+          "text": "Engineering | SFR",
+          "n": 6058
+        },
+        {
+          "text": "Fire Permit | FireSupp",
+          "n": 5978
+        },
+        {
+          "text": "Fire Permit | FA",
+          "n": 4642
+        },
+        {
+          "text": "Mechanical Permit | Alteration",
+          "n": 3287
+        },
+        {
+          "text": "GAS | Natural",
+          "n": 1940
+        },
+        {
+          "text": "Building Permit | Accessory",
+          "n": 1846
+        },
+        {
+          "text": "Engineering | Comm",
+          "n": 1740
+        },
+        {
+          "text": "Engineering | SiteWO",
+          "n": 1399
+        },
+        {
+          "text": "GAS | Propane",
+          "n": 913
+        },
+        {
+          "text": "Building Permit | Addition",
+          "n": 847
+        },
+        {
+          "text": "FloodPlain | ElevCert",
+          "n": 792
+        },
+        {
+          "text": "Building Permit | Tent",
+          "n": 701
+        },
+        {
+          "text": "Mechanical Permit | Addition",
+          "n": 396
+        },
+        {
+          "text": "Engineering | Paving",
+          "n": 292
+        },
+        {
+          "text": "Building Permit | Dumpster",
+          "n": 224
+        },
+        {
+          "text": "Fire Permit | BDADAS",
+          "n": 186
+        },
+        {
+          "text": "Fire Permit | Undergrnd",
+          "n": 161
+        },
+        {
+          "text": "Building Permit | ChangeUse",
+          "n": 143
+        },
+        {
+          "text": "Building Permit | Construct",
+          "n": 133
+        },
+        {
+          "text": "GAS | Medical",
+          "n": 133
+        }
+      ]
+    },
+    {
+      "jurisdiction_id": "fl_cape_coral_city",
+      "TOM": 14385,
+      "SAM": 3504,
+      "SAM_pct_of_TOM": 24.36,
+      "category_counts": {
+        "other": 10710,
+        "pool_spa": 2168,
+        "res_new_plumbing": 716,
+        "irrigation": 522,
+        "fire_protection": 141,
+        "res_repipe": 74,
+        "res_water_heater": 28,
+        "res_remodel_plumbing": 24,
+        "site_utility": 2
+      },
+      "sam_category_counts": {
+        "pool_spa": 2168,
+        "res_new_plumbing": 716,
+        "irrigation": 522,
+        "res_repipe": 74,
+        "res_remodel_plumbing": 24
+      },
+      "method_counts": {
+        "unclassified": 5329,
+        "regex": 3675,
+        "excluded_ac_mechanical": 1620,
+        "excluded_roof": 1440,
+        "excluded_windows_doors": 991,
+        "excluded_misc_non_plumbing": 947,
+        "excluded_electrical": 314,
+        "excluded_demolition": 69
+      },
+      "excluded_noise_rows": 5381,
+      "excluded_noise_pct": 37.41,
+      "unclassified_rows": 5329,
+      "unclassified_pct": 37.05,
+      "top_unclassified": [
+        {
+          "text": "Utility | UTL - Septic Abandonment | SEPTIC ABANDONMENT",
+          "n": 157
+        },
+        {
+          "text": "Utility | UTL - Connection Residential | North 1 West Phase 12 SWR -  Contract Area 1 & 2 LS711 & LS713",
+          "n": 88
+        },
+        {
+          "text": "Utility | UTL - Septic Abandonment | N1A SEPTIC ABANDONMENT",
+          "n": 63
+        },
+        {
+          "text": "Utility | UTL - Connection Residential | North 1 West Phase 14 Swr -  Contract Area 5 LS716 & LS718",
+          "n": 63
+        },
+        {
+          "text": "Utility | UTL - Connection Residential | North 1 West Phase 11 SWR -  Contract Area 6 LS717",
+          "n": 34
+        },
+        {
+          "text": "Utility | UTL - Connection Residential | North 1 West Phase 9 Swr -  Contract Area 3 LS714",
+          "n": 33
+        },
+        {
+          "text": "Accessories | BLD - Screen Enclosure | screen enclosure over existing footer",
+          "n": 33
+        },
+        {
+          "text": "Trades | BLD - Electric for Dock - Res | Wire boat lift 120/240 GFI Protected from Sub Panel 20a",
+          "n": 30
+        },
+        {
+          "text": "Marine Improvement | Marine Improvement | INSTALL 80 LF SEAWALL",
+          "n": 24
+        },
+        {
+          "text": "Utility | UTL - Connection Residential | North 1 West Phase 14 Swr - Contract Area 5 LS716 & LS718",
+          "n": 23
+        },
+        {
+          "text": "Utility | UTL - Connection Residential | North 1 West Phase 4 Wtr/Irr -  Contract Area 2 LS713 North 1 West Phase 12 SWR",
+          "n": 21
+        },
+        {
+          "text": "Utility | UTL - Connection Residential | North 1 West Phase 2 Wtr/Irr",
+          "n": 21
+        },
+        {
+          "text": "Utility | UTL - Connection Residential | North 1 West Phase 5 Wtr/Irr -  Contract Area 6 LS717 North 1 West Phase 11 SWR",
+          "n": 21
+        },
+        {
+          "text": "Utility | UTL - Connection Residential | North 1 West Phase 4 Wtr/Irr -  Contract Area 2 LS713",
+          "n": 20
+        },
+        {
+          "text": "Utility | UTL - Dual Water | DUAL WATER",
+          "n": 18
+        },
+        {
+          "text": "Utility | UTL - Connection Residential | North 1 West Phase 5 Wtr/Irr -  Contract Area 6 LS717",
+          "n": 17
+        },
+        {
+          "text": "Utility | UTL - Connection Residential | North 1 West Phase 6 Wtr/Irr -  Contract Area 5 LS718 North 1 West Phase 14 Swr",
+          "n": 17
+        },
+        {
+          "text": "Utility | UTL - Connection Residential | North 1 West Phase 2 Wtr/Irr North 1 West Phase 12 SWR -  Contract Area 1 & 2 LS",
+          "n": 16
+        },
+        {
+          "text": "Utility | UTL - Connection Residential | North 1 West Phase 6 Wtr/Irr -  Contract Area 5 LS718",
+          "n": 16
+        },
+        {
+          "text": "Utility | UTL - Connection Residential | North 1 West Phase 13 Wtr/Irr -  Contract Area 5 LS716 North 1 West Phase 14 Swr",
+          "n": 15
+        },
+        {
+          "text": "Marine Improvement | Marine Improvement | COASTLINE MARCO * Install a removable boat lift cover on an existing dock/lift",
+          "n": 15
+        },
+        {
+          "text": "Utility | UTL - Connection Residential | North 1 West Phase 7 Swr -  Contract Area 4 LS715 and 720",
+          "n": 15
+        },
+        {
+          "text": "Utility | UTL - Dual Water",
+          "n": 15
+        },
+        {
+          "text": "Utility | UTL - Connection Residential | North 1 West Phase 10 Wtr/Swr/Irr -  Contract Area 3 LS712",
+          "n": 14
+        },
+        {
+          "text": "Marine Improvement | Marine Improvement | Install a removable boat lift cover over existing dock/lift.",
+          "n": 13
+        }
+      ]
+    },
+    {
+      "jurisdiction_id": "fl_manatee_active_residential",
+      "TOM": 4355,
+      "SAM": 0,
+      "SAM_pct_of_TOM": 0.0,
+      "category_counts": {
+        "other": 4355
+      },
+      "sam_category_counts": {},
+      "method_counts": {
+        "unclassified": 4355
+      },
+      "excluded_noise_rows": 0,
+      "excluded_noise_pct": 0.0,
+      "unclassified_rows": 4355,
+      "unclassified_pct": 100.0,
+      "top_unclassified": [
+        {
+          "text": "Residential",
+          "n": 4176
+        },
+        {
+          "text": "Mobile Home",
+          "n": 114
+        },
+        {
+          "text": "Modular",
+          "n": 65
+        }
+      ]
+    },
+    {
+      "jurisdiction_id": "fl_manatee_county",
+      "TOM": 247846,
+      "SAM": 82025,
+      "SAM_pct_of_TOM": 33.1,
+      "category_counts": {
+        "other": 163116,
+        "res_new_plumbing": 55065,
+        "pool_spa": 25236,
+        "res_water_heater": 2621,
+        "res_repipe": 704,
+        "res_remodel_plumbing": 584,
+        "irrigation": 436,
+        "fire_protection": 82,
+        "comm_plumbing": 1,
+        "site_utility": 1
+      },
+      "sam_category_counts": {
+        "res_new_plumbing": 55065,
+        "pool_spa": 25236,
+        "res_repipe": 704,
+        "res_remodel_plumbing": 584,
+        "irrigation": 436
+      },
+      "method_counts": {
+        "regex": 84730,
+        "excluded_ac_mechanical": 42382,
+        "excluded_roof": 42176,
+        "excluded_windows_doors": 32030,
+        "unclassified": 23152,
+        "excluded_misc_non_plumbing": 13218,
+        "excluded_electrical": 8180,
+        "excluded_demolition": 1978
+      },
+      "excluded_noise_rows": 139964,
+      "excluded_noise_pct": 56.47,
+      "unclassified_rows": 23152,
+      "unclassified_pct": 9.34,
+      "top_unclassified": [
+        {
+          "text": "Temporary Certificate of Occup | NA",
+          "n": 290
+        },
+        {
+          "text": "Mechanical | NA | Residential | Install mini split in garage for storage and dehumidification purposes only / LO",
+          "n": 25
+        },
+        {
+          "text": "Mechanical | NA | Residential | NCRQD: Install mini split in garage for storage and dehumidification purposes on",
+          "n": 24
+        },
+        {
+          "text": "Mechanical | NA | Commercial | This is a Mechanical Equipment change out: Size for size, same location, same el",
+          "n": 15
+        },
+        {
+          "text": "Commercial | NA | Commercial | Addition/Alteration | Repair balcony, cracked joists need to be repaired by adding 2x10 to each side o",
+          "n": 15
+        },
+        {
+          "text": "Temporary Certificate of Occup | NA | Sewer not connected to community.  There are temporary restrooms located on site",
+          "n": 13
+        },
+        {
+          "text": "Residential | NA | Residential | Single Family | NCRQD: **PP/PR FLORIDA SPECIALIZED INSPECTIONS** *SPEC HOME* SINGLE FAMILY HOME",
+          "n": 10
+        },
+        {
+          "text": "Commercial | NA | Commercial | Addition/Alteration | NCRQD: **PP/PR ECS FLORIDA** **THRESHOLD** Renovation of the existing Tuscany La",
+          "n": 10
+        },
+        {
+          "text": "Residential | NA | Residential | Single Family | NCRQD: **PP/PR AQUILA INSPECTION SERVICES LLC** *SPEC HOME* FIRETHORN / NAT GAS",
+          "n": 9
+        },
+        {
+          "text": "Commercial | NA | Commercial | Addition/Alteration | NCRQD: **PP/PR PRIVATE PROVIDER OF SOUTHWEST** REPLACE STEEL STRUCTURAL COLUMNS",
+          "n": 8
+        },
+        {
+          "text": "ACCO Commercial Express | NA | Commercial | Mechanical Changeout",
+          "n": 8
+        },
+        {
+          "text": "Mechanical | NA | Residential | Install mini split in garage for dehumidification and storage purposes only / LO",
+          "n": 7
+        },
+        {
+          "text": "Commercial | NA | Commercial | Addition/Alteration | NCRQD:Remove and replace damaged concrete, fascia, support posts, and framing as",
+          "n": 6
+        },
+        {
+          "text": "Mechanical | NA | Residential | NCRQD: Install mini split in garage for dehumidification and storage purposes on",
+          "n": 6
+        },
+        {
+          "text": "Residential | NA | Residential | Single Family | NCRQD: **PP/PR FLORIDA SPECIALIZED** *SPEC HOME* PALMS COASTERRA / NAT GAS / LOT",
+          "n": 5
+        },
+        {
+          "text": "Mechanical | NA | Commercial | Equal change out Goodman 2 ton condenser with 5kW heater / 30 WEST APARTMENTS",
+          "n": 5
+        },
+        {
+          "text": "Commercial | NA | Commercial | Addition/Alteration | NCRQD: Replace steel structural columns with new CMU continuous columns. Replace",
+          "n": 5
+        },
+        {
+          "text": "Residential | NA | Residential | Townhouse | NCRQD: **PP/PR SPECIALTY INSPECTORS, LLC**New Residential TH UnitParrish Lakes I",
+          "n": 5
+        },
+        {
+          "text": "Residential | NA | Residential | Single Family | NCRQD: **PP WEINTRAUB INSPECTIONS & FORENSIC, INC**  CONSTRUCTION OF A SINGLE FA",
+          "n": 5
+        },
+        {
+          "text": "Mechanical | NA | Commercial | NCRQD: This is a Mechanical Equipment changeout: Size for size, same location, s",
+          "n": 4
+        },
+        {
+          "text": "Concrete | NA | Commercial | NCRQD: Removal of any existing wheel stops and installation of parking bollards",
+          "n": 4
+        },
+        {
+          "text": "Residential | NA | Residential | Single Family | NCRQD: ** PP ALLISON ** Construct a Single Family Residence / GAS / FLGB / LOT 2",
+          "n": 4
+        },
+        {
+          "text": "Residential | NA | Residential | Single Family | NCRQD: ** PP UNIVERSAL ** Construct a Single Family Residence / GAS / FLGB / LOT",
+          "n": 4
+        },
+        {
+          "text": "Residential | NA | Residential | Single Family | NCRQD: **PP/PR FLORIDA SPECIALIZED INSPECTIONS** *SPEC HOME* PALMS COASTERRA / N",
+          "n": 4
+        },
+        {
+          "text": "Mechanical | NA | Commercial | C/O of a 2 ton carrier/RPL/old hurricane pad with a new one&tie downs/SM ELEV/SM",
+          "n": 4
+        }
+      ]
+    }
+  ]
+}
