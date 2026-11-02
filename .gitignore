@@ -29,3 +29,4 @@ dashboard/node_modules/
 dashboard/.next/
 dashboard/out/
 *.log
+.vercel/
