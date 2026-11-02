@@ -24,7 +24,8 @@ Copy `.env.example` → `.env.local` (and Vercel project env) and set:
 - `CARTO_CONNECTION_NAME` — optional, default `carto_dw`
 
 County choropleth uses CARTO dark basemap tiles + local FL GeoJSON + demand metrics.  
-Status endpoint: `GET /api/carto/status` (never returns the token).
+With a live token, the map also overlays Florida places from CARTO SQL (`populated_places`).  
+Status: `GET /api/carto/status` · places: `GET /api/carto/florida-places` (never return the token).
 
 ## Deploy
 

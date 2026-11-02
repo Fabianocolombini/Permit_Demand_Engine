@@ -1,0 +1,9 @@
+permits.duckdb
+permits.duckdb.wal
+/data/
+/logs/
+/.venv/
+__pycache__/
+dashboard/node_modules/
+dashboard/.next/
+node_modules/
