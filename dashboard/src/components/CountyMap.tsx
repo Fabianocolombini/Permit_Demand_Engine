@@ -6,6 +6,7 @@ import { usd, num } from "@/lib/format";
 import {
   CARTO_API_BASE_DEFAULT,
   CARTO_BASEMAP,
+  type CartoFloridaPlace,
   type CartoStatus,
 } from "@/lib/carto";
 
@@ -17,7 +18,6 @@ type Props = {
 };
 
 function colorScale(t: number): string {
-  // gulf deep → sun
   const clamps = Math.max(0, Math.min(1, t));
   const r = Math.round(6 + clamps * (226 - 6));
   const g = Math.round(84 + clamps * (177 - 84));
@@ -29,6 +29,7 @@ export default function CountyMap({ counties, selected, onSelect, mode }: Props)
   const mapRef = useRef<HTMLDivElement>(null);
   const mapObj = useRef<import("leaflet").Map | null>(null);
   const [carto, setCarto] = useState<CartoStatus | null>(null);
+  const [places, setPlaces] = useState<CartoFloridaPlace[]>([]);
 
   const byFips = useMemo(() => {
     const m = new Map<string, (typeof counties)[0]>();
@@ -51,6 +52,19 @@ export default function CountyMap({ counties, selected, onSelect, mode }: Props)
         if (!res.ok || cancelled) return;
         const body = (await res.json()) as CartoStatus;
         if (!cancelled) setCarto(body);
+        if (body.auth === "ok") {
+          const placesRes = await fetch("/api/carto/florida-places", {
+            cache: "no-store",
+          });
+          if (!placesRes.ok || cancelled) return;
+          const placesBody = (await placesRes.json()) as {
+            ok?: boolean;
+            places?: CartoFloridaPlace[];
+          };
+          if (!cancelled && placesBody.ok && placesBody.places) {
+            setPlaces(placesBody.places);
+          }
+        }
       } catch {
         if (!cancelled) {
           setCarto({
@@ -137,6 +151,24 @@ export default function CountyMap({ counties, selected, onSelect, mode }: Props)
         },
       }).addTo(map);
 
+      if (places.length) {
+        const maxPop = Math.max(...places.map((p) => p.pop_max), 1);
+        for (const p of places) {
+          const r = 4 + 10 * Math.sqrt(p.pop_max / maxPop);
+          const marker = L.circleMarker([p.lat, p.lng], {
+            radius: r,
+            color: "#e8dcc8",
+            weight: 1,
+            fillColor: "#e2b14a",
+            fillOpacity: 0.85,
+          }).addTo(map);
+          marker.bindTooltip(
+            `<strong>${p.name}</strong><br/>pop ${num(p.pop_max)} · CARTO`,
+            { direction: "top" }
+          );
+        }
+      }
+
       if (selected === "Miami-Dade") {
         map.setView([25.6, -80.4], 8);
       }
@@ -148,11 +180,14 @@ export default function CountyMap({ counties, selected, onSelect, mode }: Props)
         mapObj.current = null;
       }
     };
-  }, [byFips, maxVal, mode, onSelect, selected]);
+  }, [byFips, maxVal, mode, onSelect, places, selected]);
 
   const badge = (() => {
     if (!carto) return "CARTO · connecting…";
-    if (carto.auth === "ok") return `CARTO · ${carto.regionLabel} · live`;
+    if (carto.auth === "ok") {
+      const n = places.length ? ` · ${places.length} places` : "";
+      return `CARTO · ${carto.regionLabel} · live${n}`;
+    }
     if (carto.auth === "missing_token")
       return `CARTO · ${carto.regionLabel} · basemap`;
     if (carto.auth === "unauthorized")
