@@ -1,4 +1,4 @@
-import Dashboard from "@/components/Dashboard";
+import LandingDashboard from "@/components/LandingDashboard";
 import type { Metrics } from "@/lib/types";
 import { readFile } from "fs/promises";
 import path from "path";
@@ -11,5 +11,5 @@ async function loadMetrics(): Promise<Metrics> {
 
 export default async function Home() {
   const data = await loadMetrics();
-  return <Dashboard data={data} />;
+  return <LandingDashboard data={data} />;
 }
