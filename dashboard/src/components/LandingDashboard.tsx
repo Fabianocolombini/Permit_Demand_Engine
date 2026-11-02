@@ -77,7 +77,7 @@ export default function LandingDashboard({ data }: { data: Metrics }) {
   const [mode, setMode] = useState<MetricMode>("valuation");
   const [grain, setGrain] = useState<"month" | "quarter">("month");
   const [sharePct, setSharePct] = useState<0.025 | 0.05>(0.05);
-  const [pipelineScope, setPipelineScope] = useState<"ytd" | 30 | 60>(60);
+  const [pipelineScope, setPipelineScope] = useState<"ytd" | 30 | 60>("ytd");
   const [selectedCounty, setSelectedCounty] = useState<string | null>("Miami-Dade");
   const [selectedMeso, setSelectedMeso] = useState<string | null>(null);
 
@@ -231,31 +231,99 @@ export default function LandingDashboard({ data }: { data: Metrics }) {
         ? data.pipeline.d30
         : data.pipeline.d60;
 
+  /** Near-term materials @ selected share (pipe stores @ 5%). */
+  const pipeMaterialsAtShare = pipe.som_material_usd * (sharePct / 0.05);
+  const shareScale = sharePct / 0.05;
+
+  /** Map + county panel share the same near-term county slice as the KPI. */
+  const pipelineCounties = useMemo(() => {
+    const byName = new Map(pipe.by_county.map((c) => [c.county, c]));
+    return data.regions.counties.map((c) => {
+      const hit = byName.get(c.county);
+      if (!hit) {
+        return {
+          ...c,
+          sam_count: 0,
+          sam_valuation: 0,
+          som_usd: 0,
+          material_usd: 0,
+          som_material_usd: 0,
+        };
+      }
+      return {
+        ...c,
+        sam_count: hit.sam_count,
+        sam_valuation: hit.sam_valuation,
+        som_usd: hit.som_usd,
+        material_usd: hit.material_usd,
+        som_material_usd: hit.som_material_usd,
+      };
+    });
+  }, [data.regions.counties, pipe.by_county]);
+
+  const selectedCountyRow = pipelineCounties.find(
+    (c) => c.county === selectedCounty
+  );
+
   const regionCountyCats = useMemo(() => {
-    const rows = data.regions.county_by_category ?? [];
+    const rows = pipe.by_county_category ?? [];
     if (!selectedCounty) return [];
     return rows
       .filter((r) => r.county === selectedCounty)
       .sort((a, b) => b.som_material_usd - a.som_material_usd);
-  }, [data.regions.county_by_category, selectedCounty]);
+  }, [pipe.by_county_category, selectedCounty]);
 
-  const selectedCountyRow = data.regions.counties.find(
-    (c) => c.county === selectedCounty
+  /** Scale all-time Miami meso mix into the selected near-term Miami-Dade pot. */
+  const scaledMesoregions = useMemo(() => {
+    const mdPipe = pipe.by_county.find((c) => c.county === "Miami-Dade");
+    const mdAll = data.regions.counties.find((c) => c.county === "Miami-Dade");
+    const base = mdAll?.som_material_usd || 0;
+    const target = mdPipe?.som_material_usd || 0;
+    const factor = base > 0 ? target / base : 0;
+    const valFactor =
+      (mdAll?.sam_valuation || 0) > 0
+        ? (mdPipe?.sam_valuation || 0) / (mdAll?.sam_valuation || 1)
+        : 0;
+    const countFactor =
+      (mdAll?.sam_count || 0) > 0
+        ? (mdPipe?.sam_count || 0) / (mdAll?.sam_count || 1)
+        : 0;
+    return data.regions.miami_dade.mesoregions.map((m) => ({
+      ...m,
+      sam_count: Math.round((m.sam_count || 0) * countFactor),
+      sam_valuation: (m.sam_valuation || 0) * valFactor,
+      som_usd: (m.som_usd || 0) * valFactor,
+      material_usd: (m.material_usd || 0) * factor,
+      som_material_usd: (m.som_material_usd || 0) * factor,
+      note: `${m.note ?? ""} Scaled to near-term window ${pipe.label ?? ""}.`.trim(),
+    }));
+  }, [
+    data.regions.counties,
+    data.regions.miami_dade.mesoregions,
+    pipe.by_county,
+    pipe.label,
+  ]);
+
+  const contractors = useMemo(() => {
+    const rows = pipe.by_contractor ?? [];
+    if (!selectedCounty) return rows;
+    return rows.filter((c) =>
+      (c.counties || "")
+        .split(",")
+        .map((s) => s.trim())
+        .includes(selectedCounty)
+    );
+  }, [pipe.by_contractor, selectedCounty]);
+
+  const contractorsMaterialsSum = useMemo(
+    () => contractors.reduce((s, c) => s + (c.som_material_usd || 0), 0),
+    [contractors]
   );
 
-  const contractors =
-    pipelineScope === "ytd"
-      ? data.contractors.ytd_by_valuation
-      : data.pipeline[pipelineScope === 30 ? "d30" : "d60"].by_contractor.map(
-          (c) => ({
-            contractor_name: c.contractor_name,
-            permits: c.permits,
-            valuation: c.valuation,
-            counties: c.counties,
-            categories: c.categories,
-            som_material_usd: c.som_material_usd,
-          })
-        );
+  const countiesMaterialsSum = useMemo(
+    () => pipe.by_county.reduce((s, c) => s + (c.som_material_usd || 0), 0),
+    [pipe.by_county]
+  );
 
   const yearBars = data.sam_som.ytd_comparison.filter((r) => r.year >= 2023);
 
@@ -739,10 +807,11 @@ export default function LandingDashboard({ data }: { data: Metrics }) {
               {L.tigreDura} · materials
             </p>
             <p className="stat-value mt-2 text-4xl text-[var(--sun)]">
-              {usd(tigrePotential)}
+              {usd(pipeMaterialsAtShare)}
             </p>
             <p className="mt-2 text-sm text-[var(--muted)]">
-              {pctPlain(sharePct * 100)} of estimated materials · commercial number
+              {pctPlain(sharePct * 100)} of estimated materials · same window as
+              county map ({pipe.label ?? "near-term"})
             </p>
           </div>
           <div className="chart-panel p-6">
@@ -750,12 +819,12 @@ export default function LandingDashboard({ data }: { data: Metrics }) {
               Near-term materials · {pipe.label ?? `last ${pipelineScope}d`}
             </p>
             <p className="stat-value mt-2 text-4xl text-[var(--foam)]">
-              {usd(pipe.som_material_usd * (sharePct / 0.05))}
+              {usd(pipeMaterialsAtShare)}
             </p>
             <p className="mt-2 text-sm text-[var(--muted)]">
               Growth vs prior window{" "}
-              {pct(pipe.growth?.som_material_pct)} · base @5% was{" "}
-              {usd(pipe.som_material_usd)}
+              {pct(pipe.growth?.som_material_pct)} · Σ counties{" "}
+              {usd(countiesMaterialsSum * shareScale)}
             </p>
           </div>
         </div>
@@ -796,28 +865,32 @@ export default function LandingDashboard({ data }: { data: Metrics }) {
           County analysis
         </h2>
         <p className="mt-3 max-w-2xl text-sm text-[var(--muted)]">
-          Map colored by {L.tigreDura}. Click a county to zoom in — Miami-Dade opens
-          mesoregion bubbles and the side list.
+          Same near-term window as above ({pipe.label ?? "pipeline"}) — county{" "}
+          {L.tigreDura} sums to {usd(pipeMaterialsAtShare)}. Click any county to
+          zoom; Miami-Dade opens mesoregions.
         </p>
 
         <div className="mt-10 grid gap-6 lg:grid-cols-5">
           <div className="chart-panel p-4 lg:col-span-3">
             <CountyMap
-              counties={data.regions.counties}
+              counties={pipelineCounties}
               selected={selectedCounty}
               onSelect={(c) => {
                 setSelectedCounty(c);
                 setSelectedMeso(null);
               }}
               mode="som_material_usd"
-              mesoregions={data.regions.miami_dade.mesoregions}
+              mesoregions={scaledMesoregions}
               selectedMeso={selectedMeso}
               onSelectMeso={setSelectedMeso}
             />
           </div>
           <div className="space-y-4 lg:col-span-2">
             <div className="chart-panel p-5">
-              <p className="text-sm text-[var(--sand)]">
+              <p className="text-[10px] uppercase tracking-[0.14em] text-[var(--muted)]">
+                {pipe.label ?? "Near-term"} · {pctPlain(sharePct * 100)} materials
+              </p>
+              <p className="mt-1 text-sm text-[var(--sand)]">
                 {selectedMeso
                   ? `Miami-Dade · ${selectedMeso}`
                   : selectedCounty ?? "Select a county"}
@@ -833,14 +906,14 @@ export default function LandingDashboard({ data }: { data: Metrics }) {
                   <div>
                     <p className="text-[var(--muted)]">{L.tigreDura}</p>
                     <p className="stat-value text-xl text-[var(--sun)]">
-                      {usd((selectedCountyRow.som_material_usd || 0) * (sharePct / 0.05))}
+                      {usd((selectedCountyRow.som_material_usd || 0) * shareScale)}
                     </p>
                   </div>
                 </div>
               ) : null}
               {selectedMeso
                 ? (() => {
-                    const meso = data.regions.miami_dade.mesoregions.find(
+                    const meso = scaledMesoregions.find(
                       (a) => a.area === selectedMeso
                     );
                     if (!meso) return null;
@@ -855,7 +928,7 @@ export default function LandingDashboard({ data }: { data: Metrics }) {
                         <div>
                           <p className="text-[var(--muted)]">{L.tigreDura}</p>
                           <p className="stat-value text-xl text-[var(--sun)]">
-                            {usd((meso.som_material_usd || 0) * (sharePct / 0.05))}
+                            {usd((meso.som_material_usd || 0) * shareScale)}
                           </p>
                         </div>
                         <div className="col-span-2">
@@ -883,23 +956,28 @@ export default function LandingDashboard({ data }: { data: Metrics }) {
                         </td>
                         <td>{num(r.sam_count)}</td>
                         <td className="text-[var(--sun)]">
-                          {usd(r.som_material_usd * (sharePct / 0.05))}
+                          {usd(r.som_material_usd * shareScale)}
                         </td>
                       </tr>
                     ))}
                   </tbody>
                 </table>
               )}
+              {!selectedCountyRow && selectedCounty ? (
+                <p className="mt-3 text-sm text-[var(--muted)]">
+                  No SAM activity for {selectedCounty} in this near-term window.
+                </p>
+              ) : null}
             </div>
             {selectedCounty === "Miami-Dade" ? (
               <div className="chart-panel max-h-72 overflow-y-auto p-4">
                 <p className="mb-2 text-[10px] uppercase tracking-[0.14em] text-[var(--muted)]">
-                  Mesoregions
+                  Mesoregions · {pipe.label}
                 </p>
                 <p className="mb-3 text-[11px] text-[var(--muted)]">
                   {data.regions.miami_dade.coverage_note}
                 </p>
-                {[...data.regions.miami_dade.mesoregions]
+                {[...scaledMesoregions]
                   .sort(
                     (a, b) => (b.som_material_usd || 0) - (a.som_material_usd || 0)
                   )
@@ -914,18 +992,21 @@ export default function LandingDashboard({ data }: { data: Metrics }) {
                     >
                       <span className="text-[var(--sand)]">{a.area}</span>
                       <span className="text-[var(--muted)]">
-                        {usd((a.som_material_usd || 0) * (sharePct / 0.05))}
+                        {usd((a.som_material_usd || 0) * shareScale)}
                       </span>
                     </button>
                   ))}
               </div>
             ) : (
               <div className="chart-panel max-h-64 overflow-y-auto p-4">
-                {[...data.regions.counties]
+                <p className="mb-2 text-[10px] uppercase tracking-[0.14em] text-[var(--muted)]">
+                  All counties · {pipe.label}
+                </p>
+                {[...pipelineCounties]
+                  .filter((c) => (c.som_material_usd || 0) > 0)
                   .sort(
                     (a, b) => (b.som_material_usd || 0) - (a.som_material_usd || 0)
                   )
-                  .slice(0, 10)
                   .map((c) => (
                     <button
                       key={c.county}
@@ -940,10 +1021,14 @@ export default function LandingDashboard({ data }: { data: Metrics }) {
                     >
                       <span className="text-[var(--sand)]">{c.county}</span>
                       <span className="text-[var(--muted)]">
-                        {usd((c.som_material_usd || 0) * (sharePct / 0.05))}
+                        {usd((c.som_material_usd || 0) * shareScale)}
                       </span>
                     </button>
                   ))}
+                <p className="mt-3 border-t border-[var(--line)] pt-2 text-[11px] text-[var(--muted)]">
+                  Σ counties {usd(countiesMaterialsSum * shareScale)} = near-term{" "}
+                  {usd(pipeMaterialsAtShare)}
+                </p>
               </div>
             )}
           </div>
@@ -959,29 +1044,36 @@ export default function LandingDashboard({ data }: { data: Metrics }) {
           Contractor analysis
         </h2>
         <p className="mt-3 max-w-2xl text-sm text-[var(--muted)]">
-          Follows the near-term window above (YTD / 30d / 60d). Owner-builder / blank
-          names excluded.
+          Same window · {pipe.label}
+          {selectedCounty ? ` · filtered to ${selectedCounty}` : ""}. Top named
+          contractors by materials potential (owner-builder / blank excluded). Listed
+          sum {usd(contractorsMaterialsSum * shareScale)} of near-term{" "}
+          {usd(pipeMaterialsAtShare)}.
         </p>
 
         <div className="mt-8 overflow-x-auto chart-panel p-5">
-          <table className="w-full min-w-[760px] text-left text-sm">
+          <table className="w-full min-w-[860px] text-left text-sm">
             <thead>
               <tr className="text-[10px] uppercase tracking-[0.12em] text-[var(--muted)]">
                 <th className="pb-2">#</th>
                 <th className="pb-2">Contractor</th>
                 <th className="pb-2">Permits</th>
                 <th className="pb-2">Value $</th>
+                <th className="pb-2">{L.tigreDura}</th>
                 <th className="pb-2">Counties</th>
                 <th className="pb-2">Categories</th>
               </tr>
             </thead>
             <tbody>
-              {contractors.slice(0, 25).map((c, i) => (
+              {contractors.slice(0, 40).map((c, i) => (
                 <tr key={c.contractor_name} className="table-row">
                   <td className="py-2 text-[var(--muted)]">{i + 1}</td>
                   <td className="py-2 text-[var(--sand)]">{c.contractor_name}</td>
                   <td className="py-2">{num(c.permits)}</td>
                   <td className="py-2">{usd(c.valuation)}</td>
+                  <td className="py-2 text-[var(--sun)]">
+                    {usd((c.som_material_usd || 0) * shareScale)}
+                  </td>
                   <td className="max-w-[160px] truncate py-2 text-[var(--muted)]">
                     {c.counties}
                   </td>
