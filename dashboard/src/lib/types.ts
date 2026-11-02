@@ -8,7 +8,8 @@ export type MonthlyPoint = {
 };
 
 export type PipelineWindow = {
-  days: number;
+  label?: string;
+  days: number | null;
   start: string;
   end: string;
   sam_count: number;
@@ -16,6 +17,30 @@ export type PipelineWindow = {
   material_usd: number;
   som_usd: number;
   som_material_usd: number;
+  prior?: {
+    start: string;
+    end: string;
+    sam_count: number;
+    sam_valuation: number;
+    material_usd: number;
+    som_usd: number;
+    som_material_usd: number;
+  };
+  growth?: {
+    sam_count_pct: number | null;
+    sam_valuation_pct: number | null;
+    som_material_pct: number | null;
+    material_usd_pct: number | null;
+    compare_note: string;
+  };
+  reconciliation?: {
+    tigre_dura_potential: number;
+    sum_by_category: number;
+    sum_by_county: number;
+    delta_category: number;
+    delta_county: number;
+    ok: boolean;
+  };
   by_county: Array<{
     county: string;
     fips: string | null;
@@ -27,6 +52,16 @@ export type PipelineWindow = {
     som_material_usd: number;
   }>;
   by_category: Array<{
+    category: string;
+    sam_count: number;
+    sam_valuation: number;
+    material_usd: number;
+    labor_usd: number;
+    som_usd: number;
+    som_material_usd: number;
+  }>;
+  by_county_category?: Array<{
+    county: string;
     category: string;
     sam_count: number;
     sam_valuation: number;
@@ -165,6 +200,7 @@ export type Metrics = {
     }>;
   };
   pipeline: {
+    ytd?: PipelineWindow;
     d30: PipelineWindow;
     d60: PipelineWindow;
     note: string;
@@ -180,6 +216,16 @@ export type Metrics = {
       som_usd: number;
       material_usd?: number;
       som_material_usd?: number;
+    }>;
+    county_by_category?: Array<{
+      county: string;
+      category: string;
+      sam_count: number;
+      sam_valuation: number;
+      material_usd: number;
+      labor_usd: number;
+      som_usd: number;
+      som_material_usd: number;
     }>;
     county_monthly_sam: Array<{
       county: string;

@@ -17,7 +17,7 @@ const outfit = Outfit({
 export const metadata: Metadata = {
   title: "Tigre × Dura · Florida Permit Demand Engine",
   description:
-    "Executive TOM / SAM / SOM analytics for Florida building permits — fittings demand for Tigre USA and Dura.",
+    "Florida Total Construction Market and Plumbing · Irrigation · Pool demand — Tigre materials potential.",
 };
 
 export default function RootLayout({
