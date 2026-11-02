@@ -23,9 +23,10 @@ Copy `.env.example` → `.env.local` (and Vercel project env) and set:
 - `CARTO_ACCESS_TOKEN` — API Access Token (Maps + SQL)
 - `CARTO_CONNECTION_NAME` — optional, default `carto_dw`
 
-County choropleth uses CARTO dark basemap tiles + local FL GeoJSON + demand metrics.  
-With a live token, the map also overlays Florida places from CARTO SQL (`populated_places`).  
-Status: `GET /api/carto/status` · places: `GET /api/carto/florida-places` (never return the token).
+Basemap defaults to Esri dark canvas (no watermark). Optional free CARTO Basemaps key
+(`NEXT_PUBLIC_CARTO_BASEMAP_KEY` from carto.com/basemaps/apikey) restores CARTO dark_all tiles.
+County click zooms in; Miami-Dade opens mesoregion markers + side list.
+With a live Maps/SQL token: `GET /api/carto/status` · `GET /api/carto/florida-places`.
 
 ## Deploy
 

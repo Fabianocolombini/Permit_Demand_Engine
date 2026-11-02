@@ -4,9 +4,6 @@
  */
 export const CARTO_API_BASE_DEFAULT = "https://gcp-us-east1.api.carto.com";
 
-export const CARTO_BASEMAP =
-  "https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png";
-
 /** Demo table granted on the Maps/SQL token — used for live overlay. */
 export const CARTO_FL_PLACES_SOURCE =
   "`carto-demo-data.demo_tables.populated_places`";

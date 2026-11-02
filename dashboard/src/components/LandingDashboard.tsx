@@ -79,6 +79,7 @@ export default function LandingDashboard({ data }: { data: Metrics }) {
   const [sharePct, setSharePct] = useState<0.025 | 0.05>(0.05);
   const [pipelineScope, setPipelineScope] = useState<"ytd" | 30 | 60>(60);
   const [selectedCounty, setSelectedCounty] = useState<string | null>("Miami-Dade");
+  const [selectedMeso, setSelectedMeso] = useState<string | null>(null);
 
   const ytdM = data.ytd_through_month;
   const onlyYear = (y: number) => setSelectedYears([y]);
@@ -795,8 +796,8 @@ export default function LandingDashboard({ data }: { data: Metrics }) {
           County analysis
         </h2>
         <p className="mt-3 max-w-2xl text-sm text-[var(--muted)]">
-          Map colored by {L.tigreDura} (materials @ 5% in historical coverage). Click a
-          county for category split.
+          Map colored by {L.tigreDura}. Click a county to zoom in — Miami-Dade opens
+          mesoregion bubbles and the side list.
         </p>
 
         <div className="mt-10 grid gap-6 lg:grid-cols-5">
@@ -804,16 +805,24 @@ export default function LandingDashboard({ data }: { data: Metrics }) {
             <CountyMap
               counties={data.regions.counties}
               selected={selectedCounty}
-              onSelect={setSelectedCounty}
+              onSelect={(c) => {
+                setSelectedCounty(c);
+                setSelectedMeso(null);
+              }}
               mode="som_material_usd"
+              mesoregions={data.regions.miami_dade.mesoregions}
+              selectedMeso={selectedMeso}
+              onSelectMeso={setSelectedMeso}
             />
           </div>
           <div className="space-y-4 lg:col-span-2">
             <div className="chart-panel p-5">
               <p className="text-sm text-[var(--sand)]">
-                {selectedCounty ?? "Select a county"}
+                {selectedMeso
+                  ? `Miami-Dade · ${selectedMeso}`
+                  : selectedCounty ?? "Select a county"}
               </p>
-              {selectedCountyRow ? (
+              {selectedCountyRow && !selectedMeso ? (
                 <div className="mt-4 grid grid-cols-2 gap-3 text-sm">
                   <div>
                     <p className="text-[var(--muted)]">{L.marketShort} $</p>
@@ -829,7 +838,35 @@ export default function LandingDashboard({ data }: { data: Metrics }) {
                   </div>
                 </div>
               ) : null}
-              {regionCountyCats.length > 0 && (
+              {selectedMeso
+                ? (() => {
+                    const meso = data.regions.miami_dade.mesoregions.find(
+                      (a) => a.area === selectedMeso
+                    );
+                    if (!meso) return null;
+                    return (
+                      <div className="mt-4 grid grid-cols-2 gap-3 text-sm">
+                        <div>
+                          <p className="text-[var(--muted)]">{L.marketShort} $</p>
+                          <p className="stat-value text-xl">
+                            {usd(meso.sam_valuation)}
+                          </p>
+                        </div>
+                        <div>
+                          <p className="text-[var(--muted)]">{L.tigreDura}</p>
+                          <p className="stat-value text-xl text-[var(--sun)]">
+                            {usd((meso.som_material_usd || 0) * (sharePct / 0.05))}
+                          </p>
+                        </div>
+                        <div className="col-span-2">
+                          <p className="text-[var(--muted)]">Permits</p>
+                          <p className="stat-value text-lg">{num(meso.sam_count)}</p>
+                        </div>
+                      </div>
+                    );
+                  })()
+                : null}
+              {regionCountyCats.length > 0 && !selectedMeso && (
                 <table className="mt-4 w-full text-left text-sm">
                   <thead>
                     <tr className="text-[10px] uppercase text-[var(--muted)]">
@@ -854,28 +891,61 @@ export default function LandingDashboard({ data }: { data: Metrics }) {
                 </table>
               )}
             </div>
-            <div className="chart-panel max-h-64 overflow-y-auto p-4">
-              {[...data.regions.counties]
-                .sort(
-                  (a, b) => (b.som_material_usd || 0) - (a.som_material_usd || 0)
-                )
-                .slice(0, 10)
-                .map((c) => (
-                  <button
-                    key={c.county}
-                    type="button"
-                    onClick={() => setSelectedCounty(c.county)}
-                    className={`flex w-full items-center justify-between rounded px-2 py-1.5 text-left text-sm hover:bg-white/5 ${
-                      selectedCounty === c.county ? "bg-white/10" : ""
-                    }`}
-                  >
-                    <span className="text-[var(--sand)]">{c.county}</span>
-                    <span className="text-[var(--muted)]">
-                      {usd((c.som_material_usd || 0) * (sharePct / 0.05))}
-                    </span>
-                  </button>
-                ))}
-            </div>
+            {selectedCounty === "Miami-Dade" ? (
+              <div className="chart-panel max-h-72 overflow-y-auto p-4">
+                <p className="mb-2 text-[10px] uppercase tracking-[0.14em] text-[var(--muted)]">
+                  Mesoregions
+                </p>
+                <p className="mb-3 text-[11px] text-[var(--muted)]">
+                  {data.regions.miami_dade.coverage_note}
+                </p>
+                {[...data.regions.miami_dade.mesoregions]
+                  .sort(
+                    (a, b) => (b.som_material_usd || 0) - (a.som_material_usd || 0)
+                  )
+                  .map((a) => (
+                    <button
+                      key={a.area}
+                      type="button"
+                      onClick={() => setSelectedMeso(a.area)}
+                      className={`flex w-full items-center justify-between rounded px-2 py-1.5 text-left text-sm hover:bg-white/5 ${
+                        selectedMeso === a.area ? "bg-white/10" : ""
+                      }`}
+                    >
+                      <span className="text-[var(--sand)]">{a.area}</span>
+                      <span className="text-[var(--muted)]">
+                        {usd((a.som_material_usd || 0) * (sharePct / 0.05))}
+                      </span>
+                    </button>
+                  ))}
+              </div>
+            ) : (
+              <div className="chart-panel max-h-64 overflow-y-auto p-4">
+                {[...data.regions.counties]
+                  .sort(
+                    (a, b) => (b.som_material_usd || 0) - (a.som_material_usd || 0)
+                  )
+                  .slice(0, 10)
+                  .map((c) => (
+                    <button
+                      key={c.county}
+                      type="button"
+                      onClick={() => {
+                        setSelectedCounty(c.county);
+                        setSelectedMeso(null);
+                      }}
+                      className={`flex w-full items-center justify-between rounded px-2 py-1.5 text-left text-sm hover:bg-white/5 ${
+                        selectedCounty === c.county ? "bg-white/10" : ""
+                      }`}
+                    >
+                      <span className="text-[var(--sand)]">{c.county}</span>
+                      <span className="text-[var(--muted)]">
+                        {usd((c.som_material_usd || 0) * (sharePct / 0.05))}
+                      </span>
+                    </button>
+                  ))}
+              </div>
+            )}
           </div>
         </div>
       </section>
