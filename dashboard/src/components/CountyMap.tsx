@@ -1,8 +1,13 @@
 "use client";
 
-import { useEffect, useMemo, useRef } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import type { Metrics } from "@/lib/types";
 import { usd, num } from "@/lib/format";
+import {
+  CARTO_API_BASE_DEFAULT,
+  CARTO_BASEMAP,
+  type CartoStatus,
+} from "@/lib/carto";
 
 type Props = {
   counties: Metrics["regions"]["counties"];
@@ -23,6 +28,8 @@ function colorScale(t: number): string {
 export default function CountyMap({ counties, selected, onSelect, mode }: Props) {
   const mapRef = useRef<HTMLDivElement>(null);
   const mapObj = useRef<import("leaflet").Map | null>(null);
+  const [carto, setCarto] = useState<CartoStatus | null>(null);
+
   const byFips = useMemo(() => {
     const m = new Map<string, (typeof counties)[0]>();
     for (const c of counties) {
@@ -39,6 +46,33 @@ export default function CountyMap({ counties, selected, onSelect, mode }: Props)
   useEffect(() => {
     let cancelled = false;
     (async () => {
+      try {
+        const res = await fetch("/api/carto/status", { cache: "no-store" });
+        if (!res.ok || cancelled) return;
+        const body = (await res.json()) as CartoStatus;
+        if (!cancelled) setCarto(body);
+      } catch {
+        if (!cancelled) {
+          setCarto({
+            ok: false,
+            apiBaseUrl: CARTO_API_BASE_DEFAULT,
+            configured: false,
+            connectionName: "carto_dw",
+            regionLabel: "gcp-us-east1",
+            auth: "error",
+            detail: "status unreachable",
+          });
+        }
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
       const L = await import("leaflet");
       if (cancelled || !mapRef.current) return;
       if (mapObj.current) {
@@ -47,13 +81,15 @@ export default function CountyMap({ counties, selected, onSelect, mode }: Props)
       }
       const map = L.map(mapRef.current, {
         zoomControl: true,
-        attributionControl: false,
+        attributionControl: true,
         scrollWheelZoom: false,
       }).setView([27.8, -83.5], 6);
       mapObj.current = map;
 
-      L.tileLayer("https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png", {
+      L.tileLayer(CARTO_BASEMAP, {
         maxZoom: 12,
+        attribution:
+          '&copy; <a href="https://www.openstreetmap.org/copyright">OSM</a> &copy; <a href="https://carto.com/attributions">CARTO</a>',
       }).addTo(map);
 
       const geo = await fetch("/data/fl-counties.geojson").then((r) => r.json());
@@ -114,10 +150,29 @@ export default function CountyMap({ counties, selected, onSelect, mode }: Props)
     };
   }, [byFips, maxVal, mode, onSelect, selected]);
 
+  const badge = (() => {
+    if (!carto) return "CARTO · connecting…";
+    if (carto.auth === "ok") return `CARTO · ${carto.regionLabel} · live`;
+    if (carto.auth === "missing_token")
+      return `CARTO · ${carto.regionLabel} · basemap`;
+    if (carto.auth === "unauthorized")
+      return `CARTO · ${carto.regionLabel} · token rejected`;
+    if (carto.ok) return `CARTO · ${carto.regionLabel}`;
+    return `CARTO · ${carto.regionLabel} · offline`;
+  })();
+
   return (
-    <div
-      ref={mapRef}
-      className="h-[420px] w-full overflow-hidden rounded-sm border border-[var(--line)]"
-    />
+    <div className="relative">
+      <div
+        ref={mapRef}
+        className="h-[420px] w-full overflow-hidden rounded-sm border border-[var(--line)]"
+      />
+      <div
+        className="pointer-events-none absolute bottom-3 left-3 rounded-sm border border-[var(--line)] bg-[rgba(8,18,22,0.88)] px-2.5 py-1 text-[10px] uppercase tracking-[0.14em] text-[var(--sand)]"
+        title={carto?.apiBaseUrl || CARTO_API_BASE_DEFAULT}
+      >
+        {badge}
+      </div>
+    </div>
   );
 }

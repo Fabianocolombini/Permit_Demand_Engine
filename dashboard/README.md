@@ -13,6 +13,19 @@ python3 scripts/build_dashboard_metrics.py
 cd dashboard && npm install && npm run dev
 ```
 
+## CARTO
+
+API base (Workspace → Developers): `https://gcp-us-east1.api.carto.com`
+
+Copy `.env.example` → `.env.local` (and Vercel project env) and set:
+
+- `CARTO_API_BASE` — already defaults to the host above
+- `CARTO_ACCESS_TOKEN` — API Access Token (Maps + SQL)
+- `CARTO_CONNECTION_NAME` — optional, default `carto_dw`
+
+County choropleth uses CARTO dark basemap tiles + local FL GeoJSON + demand metrics.  
+Status endpoint: `GET /api/carto/status` (never returns the token).
+
 ## Deploy
 
 Root of the Vercel project should be `dashboard/`. Static metrics ship in `public/data/metrics.json`.
