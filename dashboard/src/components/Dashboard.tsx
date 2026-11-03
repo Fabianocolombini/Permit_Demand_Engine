@@ -1270,10 +1270,11 @@ export default function Dashboard({ data }: { data: Metrics }) {
                     setMiamiOpen(c === "Miami-Dade");
                   }}
                   mode="som_material_usd"
+                  mesoregions={data.regions.miami_dade.mesoregions}
                 />
                 <p className="mt-2 text-xs text-[var(--muted)]">
-                  Color = Tigre × Dura Potential. Click a county (try Miami-Dade) for category
-                  drill. Coverage: {data.regions.counties.length} counties.
+                  Color = Tigre × Dura Potential. Click a county to zoom; Miami-Dade opens
+                  mesoregion bubbles. Coverage: {data.regions.counties.length} counties.
                 </p>
               </Panel>
             </div>

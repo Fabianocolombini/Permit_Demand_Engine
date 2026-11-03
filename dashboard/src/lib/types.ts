@@ -78,6 +78,9 @@ export type PipelineWindow = {
     som_material_usd: number;
     counties: string;
     categories: string;
+    mesoregions?: string[];
+    license?: string | null;
+    meso_only?: boolean;
   }>;
 };
 
