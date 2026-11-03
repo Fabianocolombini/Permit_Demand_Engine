@@ -1,7 +1,10 @@
 "use client";
 
 import dynamic from "next/dynamic";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
+import ContractorDrawer, {
+  type ContractorDetail,
+} from "./ContractorDrawer";
 import {
   Bar,
   BarChart,
@@ -80,6 +83,16 @@ export default function LandingDashboard({ data }: { data: Metrics }) {
   const [pipelineScope, setPipelineScope] = useState<"ytd" | 30 | 60>("ytd");
   const [selectedCounty, setSelectedCounty] = useState<string | null>("Miami-Dade");
   const [selectedMeso, setSelectedMeso] = useState<string | null>(null);
+  const [contractorDetails, setContractorDetails] = useState<{
+    windows: Record<
+      string,
+      { label?: string; contractors: Record<string, ContractorDetail> }
+    >;
+    note?: string;
+  } | null>(null);
+  const [selectedContractor, setSelectedContractor] = useState<string | null>(
+    null
+  );
 
   const ytdM = data.ytd_through_month;
   const onlyYear = (y: number) => setSelectedYears([y]);
@@ -304,21 +317,77 @@ export default function LandingDashboard({ data }: { data: Metrics }) {
     pipe.label,
   ]);
 
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      try {
+        const res = await fetch("/data/contractor_details.json", {
+          cache: "no-store",
+        });
+        if (!res.ok || cancelled) return;
+        const body = await res.json();
+        if (!cancelled) setContractorDetails(body);
+      } catch {
+        /* optional enrichment file */
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  const pipeWindowKey =
+    pipelineScope === "ytd" ? "ytd" : pipelineScope === 30 ? "d30" : "d60";
+
   const contractors = useMemo(() => {
-    const rows = pipe.by_contractor ?? [];
-    if (!selectedCounty) return rows;
-    return rows.filter((c) =>
-      (c.counties || "")
-        .split(",")
-        .map((s) => s.trim())
-        .includes(selectedCounty)
-    );
-  }, [pipe.by_contractor, selectedCounty]);
+    const rows = (pipe.by_contractor ?? []) as Array<{
+      contractor_name: string;
+      permits: number;
+      valuation: number;
+      material_usd?: number;
+      som_material_usd: number;
+      counties: string;
+      categories: string;
+      mesoregions?: string[];
+      license?: string | null;
+      meso_only?: boolean;
+    }>;
+    return rows.filter((c) => {
+      if (selectedCounty) {
+        const counties = (c.counties || "")
+          .split(",")
+          .map((s) => s.trim())
+          .filter(Boolean);
+        if (!counties.includes(selectedCounty)) return false;
+      }
+      if (selectedMeso) {
+        const mesos = c.mesoregions || [];
+        if (!mesos.includes(selectedMeso)) return false;
+      }
+      // Hide meso-only fillers unless a meso (or Miami-Dade) filter needs them
+      if (c.meso_only && !selectedMeso && selectedCounty !== "Miami-Dade") {
+        return false;
+      }
+      if (c.meso_only && selectedCounty === "Miami-Dade" && !selectedMeso) {
+        return false;
+      }
+      return true;
+    });
+  }, [pipe.by_contractor, selectedCounty, selectedMeso]);
 
   const contractorsMaterialsSum = useMemo(
     () => contractors.reduce((s, c) => s + (c.som_material_usd || 0), 0),
     [contractors]
   );
+
+  const activeContractorDetail = useMemo(() => {
+    if (!selectedContractor || !contractorDetails) return null;
+    return (
+      contractorDetails.windows?.[pipeWindowKey]?.contractors?.[
+        selectedContractor
+      ] || null
+    );
+  }, [contractorDetails, pipeWindowKey, selectedContractor]);
 
   const countiesMaterialsSum = useMemo(
     () => pipe.by_county.reduce((s, c) => s + (c.som_material_usd || 0), 0),
@@ -1045,47 +1114,110 @@ export default function LandingDashboard({ data }: { data: Metrics }) {
         </h2>
         <p className="mt-3 max-w-2xl text-sm text-[var(--muted)]">
           Same window · {pipe.label}
-          {selectedCounty ? ` · filtered to ${selectedCounty}` : ""}. Top named
-          contractors by materials potential (owner-builder / blank excluded). Listed
-          sum {usd(contractorsMaterialsSum * shareScale)} of near-term{" "}
-          {usd(pipeMaterialsAtShare)}.
+          {selectedCounty ? ` · ${selectedCounty}` : ""}
+          {selectedMeso ? ` · ${selectedMeso}` : ""}. Click a row to open the
+          permit card (project $ breakdown). License when present; phone/web are
+          not in open feeds — search links included.
         </p>
 
         <div className="mt-8 overflow-x-auto chart-panel p-5">
-          <table className="w-full min-w-[860px] text-left text-sm">
-            <thead>
-              <tr className="text-[10px] uppercase tracking-[0.12em] text-[var(--muted)]">
-                <th className="pb-2">#</th>
-                <th className="pb-2">Contractor</th>
-                <th className="pb-2">Permits</th>
-                <th className="pb-2">Value $</th>
-                <th className="pb-2">{L.tigreDura}</th>
-                <th className="pb-2">Counties</th>
-                <th className="pb-2">Categories</th>
-              </tr>
-            </thead>
-            <tbody>
-              {contractors.slice(0, 40).map((c, i) => (
-                <tr key={c.contractor_name} className="table-row">
-                  <td className="py-2 text-[var(--muted)]">{i + 1}</td>
-                  <td className="py-2 text-[var(--sand)]">{c.contractor_name}</td>
-                  <td className="py-2">{num(c.permits)}</td>
-                  <td className="py-2">{usd(c.valuation)}</td>
-                  <td className="py-2 text-[var(--sun)]">
-                    {usd((c.som_material_usd || 0) * shareScale)}
-                  </td>
-                  <td className="max-w-[160px] truncate py-2 text-[var(--muted)]">
-                    {c.counties}
-                  </td>
-                  <td className="max-w-[180px] truncate py-2 text-[var(--muted)]">
-                    {c.categories}
-                  </td>
+          {contractors.length === 0 ? (
+            <p className="text-sm text-[var(--muted)]">
+              No named contractors for this filter in {pipe.label}. Try another
+              mesoregion or clear the meso selection.
+            </p>
+          ) : (
+            <table className="w-full min-w-[860px] text-left text-sm">
+              <thead>
+                <tr className="text-[10px] uppercase tracking-[0.12em] text-[var(--muted)]">
+                  <th className="pb-2">#</th>
+                  <th className="pb-2">Contractor</th>
+                  <th className="pb-2">Permits</th>
+                  <th className="pb-2">Value $</th>
+                  <th className="pb-2">{L.tigreDura}</th>
+                  <th className="pb-2">Meso / counties</th>
+                  <th className="pb-2">Categories</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                {contractors.slice(0, 40).map((c, i) => (
+                  <tr
+                    key={c.contractor_name}
+                    className="table-row cursor-pointer hover:bg-white/5"
+                    onClick={() => setSelectedContractor(c.contractor_name)}
+                  >
+                    <td className="py-2 text-[var(--muted)]">{i + 1}</td>
+                    <td className="py-2 text-[var(--sand)]">
+                      <span className="underline-offset-2 hover:underline">
+                        {c.contractor_name}
+                      </span>
+                      {c.license ? (
+                        <span className="mt-0.5 block text-[11px] text-[var(--muted)]">
+                          {c.license}
+                        </span>
+                      ) : null}
+                    </td>
+                    <td className="py-2">{num(c.permits)}</td>
+                    <td className="py-2">{usd(c.valuation)}</td>
+                    <td className="py-2 text-[var(--sun)]">
+                      {usd((c.som_material_usd || 0) * shareScale)}
+                    </td>
+                    <td className="max-w-[180px] truncate py-2 text-[var(--muted)]">
+                      {(c.mesoregions && c.mesoregions.length
+                        ? c.mesoregions.join(", ")
+                        : c.counties) || "—"}
+                    </td>
+                    <td className="max-w-[180px] truncate py-2 text-[var(--muted)]">
+                      {c.categories}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          )}
+          <p className="mt-3 text-[11px] text-[var(--muted)]">
+            Listed materials {usd(contractorsMaterialsSum * shareScale)}
+            {selectedMeso
+              ? ` in ${selectedMeso}`
+              : ` · near-term total ${usd(pipeMaterialsAtShare)}`}
+            . Owner-builder / blank names excluded.
+          </p>
         </div>
       </section>
+
+      <ContractorDrawer
+        open={Boolean(selectedContractor)}
+        detail={
+          activeContractorDetail ||
+          (selectedContractor
+            ? {
+                contractor_name: selectedContractor,
+                permits:
+                  contractors.find((c) => c.contractor_name === selectedContractor)
+                    ?.permits || 0,
+                valuation:
+                  contractors.find((c) => c.contractor_name === selectedContractor)
+                    ?.valuation || 0,
+                material_usd:
+                  contractors.find((c) => c.contractor_name === selectedContractor)
+                    ?.material_usd || 0,
+                som_material_usd:
+                  contractors.find((c) => c.contractor_name === selectedContractor)
+                    ?.som_material_usd || 0,
+                license:
+                  contractors.find((c) => c.contractor_name === selectedContractor)
+                    ?.license || null,
+                mesoregions:
+                  contractors.find((c) => c.contractor_name === selectedContractor)
+                    ?.mesoregions || [],
+                projects: [],
+              }
+            : null)
+        }
+        windowLabel={pipe.label ?? String(pipelineScope)}
+        shareScale={shareScale}
+        onClose={() => setSelectedContractor(null)}
+      />
 
       <footer className="border-t border-[var(--line)] px-5 py-8 text-xs text-[var(--muted)] md:px-10">
         Tigre × Dura · {L.tcm} → {L.marketShort} ({L.market}) → {L.addressable} →{" "}
