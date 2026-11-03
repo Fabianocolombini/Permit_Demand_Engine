@@ -1,0 +1,41 @@
+{
+  "note": "Curated official websites (not in open permit feeds). Matched by normalized contractor name.",
+  "by_name": {
+    "AURORA PLUMBING CORPORATION": {
+      "website": "https://www.auroraplumbingcorps.com/",
+      "phone": "(305) 489-1367"
+    },
+    "COASTAL CONSTRUCTION OF MIAMI DADE COU": {
+      "website": "https://coastalconstruction.com/",
+      "phone": "(305) 559-4900"
+    },
+    "COASTAL CONSTRUCTION OF MIAMI DADE INC DBA COASTAL CONDOMINIUMS II": {
+      "website": "https://coastalconstruction.com/",
+      "phone": "(305) 559-4900"
+    },
+    "SOUTH CENTRAL ELECTRIC LLC": {
+      "website": "https://www.scepowerplus.com/",
+      "phone": "(832) 706-0194"
+    },
+    "LEMARTEC CORPORATION": {
+      "website": "https://www.lemartec.com/",
+      "phone": "(305) 273-8676"
+    },
+    "MOSS & ASSOCIATES LLC": {
+      "website": "https://moss.com/",
+      "phone": "(954) 228-6420"
+    },
+    "TRI-CITY ELECTRICAL CONTRACTORS INC": {
+      "website": "https://www.tcelectric.com/",
+      "phone": "(407) 788-3500"
+    },
+    "POWER DESIGN INC": {
+      "website": "https://www.powerdesigninc.us/",
+      "phone": "(727) 210-0492"
+    },
+    "JOHN MORIARTY AND ASSOCIATES OF FLORIDA INC": {
+      "website": "https://www.jm-a.com/",
+      "phone": "(954) 920-8550"
+    }
+  }
+}

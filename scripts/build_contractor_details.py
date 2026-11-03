@@ -231,7 +231,14 @@ def main() -> None:
             for cname, b in by_name.items():
                 if cname not in ranked:
                     continue
-                projects = sorted(b["projects"], key=lambda p: -p["valuation"])[:25]
+                projects = sorted(
+                    b["projects"],
+                    key=lambda p: (
+                        p.get("issued_date") or "",
+                        p.get("valuation") or 0,
+                    ),
+                    reverse=True,  # newest issued → oldest
+                )[:25]
                 out_contractors[cname] = {
                     "contractor_name": cname,
                     "license": b["license"],
@@ -286,6 +293,26 @@ def main() -> None:
                 )
             metrics["pipeline"][wkey]["by_contractor"] = list(existing.values()) + sorted(
                 extras, key=lambda x: -float(x["som_material_usd"])
+            )
+
+        # Curated websites/phones (not available in open permit bronze)
+        websites_path = (
+            ROOT / "dashboard" / "public" / "data" / "contractor_websites.json"
+        )
+        if websites_path.exists():
+            by_name = json.loads(websites_path.read_text()).get("by_name") or {}
+            for w in details["windows"].values():
+                for cname, c in w["contractors"].items():
+                    info = by_name.get(cname)
+                    if not info:
+                        continue
+                    if info.get("website"):
+                        c["website"] = info["website"]
+                    if info.get("phone"):
+                        c["phone"] = info["phone"]
+            details["contact_note"] = (
+                "Websites/phones are curated enrichments (not from permit bronze). "
+                "Projects sorted issued_date newest → oldest."
             )
 
         OUT.write_text(json.dumps(details, separators=(",", ":")))

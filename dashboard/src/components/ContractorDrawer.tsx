@@ -21,6 +21,8 @@ export type ContractorProject = {
 export type ContractorDetail = {
   contractor_name: string;
   license?: string | null;
+  website?: string | null;
+  phone?: string | null;
   mesoregions?: string[];
   counties?: string[];
   permits: number;
@@ -52,8 +54,15 @@ export default function ContractorDrawer({
     detail.search_query ||
       `${detail.contractor_name} ${detail.license || ""} Florida contractor`
   );
-  const projects = detail.projects || [];
+  const projects = [...(detail.projects || [])].sort((a, b) => {
+    const da = a.issued_date || "";
+    const db = b.issued_date || "";
+    if (da === db) return (b.valuation || 0) - (a.valuation || 0);
+    return db.localeCompare(da); // newest → oldest
+  });
   const projectSum = projects.reduce((s, p) => s + (p.valuation || 0), 0);
+  const website = detail.website?.trim() || null;
+  const phone = detail.phone?.trim() || null;
 
   return (
     <div className="fixed inset-0 z-50 flex items-end justify-center md:items-center">
@@ -110,6 +119,24 @@ export default function ContractorDrawer({
         </div>
 
         <div className="mt-4 flex flex-wrap gap-2 text-xs">
+          {website ? (
+            <a
+              href={website}
+              target="_blank"
+              rel="noreferrer"
+              className="rounded-full bg-[var(--sun)] px-3 py-1 text-[#071a1f] hover:opacity-90"
+            >
+              Website
+            </a>
+          ) : null}
+          {phone ? (
+            <a
+              href={`tel:${phone.replace(/[^\d+]/g, "")}`}
+              className="rounded-full border border-[var(--line)] px-3 py-1 text-[var(--sand)] hover:bg-white/5"
+            >
+              {phone}
+            </a>
+          ) : null}
           <a
             href={`https://www.google.com/search?q=${search}`}
             target="_blank"
@@ -126,9 +153,11 @@ export default function ContractorDrawer({
           >
             Florida Sunbiz
           </a>
-          <span className="rounded-full border border-[var(--line)] px-3 py-1 text-[var(--muted)]">
-            Phone / website not in open permit feeds
-          </span>
+          {!website ? (
+            <span className="rounded-full border border-[var(--line)] px-3 py-1 text-[var(--muted)]">
+              Website not in permit feed — enriched when found
+            </span>
+          ) : null}
         </div>
 
         <p className="mt-6 text-[10px] uppercase tracking-[0.14em] text-[var(--muted)]">
