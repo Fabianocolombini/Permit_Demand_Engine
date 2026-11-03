@@ -167,7 +167,7 @@ export default function ContractorDrawer({
           <table className="w-full min-w-[720px] text-left text-sm">
             <thead>
               <tr className="text-[10px] uppercase tracking-[0.12em] text-[var(--muted)]">
-                <th className="pb-2">Issued</th>
+                <th className="pb-2">Issued ↓</th>
                 <th className="pb-2">Permit</th>
                 <th className="pb-2">Address</th>
                 <th className="pb-2">Category</th>
